@@ -10,7 +10,7 @@
 
 **1)** Add the package to "require" in composer.json
 
-    composer require "eyewitness/eye:~1.0"
+    composer require eyewitness/eye
 
 **2)** Once composer is finished, you need to add the service provider. Open `config/app.php`, and add a new item to the providers array.
 
