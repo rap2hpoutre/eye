@@ -23,6 +23,8 @@ class ServerControllerTest extends TestCase
 
     protected $disk;
 
+    protected $log;
+
     public function setUp()
     {
         parent::setUp();
@@ -45,11 +47,15 @@ class ServerControllerTest extends TestCase
         $this->disk = Mockery::mock(Disk::class);
         $this->app->instance(Disk::class, $this->disk);
 
+        $this->log = Mockery::mock(Log::class);
+        $this->app->instance(Log::class, $this->log);
+
         $this->app['config']->set('eyewitness.monitor_database', false);
         $this->app['config']->set('eyewitness.monitor_request', false);
         $this->app['config']->set('eyewitness.monitor_disk', false);
         $this->app['config']->set('eyewitness.monitor_email', false);
         $this->app['config']->set('eyewitness.monitor_queue', false);
+        $this->app['config']->set('eyewitness.monitor_log', false);
     }
 
     public function testPingServerHonoursConfig()
@@ -61,6 +67,7 @@ class ServerControllerTest extends TestCase
         $this->disk->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
@@ -79,6 +86,7 @@ class ServerControllerTest extends TestCase
         $this->request->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
@@ -91,17 +99,17 @@ class ServerControllerTest extends TestCase
         $this->app['config']->set('eyewitness.monitor_queue', true);
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
-        $this->queue->shouldReceive('allTubeStats')->once()->andReturn('list');
-        $this->queue->shouldReceive('driverName')->once()->andReturn('example');
+        $this->queue->shouldReceive('allTubeStats')->once()->andReturn(['list']);
         
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
+        $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
-        $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'queue_stats' => ['tubes' => 'list', 'driver' => 'example']]), $response->getContent());
+        $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'queue_stats' => ['list']]), $response->getContent());
         $this->assertEquals(200, $response->getStatusCode());        
     }
 
@@ -116,6 +124,7 @@ class ServerControllerTest extends TestCase
         $this->disk->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
@@ -134,6 +143,7 @@ class ServerControllerTest extends TestCase
         $this->disk->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
@@ -152,10 +162,30 @@ class ServerControllerTest extends TestCase
         $this->database->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'disk_stats' => ['size' => 7]]), $response->getContent());
+        $this->assertEquals(200, $response->getStatusCode());        
+    }
+
+    public function testLog()
+    {
+        $this->app['config']->set('eyewitness.monitor_log', true);
+
+        $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
+        $this->log->shouldReceive('check')->once()->andReturn(['tests' => 'ok']);
+
+        $this->request->shouldReceive('check')->never();
+        $this->disk->shouldReceive('check')->never();
+        $this->database->shouldReceive('check')->never();
+        $this->email->shouldReceive('send')->never();
+        $this->queue->shouldReceive('pingAllTubes')->never();
+
+        $response = $this->call('GET', $this->api.'server'.$this->auth);
+
+        $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'log_stats' => ['tests' => 'ok']]), $response->getContent());
         $this->assertEquals(200, $response->getStatusCode());        
     }
 }

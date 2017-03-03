@@ -6,6 +6,7 @@ use Eyewitness\Eye\Http\Middleware\CaptureRequest;
 use Eyewitness\Eye\Http\Middleware\EnabledRoute;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Eyewitness\Eye\Commands\ScheduleRunCommand;
+use Eyewitness\Eye\Commands\LegacyWorkCommand;
 use Eyewitness\Eye\Http\Middleware\AuthRoute;
 use Illuminate\Console\Scheduling\Schedule;
 use Eyewitness\Eye\Commands\InstallCommand;
@@ -115,7 +116,7 @@ class EyeServiceProvider extends ServiceProvider
     {
         if (config('eyewitness.monitor_log')) {
             app('log')->listen(function ($level, $message = null, $context = null) {
-                app(Eye::class)->log()->sendExceptionAlert($level, $message);
+                app(Eye::class)->log()->logError($level);
             });
         }
     }
@@ -227,20 +228,19 @@ class EyeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register a new queue:work command. This is only for Laravel versions
-     * that are <=5.2. This is to backport a feature from >=5.3 where
-     * cache is enabled on all workers (not just daemons) and improves
-     * default queue detection.
+     * Register a new queue:work command.
      *
      * @return void
      */
     protected function registerWorkCommand()
     {
-        if (laravel_version_less_than_or_equal_to(5.2)) {
-            $this->app->extend('command.queue.work', function () {
+        $this->app->extend('command.queue.work', function () {
+            if (laravel_version_less_than_or_equal_to(5.2)) {
+                return new LegacyWorkCommand($this->app['queue.worker']);
+            } else {
                 return new WorkCommand($this->app['queue.worker']);
-            });
-        }
+            }
+        });
     }
 
     /**

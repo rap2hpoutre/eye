@@ -23,6 +23,6 @@ class RedisQueue extends Handler
      */
     public function pendingJobsCount($tube)
     {
-        return $this->queue->llen($tube);
+        return $this->queue->llen('queues:'.$tube);
     }
 }

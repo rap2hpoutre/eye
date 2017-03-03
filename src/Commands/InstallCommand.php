@@ -57,7 +57,7 @@ class InstallCommand extends Command
         $this->callSilent('vendor:publish', ['--provider' => 'Eyewitness\Eye\EyeServiceProvider']);
 
         try {
-            $this->setDefaultQueueTube();
+            $this->setDefaultQueueConfig();
         } catch (Exception $e) {
             return $this->failedInstallation('queue configuration', $e->getMessage());
         }
@@ -103,13 +103,12 @@ class InstallCommand extends Command
      *
      * @return void
      */
-    protected function setDefaultQueueTube()
+    protected function setDefaultQueueConfig()
     {
-        $default = $this->getDefaultTube();
+        $this->modifyConfigFile(Eye::QUEUE_CONNECTION_PLACEHOLDER, config('queue.default'));
+        $this->modifyConfigFile(Eye::QUEUE_TUBE_PLACEHOLDER, $this->getDefaultQueue());
 
-        $this->modifyConfigFile(Eye::QUEUE_TUBE_PLACEHOLDER, $default);
-
-        $this->laravel['config']['eyewitness.queue_tube_list'] = [$default];
+        $this->laravel['config']['eyewitness.queue_tube_list'] = [config('queue.default') => [$this->getDefaultQueue()]];
     }
 
     /**
@@ -220,7 +219,7 @@ class InstallCommand extends Command
      *
      * @return string
      */
-    protected function getDefaultTube()
+    protected function getDefaultQueue()
     {
         return config('queue.connections.'.config('queue.default').'.queue') ?: 'default';
     }

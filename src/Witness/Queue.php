@@ -2,22 +2,22 @@
 
 namespace Eyewitness\Eye\Witness;
 
-use Illuminate\Database\QueryException;
 use Illuminate\Queue\QueueManager;
-use ReflectionClass;
+use Exception;
 
 class Queue
 {
     /**
-     * Get the queue driver name.
+     * Get the queue connection configuration.
      *
-     * @return string
+     * @param  string  $name
+     * @return array
      */
-    public function driverName()
+    public function getConnectionConfig($connection)
     {
-        return app(QueueManager::class)->getDefaultDriver();
+        return app('config')["queue.connections.$connection"];
     }
-
+    
     /**
      * Get the queue stats for all tubes.
      *
@@ -27,8 +27,14 @@ class Queue
     {
         $stats = [];
 
-        foreach (config('eyewitness.queue_tube_list') as $tube) {
-            $stats[] = $this->tubeStats($tube);
+        try {
+            foreach (config('eyewitness.queue_tube_list') as $connection => $tubes) {
+                foreach ($tubes as $tube) {
+                    $stats[] = $this->tubeStats($connection, $tube);
+                }
+            }
+        } catch (Exception $e) {
+            //
         }
 
         return $stats;
@@ -37,16 +43,32 @@ class Queue
     /**
      * Get the queue stats for a specific tube.
      *
+     * @param  string  $connection
      * @param  string  $tube
      * @return mixed
      */
-    public function tubeStats($tube)
+    public function tubeStats($connection, $tube)
     {
-        $stats['tube_name'] = $tube;
-        $stats['pending_count'] = $this->getPendingJobsCount($tube);
-        $stats['failed_count'] = $this->getFailedJobsCount($tube);
+        $stats['connection'] = $connection;
+        $stats['tube'] = $tube;
+        $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
+        $stats['failed_count'] = $this->getFailedJobsCount($connection, $tube);
 
         return $stats;
+    }
+
+    /**
+     * Count the number of failed jobs.
+     *
+     * @param  string  $connection
+     * @param  string  $tube
+     * @return int
+     */
+    protected function getFailedJobsCount($connection, $tube)
+    {
+        return $this->getFailedJobs()->where('queue', $tube)
+                                     ->where('connection', $connection)
+                                     ->count();
     }
 
     /**
@@ -64,38 +86,28 @@ class Queue
                 return $job;
             });
             return $list;
-        } catch (QueryException $e) {
+        } catch (Exception $e) {
             return collect([]);
         }
     }
 
     /**
-     * Count the number of failed jobs.
-     *
-     * @param  string  $tube
-     * @return int
-     */
-    protected function getFailedJobsCount($tube)
-    {
-        return $this->getFailedJobs()->where('queue', $tube)->count();
-    }
-
-    /**
      * Get the number of pending jobs for this queue tube.
      *
+     * @param  string  $connection
      * @param  string  $tube
      * @return void
      */
-    protected function getPendingJobsCount($tube)
+    protected function getPendingJobsCount($connection, $tube)
     {
-        $qm = app(QueueManager::class);
-        $this->driver = (new ReflectionClass($qm->connection()))->getShortName();
-        $driver_class = "\\Eyewitness\\Eye\\Queue\\$this->driver";
+        $config = $this->getConnectionConfig($connection);
+        $driver_class = "\\Eyewitness\\Eye\\Queue\\".ucfirst(strtolower($config['driver'])).'Queue';
 
         if (class_exists($driver_class)) {
-            return (new $driver_class($qm->connection()))->pendingJobsCount($tube);
+            $qm = app(QueueManager::class)->connection($connection);
+            return (new $driver_class($qm, $config))->pendingJobsCount($tube);
         }
-        
+
         return 0;
     }
 }

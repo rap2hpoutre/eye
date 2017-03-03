@@ -76,14 +76,13 @@ class Api
     /**
      * Send a ping for the queue.
      *
+     * @param  string  $connection
      * @param  string  $tube
-     * @param  string  $time_in_queue
-     * @param  array   $stats
      * @return void
      */
-    public function sendQueuePing($tube)
+    public function sendQueuePing($connection, $tube)
     {
-        $this->ping('queue/ping', ['tube' => $tube]);
+        $this->ping('queue/ping', ['connection' => $connection, 'tube' => $tube]);
     }
 
     /**

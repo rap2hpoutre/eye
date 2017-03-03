@@ -8,7 +8,7 @@ use Eyewitness\Eye\Eye;
 class Worker extends OriginalWorker
 {
     /**
-     * Extend the worker and place a heart beat as it is procoessing.
+     * Extend the worker and place a heartbeat as it is processing.
      *
      * @param  \Illuminate\Contracts\Queue\Queue  $connection
      * @param  string  $queue
@@ -29,15 +29,16 @@ class Worker extends OriginalWorker
      * Check if we have recently pinged Eyewitness for this queue. Only
      * ping if the cache has expired.
      *
-     * @param  \Illuminate\Contracts\Queue\Queue  $connection
-     * @param  string  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
+     * @param  string  $tube
+     * @return void
      */
     protected function eyewitnessHeartBeat($tube)
     {
-        if (! $this->cache->has('eyewitness_queue_heartbeat_'.$tube)) {
-            $this->cache->add('eyewitness_queue_heartbeat_'.$tube, 1, 6);
-            app(Eye::class)->api()->sendQueuePing($tube);
+        $connection = config('eyewitness.temp_connection_name', 'default');
+
+        if (! $this->cache->has('eyewitness_queue_heartbeat_'.$connection.'_'.$tube)) {
+            $this->cache->add('eyewitness_queue_heartbeat_'.$connection.'_'.$tube, 1, 6);
+            app(Eye::class)->api()->sendQueuePing($connection, $tube);
         }
     }
 }

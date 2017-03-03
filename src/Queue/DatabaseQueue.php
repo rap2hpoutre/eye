@@ -17,13 +17,14 @@ class DatabaseQueue extends Handler
      * Create a new Database queue instance.
      *
      * @param string  $connection
+     * @param string  $connection
      * @return void
      */
-    public function __construct($connection)
+    public function __construct($connection, $config)
     {
         $this->queue = $connection->getDatabase();
 
-        $this->table = config('queue.connections.'.config('queue.default').'.table');
+        $this->table = $config['table'];
     }
 
     /**

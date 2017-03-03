@@ -64,12 +64,21 @@ return [
      |--------------------------------------------------------------------------
      |
      | If you run multiple queue tubes, please list them below for monitoring.
+     | A sensible default has been configured for you as part of the installation
+     | process that should work for most common applications.
      |
-     | i.e. 'queue_tube_list' => ['default', 'email', 'other'],
+     | Below is a more advanced example of how you can monitor multiple queue
+     | connections and tubes.
+     | 
+     | 'queue_tube_list' => ['connection1' => ['tube1', 'tube2'], 
+     |                       'connection2' => ['tube1', 'tube2', 'tube3']],
+     |
+     | Not sure the best option for your application? Send us a quick email
+     | at 'support@eyewitness.io' and we'll be happy to help.
      |
      */
 
-    'queue_tube_list' => ['QUEUE_TUBE_PLACEHOLDER'],
+    'queue_tube_list' => ['QUEUE_CONNECTION_PLACEHOLDER' => ['QUEUE_TUBE_PLACEHOLDER']],
 
 
     /*
@@ -112,28 +121,6 @@ return [
      */
 
     'send_queued_emails' => false,
-
-
-    /*
-     |--------------------------------------------------------------------------
-     | Exception Error Levels Alerts
-     |--------------------------------------------------------------------------
-     |
-     | When monitoring logs - we can send you alerts when exceptions occur
-     | in your application which are logged. So this takes into account your
-     | 'dontReport' list configured as part of your Laravel application.
-     |
-     | However it is unlikely that you will want to be alerted to all log levels,
-     | otherwise you'll get too many alerts.
-     |
-     | So you can determine which levels to report on following the PSR-3
-     | log levels:
-     |
-     | 'emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'
-     |
-     */
-
-    'exception_alert_levels' => ['emergency', 'alert', 'critical', 'error'],
 
 
     /*

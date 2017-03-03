@@ -14,10 +14,11 @@ use Eyewitness\Eye\Api;
 
 class Eye
 {
+    const QUEUE_CONNECTION_PLACEHOLDER = 'QUEUE_CONNECTION_PLACEHOLDER';
     const QUEUE_TUBE_PLACEHOLDER = 'QUEUE_TUBE_PLACEHOLDER';
     const SECRET_KEY_PLACEHOLDER = 'SECRET_KEY_PLACEHOLDER';
     const APP_TOKEN_PLACEHOLDER = 'APP_TOKEN_PLACEHOLDER';
-    const EYE_VERSION = '1.0.0';
+    const EYE_VERSION = '1.1.0';
 
     /**
      * The Scheduler witness.
@@ -133,8 +134,7 @@ class Eye
         }
 
         if (config('eyewitness.monitor_queue')) {
-            $data['queue_stats']['tubes'] = $this->queue()->allTubeStats();
-            $data['queue_stats']['driver'] = $this->queue()->driverName();
+            $data['queue_stats'] = $this->queue()->allTubeStats();
         }
 
         if (config('eyewitness.monitor_disk')) {
@@ -143,6 +143,10 @@ class Eye
 
         if (config('eyewitness.monitor_email') && ($email)) {
             $this->email()->send();
+        }
+
+        if (config('eyewitness.monitor_log')) {
+            $data['log_stats'] = $this->log()->check();
         }
 
         return $data;

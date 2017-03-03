@@ -12,28 +12,41 @@ use Exception;
 class Log
 {
     /**
+     * Get all the log checks.
+     *
+     * @return array
+     */
+    public function check()
+    {
+        $data['logs'] = $this->getErrorHistory();
+        
+        return $data;
+    }
+
+    /**
      * Get the exception error and send to Eyewitness server.
      *
      * @return array
      */
-    public function sendExceptionAlert($level, $message = null)
+    public function logError($level)
     {
-        if ($level instanceof MessageLogged) {
-            $message = $level->message;
-            $level = $level->level;
-        }
-        
-        if ($message instanceof Exception) {
-            $message = $message->getMessage();
-        }
+        try {
+            if ($level instanceof MessageLogged) {
+                $level = $level->level;
+            }
 
-        if (in_array($level, config('eyewitness.exception_alert_levels'))) {
-            app(Eye::class)->api()->sendExceptionAlert($level, $message);
+            if (in_array($level, ['emergency', 'alert', 'critical', 'error'])) {
+                $tag = gmdate('Y_m_d_H');
+                Cache::add('eyewitness_error_count_'.$tag, 0, 100);
+                Cache::increment('eyewitness_error_count_'.$tag, 1);
+            }
+        } catch (Exception $e) {
+            // if we cant log - do nothing to prevent loops
         }
     }
 
     /**
-     * Get the error count for the server for the past hour (if tracked).
+     * Get the error count for the server for the past hours (if tracked).
      *
      * @return array
      */

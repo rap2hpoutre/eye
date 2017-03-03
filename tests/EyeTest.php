@@ -28,8 +28,9 @@ class EyeTest extends TestCase
 
     public function testConstsAreSet()
     {
-        $this->assertEquals('SECRET_KEY_PLACEHOLDER', $this->eye::SECRET_KEY_PLACEHOLDER);
+        $this->assertEquals('QUEUE_CONNECTION_PLACEHOLDER', $this->eye::QUEUE_CONNECTION_PLACEHOLDER);
         $this->assertEquals('QUEUE_TUBE_PLACEHOLDER', $this->eye::QUEUE_TUBE_PLACEHOLDER);
+        $this->assertEquals('SECRET_KEY_PLACEHOLDER', $this->eye::SECRET_KEY_PLACEHOLDER);
         $this->assertEquals('APP_TOKEN_PLACEHOLDER', $this->eye::APP_TOKEN_PLACEHOLDER);
         $this->assertTrue($this->eye::EYE_VERSION !== '');
     }
