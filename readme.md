@@ -2,7 +2,7 @@
 
 ## Eyewitness.io package for Laravel 5 applications
 
-<a href="https://eyewitness.io">Eyewitness.io</a> allows you to automatically monitor your schedules (cron jobs), queues, email, database, SSL certificates and many other aspects of your Laravel 5 application. No more silent errors - get notified when something goes wrong!
+<a href="https://eyewitness.io">Eyewitness.io</a> is a monitoring and application analytic service built specifically for Laravel. Never miss a silent failure, and be the first to know how your applications are actually performing. Monitor your queues, schedulers/cron, email, logs, security and every part of your application.
 
 ### Installation
 
@@ -39,10 +39,6 @@ The only config option some people need to change is `queue_tube_list`. If you r
 This package current supports all Laravel versions `>=5.1`.
 
 If you are running Lumen, Laravel 5.0 or Laravel 4.2 and would like to use Eyewitness.io on those applications - please get in contact with us `support@eyewitness.io` and we'll organise to get you beta access to those packages currently under development.
-
-### Documentation
-
-For more information about the package - check out the docs at <a href="https://eyewitness.io/docs">https://eyewitness.io/docs</a> 
 
 ### Security Vulnerabilites
 
