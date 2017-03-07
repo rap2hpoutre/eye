@@ -27,10 +27,6 @@ class LogControllerTest extends TestCase
         $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
 
-        $response = $this->call('GET', $this->api.'log/delete'.$this->auth, ['filename' => 'test.log']);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
-        $this->assertEquals(405, $response->getStatusCode());
-
         $response = $this->call('GET', $this->api.'log/show'.$this->auth, ['filename' => 'test.log', 'count' => 3]);
         $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());

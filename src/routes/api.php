@@ -13,5 +13,4 @@ Route::group(['prefix' => 'api/eyewitness/v1', 'middleware' => 'eyewitness_auth'
 
     Route::get('log', 'Eyewitness\Eye\Http\Controllers\LogController@index');
     Route::get('log/show', 'Eyewitness\Eye\Http\Controllers\LogController@show');
-    Route::get('log/delete', 'Eyewitness\Eye\Http\Controllers\LogController@delete');
 });
