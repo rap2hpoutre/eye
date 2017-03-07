@@ -196,9 +196,7 @@ class Log
             $reversed[$id]['stack_trace'] = array_reverse($log);
         }
 
-        dd($reversed);
-
-        return ['logs' => $logs, 'offset' => $pos, 'start' => $start];
+        return ['logs' => $reversed, 'offset' => $pos, 'start' => $start];
     }
 
     /**
