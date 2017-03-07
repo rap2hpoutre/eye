@@ -71,7 +71,6 @@ class Log
         $files = [];
 
         foreach (array_filter($log_files, 'is_file') as $id => $file) {
-            $files[$id]['path'] = $file;
             $files[$id]['filename'] = basename($file);
             $files[$id]['size'] = filesize($file);
             $files[$id]['log_count'] = $this->getLogCount($file);
@@ -186,6 +185,56 @@ class Log
             }
         }
 
+        $reversed = [];
+
+        foreach ($logs as $id => $log) {
+            $main = array_pop($log);
+            $error = $this->extractErrorLevel($main);
+            $reversed[$id]['timestamp'] = $this->extractTimestamp($main);
+            $reversed[$id]['level'] = strtolower($error);
+            $reversed[$id]['error'] = $this->extractErrorMessage($main, $error);
+            $reversed[$id]['stack_trace'] = array_reverse($log);
+        }
+
+        dd($reversed);
+
         return ['logs' => $logs, 'offset' => $pos, 'start' => $start];
+    }
+
+    /**
+     * Get the timestamp from the log line.
+     *
+     * @param  string  $log
+     * @return string
+     */
+    protected function extractTimestamp($log)
+    {
+        return ltrim(substr($log, 0, strpos($log, ']')),'[');
+    }
+
+    /**
+     * Get the error level from the log line.
+     *
+     * @param  string  $log
+     * @return string
+     */
+    protected function extractErrorLevel($log)
+    {
+        $start = ltrim(substr($log, strpos($log, "]") + 1));
+        $end = substr($start, 0, strpos($start, ':'));
+        return substr($end, strpos($end, ".") + 1);
+    }
+
+    /**
+     * Get the error level from the log line.
+     *
+     * @param  string  $log
+     * @param  string  $error
+     * @return string
+     */
+    protected function extractErrorMessage($log, $error)
+    {
+        $log = ltrim(substr($log, strpos($log, $error)));
+        return ltrim(substr($log, strpos($log, ':')+1));
     }
 }
