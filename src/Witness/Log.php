@@ -72,6 +72,7 @@ class Log
 
         foreach (array_filter($log_files, 'is_file') as $id => $file) {
             $files[$id]['path'] = $file;
+            $files[$id]['filename'] = basename($file);
             $files[$id]['size'] = filesize($file);
             $files[$id]['log_count'] = $this->getLogCount($file);
         }
