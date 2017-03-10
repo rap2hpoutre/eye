@@ -35,6 +35,7 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
             // Capture the command and how long it took to run
             $eventResults[] = ['command' => $event->command,
                                'schedule' => $event->expression,
+                               'timezone' => $event->timezone,
                                'time' => round($end_time - $start_time, 4)];
 
             $eventsRan = true;
