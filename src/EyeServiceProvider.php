@@ -2,6 +2,7 @@
 
 namespace Eyewitness\Eye;
 
+use Eyewitness\Eye\Http\Middleware\CaptureRequestLegacy;
 use Eyewitness\Eye\Http\Middleware\EnabledComposerRoute;
 use Eyewitness\Eye\Http\Middleware\EnabledQueueRoute;
 use Eyewitness\Eye\Http\Middleware\EnabledLogRoute;
@@ -105,7 +106,11 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadRequestTracking()
     {
         if (config('eyewitness.monitor_request')) {
-            $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequest::class);
+            if (laravel_version_greater_than_or_equal_to(5.1)) {
+                $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequest::class);
+            } else {
+                $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequestLegacy::class);
+            }
         }
     }
 
