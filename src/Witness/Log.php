@@ -4,7 +4,6 @@ namespace Eyewitness\Eye\Witness;
 
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
-use Eyewitness\Eye\Eye;
 use Psr\Log\LogLevel;
 use ReflectionClass;
 use Exception;
@@ -19,7 +18,7 @@ class Log
     public function check()
     {
         $data['logs'] = $this->getErrorHistory();
-        
+
         return $data;
     }
 
@@ -119,7 +118,7 @@ class Log
         } catch (Exception $e) {
             return 0;
         }
-                
+
         $logs = substr_count(fread($fp, 5), "[20");
         rewind($fp);
 
@@ -148,7 +147,7 @@ class Log
         if (is_null($start)) {
             $start = filesize(storage_path('logs/'.$filename))-1;
         }
-        
+
         $pos = $start - (is_null($offset) ? 0 : $offset);
 
         $logs = [];
