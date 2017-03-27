@@ -14,7 +14,7 @@ class ComposerController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('eyewitness_enabled_route:monitor_composer_lock');
+        $this->middleware('eyewitness_composer_route');
     }
 
     /**
@@ -30,6 +30,6 @@ class ComposerController extends Controller
             return response()->json(['error' => 'Could not run composer.lock check'], 500);
         }
 
-        return response()->json($result, 200);        
+        return response()->json($result, 200);
     }
 }

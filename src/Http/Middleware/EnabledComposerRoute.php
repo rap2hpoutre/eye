@@ -4,7 +4,7 @@ namespace Eyewitness\Eye\Http\Middleware;
 
 use Closure;
 
-class EnabledRoute
+class EnabledComposerRoute
 {
     /**
      * Handle an incoming request and check if it can access the route.
@@ -13,10 +13,10 @@ class EnabledRoute
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $config)
+    public function handle($request, Closure $next)
     {
-        if ( ! config('eyewitness.'.$config)) {
-            return response()->json(['error' => 'The route is disabled on the server'], 405)
+        if ( ! config('eyewitness.monitor_composer_lock')) {
+            return response()->json(['error' => 'The composer route is disabled on the server'], 405)
                              ->setCallback($request->input('callback'));
         }
 

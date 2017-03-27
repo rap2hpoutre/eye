@@ -33,8 +33,8 @@ class LogController extends Controller
      */
     public function __construct(Eye $eye, Request $request)
     {
-        $this->middleware('eyewitness_enabled_route:routes_log');
-        
+        $this->middleware('eyewitness_log_route');
+
         $this->log = $eye->log();
 
         $this->request = $request;

@@ -28,7 +28,7 @@ class ComposerControllerTest extends TestCase
         $this->eyeapi->shouldReceive('runComposerLockCheck')->never();
 
         $response = $this->call('GET', $this->api.'composer'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The composer route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
     }
 

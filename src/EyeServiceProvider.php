@@ -2,8 +2,10 @@
 
 namespace Eyewitness\Eye;
 
+use Eyewitness\Eye\Http\Middleware\EnabledComposerRoute;
+use Eyewitness\Eye\Http\Middleware\EnabledQueueRoute;
+use Eyewitness\Eye\Http\Middleware\EnabledLogRoute;
 use Eyewitness\Eye\Http\Middleware\CaptureRequest;
-use Eyewitness\Eye\Http\Middleware\EnabledRoute;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Eyewitness\Eye\Commands\ScheduleRunCommand;
 use Eyewitness\Eye\Commands\LegacyWorkCommand;
@@ -132,10 +134,14 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadMiddleware($router)
     {
         if (laravel_version_greater_than_or_equal_to(5.4)) {
-            $router->aliasMiddleware('eyewitness_enabled_route', EnabledRoute::class);
+            $router->aliasMiddleware('eyewitness_log_route', EnabledLogRoute::class);
+            $router->aliasMiddleware('eyewitness_queue_route', EnabledQueueRoute::class);
+            $router->aliasMiddleware('eyewitness_composer_route', EnabledComposerRoute::class);
             $router->aliasMiddleware('eyewitness_auth', AuthRoute::class);
         } else {
-            $router->middleware('eyewitness_enabled_route', EnabledRoute::class);
+            $router->middleware('eyewitness_log_route', EnabledLogRoute::class);
+            $router->middleware('eyewitness_queue_route', EnabledQueueRoute::class);
+            $router->middleware('eyewitness_composer_route', EnabledComposerRoute::class);
             $router->middleware('eyewitness_auth', AuthRoute::class);
         }
     }
@@ -220,7 +226,7 @@ class EyeServiceProvider extends ServiceProvider
     {
         $this->app->singleton('queue.worker', function () {
             if (laravel_version_greater_than_or_equal_to(5.3)) {
-                return new Worker($this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]);    
+                return new Worker($this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]);
             } else {
                 return new Worker($this->app['queue'], $this->app['queue.failer'], $this->app['events']);
             }

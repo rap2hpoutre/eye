@@ -14,23 +14,23 @@ class FailedQueueControllerTest extends TestCase
         $this->app['config']->set('eyewitness.routes_queue', false);
 
         $response = $this->call('GET', $this->api.'failed_queue'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The queue route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
 
         $response = $this->call('GET', $this->api.'failed_queue/delete/all'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The queue route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
 
         $response = $this->call('GET', $this->api.'failed_queue/delete/1'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The queue route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
 
         $response = $this->call('GET', $this->api.'failed_queue/retry/all'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The queue route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
 
         $response = $this->call('GET', $this->api.'failed_queue/retry/1'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The queue route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
     }
 
@@ -163,7 +163,7 @@ class FailedQueueControllerTest extends TestCase
                ->with('queue:retry', ['id' => [1]])
                ->once()
                ->andReturn(true);
-        
+
         $response = $this->call('GET', $this->api.'failed_queue/retry/1'.$this->auth);
 
         $this->assertEquals(json_encode(['msg' => 'Success']), $response->getContent());
@@ -176,7 +176,7 @@ class FailedQueueControllerTest extends TestCase
                ->with('queue:retry', ['id' => [1]])
                ->once()
                ->andThrow(new Exception('my error'));
-        
+
         $response = $this->call('GET', $this->api.'failed_queue/retry/1'.$this->auth);
 
         $this->assertEquals(json_encode(['error' => 'my error']), $response->getContent());
@@ -189,7 +189,7 @@ class FailedQueueControllerTest extends TestCase
                ->with('queue:retry', ['id' => ['all']])
                ->once()
                ->andReturn(true);
-        
+
         $response = $this->call('GET', $this->api.'failed_queue/retry/all'.$this->auth);
 
         $this->assertEquals(json_encode(['msg' => 'Success']), $response->getContent());

@@ -24,11 +24,11 @@ class FailedQueueController extends Controller
      */
     public function __construct(Request $request)
     {
-        $this->middleware('eyewitness_enabled_route:routes_queue');
+        $this->middleware('eyewitness_queue_route');
 
         $this->request = $request;
     }
-    
+
     /**
      * Get the index of failed jobs.
      *
@@ -55,7 +55,7 @@ class FailedQueueController extends Controller
         } catch (Exception $e) {
             return $this->jsonp(['error' => $e->getMessage()], 500);
         }
-        
+
         return $this->jsonp(['error' => 'Could not find that log id to delete'], 404);
     }
 

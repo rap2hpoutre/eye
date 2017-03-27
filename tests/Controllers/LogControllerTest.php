@@ -24,11 +24,11 @@ class LogControllerTest extends TestCase
         $this->app['config']->set('eyewitness.routes_log', false);
 
         $response = $this->call('GET', $this->api.'log'.$this->auth);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The log route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
 
         $response = $this->call('GET', $this->api.'log/show'.$this->auth, ['filename' => 'test.log', 'count' => 3]);
-        $this->assertEquals(json_encode(['error' => 'The route is disabled on the server']), $response->getContent());
+        $this->assertEquals(json_encode(['error' => 'The log route is disabled on the server']), $response->getContent());
         $this->assertEquals(405, $response->getStatusCode());
     }
 
@@ -73,5 +73,5 @@ class LogControllerTest extends TestCase
         $this->assertEquals(json_encode(['log' => 'example']), $response->getContent());
         $this->assertEquals(200, $response->getStatusCode());
     }
-    
+
 }
