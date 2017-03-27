@@ -82,7 +82,7 @@ class LogController extends Controller
     public function delete()
     {
         $this->validate($this->request, [
-                'filename' => 'required|string|min:3|max:100'
+                'filename' => 'required|string|min:3|max:60'
         ]);
 
         try {
