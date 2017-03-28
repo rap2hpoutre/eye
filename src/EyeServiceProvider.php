@@ -28,6 +28,18 @@ use Eyewitness\Eye\Eye;
 class EyeServiceProvider extends ServiceProvider
 {
     /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__.'/config/eyewitness.php', 'eyewitness');
+
+        $this->app->singleton(Eyewitness\Eye\Eye::class);
+    }
+
+    /**
      * Bootstrap the package.
      *
      * @return void
@@ -46,18 +58,6 @@ class EyeServiceProvider extends ServiceProvider
         } else {
             $this->loadRequestTracking();
         }
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__.'/config/eyewitness.php', 'eyewitness');
-
-        $this->app->singleton(Eyewitness\Eye\Eye::class);
     }
 
     /**
@@ -80,38 +80,6 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadViews()
     {
         $this->loadViewsFrom(__DIR__.'/views', 'eyewitness');
-    }
-
-    /**
-     * Load the console.
-     *
-     * @return void
-     */
-    protected function loadConsole()
-    {
-        $this->publishes([__DIR__.'/config/eyewitness.php' => config_path('eyewitness.php')]);
-
-        $this->commands([InstallCommand::class]);
-
-        $this->loadSchedulerMonitor();
-        $this->loadMaintenanceMonitor();
-        $this->loadQueueMonitor();
-    }
-
-    /**
-     * Load the request tracking.
-     *
-     * @return void
-     */
-    protected function loadRequestTracking()
-    {
-        if (config('eyewitness.monitor_request')) {
-            if (laravel_version_greater_than_or_equal_to(5.1)) {
-                $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequest::class);
-            } else {
-                $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequestLegacy::class);
-            }
-        }
     }
 
     /**
@@ -152,17 +120,19 @@ class EyeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Load the queue monitor.
+     * Load the console.
      *
      * @return void
      */
-    protected function loadQueueMonitor()
+    protected function loadConsole()
     {
-        if (config('eyewitness.monitor_queue')) {
-            $this->registerFailingQueueHandler();
-            $this->registerQueueWorker();
-            $this->registerWorkCommand();
-        }
+        $this->publishes([__DIR__.'/config/eyewitness.php' => config_path('eyewitness.php')]);
+
+        $this->commands([InstallCommand::class]);
+
+        $this->loadSchedulerMonitor();
+        $this->loadMaintenanceMonitor();
+        $this->loadQueueMonitor();
     }
 
     /**
@@ -197,6 +167,20 @@ class EyeServiceProvider extends ServiceProvider
             $this->app->extend('command.up', function() {
                 return new UpCommand();
             });
+        }
+    }
+
+    /**
+     * Load the queue monitor.
+     *
+     * @return void
+     */
+    protected function loadQueueMonitor()
+    {
+        if (config('eyewitness.monitor_queue')) {
+            $this->registerFailingQueueHandler();
+            $this->registerQueueWorker();
+            $this->registerWorkCommand();
         }
     }
 
@@ -252,6 +236,22 @@ class EyeServiceProvider extends ServiceProvider
                 return new WorkCommand($this->app['queue.worker']);
             }
         });
+    }
+
+    /**
+     * Load the request tracking.
+     *
+     * @return void
+     */
+    protected function loadRequestTracking()
+    {
+        if (config('eyewitness.monitor_request')) {
+            if (laravel_version_greater_than_or_equal_to(5.1)) {
+                $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequest::class);
+            } else {
+                $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequestLegacy::class);
+            }
+        }
     }
 
     /**
