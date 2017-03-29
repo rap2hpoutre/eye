@@ -36,7 +36,7 @@ class EyeServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/config/eyewitness.php', 'eyewitness');
 
-        $this->app->singleton(Eyewitness\Eye\Eye::class);
+        $this->app->singleton(Eye::class);
     }
 
     /**
