@@ -66,7 +66,7 @@ class Log
      */
     public function getLogFiles()
     {
-        $log_files = glob(storage_path('logs/*.log'));
+        $log_files = glob(storage_path('logs/*.{log,txt}'), GLOB_BRACE);
         $files = [];
 
         foreach (array_filter($log_files, 'is_file') as $id => $file) {
@@ -87,7 +87,7 @@ class Log
     {
         $files = [];
 
-        foreach (glob(storage_path('logs/*.log')) as $file) {
+        foreach (glob(storage_path('logs/*.{log,txt}'), GLOB_BRACE) as $file) {
             $files[] = basename($file);
         }
 
