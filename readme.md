@@ -36,9 +36,11 @@ The only config option some people need to change is `queue_tube_list`. If you r
 
 ### Version
 
-This package current supports all Laravel versions `>=5.1`.
+This package supports all versions of Laravel 5.
 
-If you are running Lumen, Laravel 5.0 or Laravel 4.2 and would like to use Eyewitness.io on those applications - please get in contact with us `support@eyewitness.io` and we'll organise to get you beta access to those packages currently under development.
+If you are running Laravel 4.2 - you should use [the Eyewitness Laravel 4.2 package](https://github.com/eyewitness/eye4)
+
+If you are running Lumen please get in contact with us `support@eyewitness.io` and we'll organise to get you beta access to the package currently under development.
 
 ### Security Vulnerabilites
 
