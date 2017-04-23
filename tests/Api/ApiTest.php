@@ -1,7 +1,7 @@
 <?php
 
 use GuzzleHttp\Psr7\Response;
-use Eyewitness\Eye\Api;
+use Eyewitness\Eye\Api\Api;
 use GuzzleHttp\Client;
 
 class ApiTest extends TestCase
@@ -28,7 +28,7 @@ class ApiTest extends TestCase
         $this->app['config']->set('eyewitness.api_enabled', false);
 
         $this->guzzle->shouldReceive('post')->never();
-        
+
         $this->api->up();
     }
 
@@ -39,7 +39,7 @@ class ApiTest extends TestCase
 
         $this->assertEquals(['ok'], $result);
     }
- 
+
     public function testSendInstallEmail()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Eyewitness\Eye;
+namespace Eyewitness\Eye\Api;
 
 use GuzzleHttp\Client;
 use Exception;

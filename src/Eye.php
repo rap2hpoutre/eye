@@ -10,7 +10,7 @@ use Eyewitness\Eye\Witness\Queue;
 use Eyewitness\Eye\Witness\Email;
 use Eyewitness\Eye\Witness\Disk;
 use Eyewitness\Eye\Witness\Log;
-use Eyewitness\Eye\Api;
+use Eyewitness\Eye\Api\Api;
 
 class Eye
 {

@@ -1,6 +1,6 @@
 <?php
 
-use Eyewitness\Eye\Api;
+use Eyewitness\Eye\Api\Api;
 
 class ComposerControllerTest extends TestCase
 {
