@@ -179,7 +179,12 @@ class Api
     public function runComposerLockCheck()
     {
         $this->headers['headers'] = ['Accept' => 'application/json'];
-        $this->headers['multipart'] = [['name' => 'lock', 'contents' => fopen(config('eyewitness.composer_lock_file_location'), 'r')]];
+
+        if ($this->isRunningGuzzle5()) {
+            $this->headers['body'] = ['lock' => fopen(config('eyewitness.composer_lock_file_location'), 'r')];
+        } else {
+            $this->headers['multipart'] = [['name' => 'lock', 'contents' => fopen(config('eyewitness.composer_lock_file_location'), 'r')]];
+        }
 
         $response = null;
 
@@ -216,5 +221,15 @@ class Api
         } catch (Exception $e) {
             //
         }
+    }
+
+    /**
+     * Determine if we are runing Guzzle 5 or 6 to provide dual support in the one package.
+     *
+     * @return bool
+     */
+    protected function isRunningGuzzle5()
+    {
+        return ($this->client::VERSION[0] == "5");
     }
 }
