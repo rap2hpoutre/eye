@@ -102,14 +102,12 @@ class Api
      * @param  string  $connection
      * @param  string  $job
      * @param  string  $tube
-     * @param  string  $exception_class
-     * @param  string  $exception_message
      * @return void
      */
-    public function sendQueueFailingPing($connection, $job, $tube)
+    public function sendQueueFailingPing($connection, $name, $tube)
     {
         $this->ping('queue/failing', ['connection' => $connection,
-                                      'job' => $job,
+                                      'job' => $name,
                                       'tube' => $tube]);
     }
 

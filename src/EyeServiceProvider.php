@@ -16,9 +16,8 @@ use Eyewitness\Eye\Commands\InstallCommand;
 use Eyewitness\Eye\Commands\WorkCommand;
 use Eyewitness\Eye\Commands\DownCommand;
 use Illuminate\Support\ServiceProvider;
-use Eyewitness\Eye\Commands\UpCommand;
 use Illuminate\Queue\Events\JobFailed;
-use Illuminate\Support\Facades\Cache;
+use Eyewitness\Eye\Commands\UpCommand;
 use Illuminate\Queue\QueueManager;
 use Eyewitness\Eye\Queue\Worker;
 use Illuminate\Routing\Router;
@@ -194,11 +193,15 @@ class EyeServiceProvider extends ServiceProvider
     {
         if (laravel_version_less_than_or_equal_to(5.1)) {
             app(QueueManager::class)->failing(function ($connection, $job, $data) {
-                app(Eye::class)->api()->sendQueueFailingPing($connection, get_class(unserialize($data['data']['command'])), $job->getQueue());
+                app(Eye::class)->api()->sendQueueFailingPing($connection,
+                                                             app(Eye::class)->queue()->resolveLegacyName($job),
+                                                             $job->getQueue());
             });
         } else {
             app(QueueManager::class)->failing(function (JobFailed $e) {
-                app(Eye::class)->api()->sendQueueFailingPing($e->connectionName, $e->job->resolveName(), $e->job->getQueue());
+                app(Eye::class)->api()->sendQueueFailingPing($e->connectionName,
+                                                             $e->job->resolveName(),
+                                                             $e->job->getQueue());
             });
         }
     }

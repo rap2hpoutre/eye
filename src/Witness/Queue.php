@@ -17,7 +17,7 @@ class Queue
     {
         return app('config')["queue.connections.$connection"];
     }
-    
+
     /**
      * Get the queue stats for all tubes.
      *
@@ -109,6 +109,36 @@ class Queue
         }
 
         return 0;
+    }
+
+    /**
+     * Get the resolved name of the queued job class.
+     *
+     * @param  array  $job
+     * @return string
+     */
+    public function resolveLegacyName($job)
+    {
+        try {
+            $payload = json_decode($job->getRawBody(), true);
+            $name = $payload['job'];
+
+            if (! empty($payload['displayName'])) {
+                return $payload['displayName'];
+            }
+
+            if ($name === 'Illuminate\Queue\CallQueuedHandler@call') {
+                return get_class(unserialize($data['data']['command']));
+            }
+
+            if ($name === 'Illuminate\Events\CallQueuedHandler@call') {
+                return $payload['data']['class'].'@'.$payload['data']['method'];
+            }
+        } catch (Exception $e) {
+            $name = 'Unknown';
+        }
+
+        return $name;
     }
 }
 
