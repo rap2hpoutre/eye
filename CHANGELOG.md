@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased]
+## v1.3.1 (2017-04-24)
 
 ### Added
 - Added a changelog to package.
