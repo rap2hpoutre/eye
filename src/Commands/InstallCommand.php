@@ -39,7 +39,7 @@ class InstallCommand extends Command
     {
         parent::__construct();
 
-        $this->eye = $eye;        
+        $this->eye = $eye;
     }
 
     /**

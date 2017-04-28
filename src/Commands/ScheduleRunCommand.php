@@ -24,8 +24,8 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
             if (laravel_version_greater_than_or_equal_to(5.2) && (! $event->filtersPass($this->laravel))) {
                 continue;
             }
-            
-            $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());          
+
+            $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());
 
             // Run the command
             $start_time = microtime(true);
