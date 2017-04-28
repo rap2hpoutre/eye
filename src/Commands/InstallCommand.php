@@ -50,9 +50,11 @@ class InstallCommand extends Command
     public function handle()
     {
         if ($this->eye->checkConfig()) {
-            $this->error('It appears that this package has already been installed. You should only need to run the installer once per application. Please contact "support@eyewitness.io" if you need any further assistance.');
+            $this->error('It appears that this package has already been installed. You only need to run the installer once per application. Please contact "support@eyewitness.io" if you need any further assistance.');
             return;
         }
+
+        $this->displayInitialInstallMessage();
 
         $this->callSilent('vendor:publish', ['--provider' => 'Eyewitness\Eye\EyeServiceProvider']);
 
@@ -119,11 +121,22 @@ class InstallCommand extends Command
     protected function getApplicationData()
     {
         $app = $this->eye->runAllChecks(false);
-        $app['name'] = $this->handleAppName(config('app.name', 'My Laravel App'));
-        $app['domain'] = $this->handleAppDomain(config('app.url'));
         $app['events'] = $this->eye->scheduler()->getScheduledEvents();
 
         return $app;
+    }
+
+    /**
+     * Display the initial installation message.
+     *
+     * @return void
+     */
+    protected function displayInitialInstallMessage()
+    {
+        $this->info('______________________________________');
+        $this->info(' ');
+        $this->info('Installing and configuring package for Eyewitness.io....');
+        $this->info(' ');
     }
 
     /**
@@ -133,44 +146,17 @@ class InstallCommand extends Command
      */
     protected function displayOutcome()
     {
-        $this->info('-------------------------------');
+        $this->info('______________________________________');
+        $this->info(' ');
         $this->info('Success! Your Laravel application has been configured and is now being monitored by Eyewitness.io!');
         $this->info(' ');
-        $this->info('App Token: '.config('eyewitness.app_token'));
-        $this->info('Secret Key: '.config('eyewitness.secret_key'));
+        $this->info('   App Token: '.config('eyewitness.app_token'));
+        $this->info('   Secret Key: '.config('eyewitness.secret_key'));
         $this->info(' ');
         $this->info('Optional: You can provide your email address now, and we will send you an email with the "app_token" and "secret_key" included. This email will be sent by our email server, so it is ok if you do not have email configured on this server. No spam, we promise!');
         $this->info(' ');
 
         $this->handleOptionalEmailRequest();
-    }
-
-    /**
-     * Handle confirming the application domain.
-     *
-     * @param  string   $url
-     * @return string
-     */
-    protected function handleAppDomain($url)
-    {
-        return $this->ask('2. What is the full domain of your application that we are monitoring (so we can ping the server)?', $url);
-    }
-
-    /**
-     * Handle confirming the application name.
-     *
-     * @param  string   $name
-     * @return string
-     */
-    protected function handleAppName($name)
-    {
-        $this->info('-------------------------------');
-        $this->info(' ');
-        $this->info('Installing and configuring package for Eyewitness.io.');
-        $this->info(' ');
-        $this->info('There are just two questions to help get you started.');
-        $this->info(' ');
-        return $this->ask('1. Please give your application a name (this helps when you are monitoring multiple applications):', $name);
     }
 
     /**
@@ -184,22 +170,24 @@ class InstallCommand extends Command
             $email = $this->ask('Your email address (optional - leave blank if you do not want an email):', false);
 
             if ($email === false) {
+                $this->info('______________________________________');
                 $this->info(' ');
                 $this->info('Now that your package is installed - please head to https://eyewitness.io and login to view your application monitor. You will need your "app_token" and "secret_key" to access your server on the website.');
                 $this->info(' ');
                 $this->info('You can copy and paste these from above. Or you can get them from your '.config_path('eyewitness.php').' file as well.');
-                break;
-            } else {
-                if ($this->validateEmail($email)) {
-                    $this->eye->api()->sendInstallEmail($email);
-                    $this->info(' ');
-                    $this->info('Email sent via Eyewitness.io to "'.$email.'". Please check your inbox for a copy of your "app_token" and "secret_key"');
-                    $this->info(' ');
-                    break;
-                } else {
-                    $this->error('Sorry - that email address does not seem to be valid. Please try again.');
-                }
+                $this->info(' ');
+                return;
             }
+
+            if ($this->validateEmail($email)) {
+                $this->eye->api()->sendInstallEmail($email);
+                $this->info(' ');
+                $this->info('Email sent via Eyewitness.io to "'.$email.'". Please check your inbox for a copy of your "app_token" and "secret_key"');
+                $this->info(' ');
+                return;
+            }
+
+            $this->error('Sorry - that email address does not seem to be valid. Please try again.');
         }
     }
 
@@ -251,5 +239,4 @@ class InstallCommand extends Command
         $this->error('');
         $this->error('Please try again or contact us at: "support@eyewitness.io"');
     }
-
 }
