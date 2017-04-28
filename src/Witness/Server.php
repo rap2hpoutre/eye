@@ -13,7 +13,9 @@ class Server
     {
         $data['version_php'] = phpversion();
         $data['version_laravel'] = app()->version();
-        $data['reboot_required'] = $this->checkServerForReboot();
+        $data['reboot_required'] = $this->checkServerForRebootRequired();
+        $data['cache_config'] = app()->configurationIsCached();
+        $data['cache_route'] = app()->routesAreCached();
         $data['timezone'] = config('app.timezone');
 
         return $data;
@@ -24,7 +26,7 @@ class Server
      *
      * @return boolean
      */
-    public function checkServerForReboot()
+    public function checkServerForRebootRequired()
     {
         return file_exists('/var/run/reboot-required');
     }

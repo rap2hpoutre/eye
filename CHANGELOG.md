@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-### Changed
+### Added
+- Now track the status of `config:cache` and `route:cache` for the application
 
 
 
