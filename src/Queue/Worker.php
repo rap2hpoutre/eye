@@ -34,6 +34,7 @@ class Worker extends OriginalWorker
      */
     protected function eyewitnessHeartBeat($tube)
     {
+        $tube = config('queue.prefix').$tube;
         $connection = config('eyewitness.temp_connection_name', 'default');
 
         if (! $this->cache->has('eyewitness_queue_heartbeat_'.$connection.'_'.$tube)) {
