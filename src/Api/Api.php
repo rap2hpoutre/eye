@@ -100,7 +100,7 @@ class Api
      * Send a ping for a failing queue.
      *
      * @param  string  $connection
-     * @param  string  $job
+     * @param  string  $name
      * @param  string  $tube
      * @return void
      */
@@ -112,13 +112,10 @@ class Api
     }
 
     /**
-     * Send a ping for a failing queue.
+     * Send a ping for an application exception.
      *
-     * @param  string  $connection
-     * @param  string  $job
-     * @param  string  $tube
-     * @param  string  $exception_class
-     * @param  string  $exception_message
+     * @param  string  $level
+     * @param  string  $message
      * @return void
      */
     public function sendExceptionAlert($level, $message)
