@@ -3,7 +3,13 @@
 ## Unreleased
 
 ### Added
-- Now track the status of `config:cache` and `route:cache` for the application
+- Now track the status of `config:cache` and `route:cache` for the application.
+- Add `eyewitness:poll` command and add to scheduler. Package will now autopush server status when required, rather
+  than require manual polling. Allows for servers behind VPNs etc to still be monitored. Eyewitness.io will
+  auto fall back to remote polling for applications that do not run a scheduler.
+
+### Changed
+- Refactored install command for new applications to be simplier.
 
 
 
