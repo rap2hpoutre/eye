@@ -13,7 +13,7 @@ use Eyewitness\Eye\Commands\LegacyWorkCommand;
 use Eyewitness\Eye\Http\Middleware\AuthRoute;
 use Illuminate\Console\Scheduling\Schedule;
 use Eyewitness\Eye\Commands\InstallCommand;
-use Eyewitness\Eye\Commands\ServerCommand;
+use Eyewitness\Eye\Commands\PollCommand;
 use Eyewitness\Eye\Commands\WorkCommand;
 use Eyewitness\Eye\Commands\DownCommand;
 use Illuminate\Support\ServiceProvider;
@@ -128,24 +128,24 @@ class EyeServiceProvider extends ServiceProvider
     {
         $this->publishes([__DIR__.'/config/eyewitness.php' => config_path('eyewitness.php')]);
 
-        $this->commands([InstallCommand::class, ServerCommand::class]);
+        $this->commands([InstallCommand::class, PollCommand::class]);
 
-        $this->loadServerMonitor();
+        $this->loadServerPolling();
         $this->loadSchedulerMonitor();
         $this->loadMaintenanceMonitor();
         $this->loadQueueMonitor();
     }
 
     /**
-     * Load the server monitor and add it to the scheduler.
+     * Load the server polling and add it to the scheduler.
      *
      * @return void
      */
-    protected function loadServerMonitor()
+    protected function loadServerPolling()
     {
         $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
-            $schedule->command('eyewitness:server')->cron('2,8,14,20,26,32,38,44,50,56 * * * * *');
+            $schedule->command('eyewitness:poll')->cron('2,8,14,20,26,32,38,44,50,56 * * * * *');
         });
     }
 

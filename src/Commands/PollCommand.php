@@ -5,7 +5,7 @@ namespace Eyewitness\Eye\Commands;
 use Illuminate\Console\Command;
 use Eyewitness\Eye\Eye;
 
-class ServerCommand extends Command
+class PollCommand extends Command
 {
     /**
      * The eye instance.
@@ -19,14 +19,14 @@ class ServerCommand extends Command
      *
      * @var string
      */
-    protected $name = 'eyewitness:server';
+    protected $name = 'eyewitness:poll';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Eyewitness.io server ping command';
+    protected $description = 'Eyewitness.io poll command';
 
     /**
      * Create the Server command.
@@ -50,6 +50,6 @@ class ServerCommand extends Command
     {
         $this->eye->api()->sendServerPing($this->eye->runAllChecks());
 
-        $this->info('Eyewitness.io server ping command complete.');
+        $this->info('Eyewitness.io server poll command complete.');
     }
 }
