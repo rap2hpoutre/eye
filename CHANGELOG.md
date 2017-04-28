@@ -1,5 +1,11 @@
 # Release Notes
 
+## Unreleased
+
+### Changed
+- Added support for queue prefixes that were added to Laravel 5.4.20
+
+
 ## v1.3.1 (2017-04-24)
 
 ### Added
