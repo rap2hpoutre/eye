@@ -65,7 +65,7 @@ class InstallCommand extends Command
         }
 
         try {
-            $app = $this->getApplicationData();
+            $app = $this->eye->runAllChecks(false);
         } catch (Exception $e) {
             return $this->failedInstallation('application data', $e->getMessage());
         }
@@ -111,19 +111,6 @@ class InstallCommand extends Command
         $this->modifyConfigFile(Eye::QUEUE_TUBE_PLACEHOLDER, $this->getDefaultQueue());
 
         $this->laravel['config']['eyewitness.queue_tube_list'] = [config('queue.default') => [$this->getDefaultQueue()]];
-    }
-
-    /**
-     * Get all the relevant application data.
-     *
-     * @return array
-     */
-    protected function getApplicationData()
-    {
-        $app = $this->eye->runAllChecks(false);
-        $app['events'] = $this->eye->scheduler()->getScheduledEvents();
-
-        return $app;
     }
 
     /**

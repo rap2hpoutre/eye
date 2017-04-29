@@ -129,6 +129,10 @@ class Eye
             $data['db_stats'] = $this->database()->check();
         }
 
+        if (config('eyewitness.monitor_scheduler')) {
+            $data['scheduler'] = $this->scheduler()->getScheduledEvents();
+        }
+
         if (config('eyewitness.monitor_request')) {
             $data['request_stats'] = $this->request()->check();
         }

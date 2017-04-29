@@ -1,5 +1,6 @@
 <?php
 
+use Eyewitness\Eye\Witness\Scheduler;
 use Eyewitness\Eye\Witness\Database;
 use Eyewitness\Eye\Witness\Request;
 use Eyewitness\Eye\Witness\Server;
@@ -11,6 +12,8 @@ use Eyewitness\Eye\Eye;
 
 class ServerControllerTest extends TestCase
 {
+    protected $scheduler;
+
     protected $database;
 
     protected $request;
@@ -28,6 +31,9 @@ class ServerControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $this->scheduler = Mockery::mock(Scheduler::class);
+        $this->app->instance(Scheduler::class, $this->scheduler);
 
         $this->database = Mockery::mock(Database::class);
         $this->app->instance(Database::class, $this->database);
@@ -50,6 +56,7 @@ class ServerControllerTest extends TestCase
         $this->log = Mockery::mock(Log::class);
         $this->app->instance(Log::class, $this->log);
 
+        $this->app['config']->set('eyewitness.monitor_scheduler', false);
         $this->app['config']->set('eyewitness.monitor_database', false);
         $this->app['config']->set('eyewitness.monitor_request', false);
         $this->app['config']->set('eyewitness.monitor_disk', false);
@@ -61,17 +68,38 @@ class ServerControllerTest extends TestCase
     public function testPingServerHonoursConfig()
     {
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
-        
+
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
+        $this->queue->shouldReceive('pingAllTubes')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->disk->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION]), $response->getContent());
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testScheduler()
+    {
+        $this->app['config']->set('eyewitness.monitor_scheduler', true);
+
+        $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
+        $this->scheduler->shouldReceive('getScheduledEvents')->once()->andReturn(['example' => 'list']);
+
+        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->database->shouldReceive('check')->never();
+        $this->request->shouldReceive('check')->never();
+        $this->email->shouldReceive('send')->never();
+        $this->disk->shouldReceive('check')->never();
+        $this->log->shouldReceive('check')->never();
+
+        $response = $this->call('GET', $this->api.'server'.$this->auth);
+
+        $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'scheduler' => ['example' => 'list']]), $response->getContent());
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -82,16 +110,17 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->email->shouldReceive('send')->once();
 
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
+        $this->queue->shouldReceive('pingAllTubes')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION]), $response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());        
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testQueue()
@@ -100,17 +129,18 @@ class ServerControllerTest extends TestCase
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->queue->shouldReceive('allTubeStats')->once()->andReturn(['list']);
-        
+
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->disk->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
+        $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'queue_stats' => ['list']]), $response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());        
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testDatabase()
@@ -119,17 +149,18 @@ class ServerControllerTest extends TestCase
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->database->shouldReceive('check')->once()->andReturn(['db_status' => true]);
-        
-        $this->request->shouldReceive('check')->never();
-        $this->disk->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->request->shouldReceive('check')->never();
+        $this->email->shouldReceive('send')->never();
+        $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'db_stats' => ['db_status' => true]]), $response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());        
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testRequest()
@@ -138,17 +169,18 @@ class ServerControllerTest extends TestCase
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->request->shouldReceive('check')->once()->andReturn(['count' => 5]);
-        
-        $this->database->shouldReceive('check')->never();
-        $this->disk->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->database->shouldReceive('check')->never();
+        $this->email->shouldReceive('send')->never();
+        $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'request_stats' => ['count' => 5]]), $response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());        
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testDisk()
@@ -158,16 +190,17 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->disk->shouldReceive('check')->once()->andReturn(['size' => 7]);
 
-        $this->request->shouldReceive('check')->never();
-        $this->database->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->database->shouldReceive('check')->never();
+        $this->request->shouldReceive('check')->never();
+        $this->email->shouldReceive('send')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'disk_stats' => ['size' => 7]]), $response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());        
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testLog()
@@ -177,15 +210,16 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->log->shouldReceive('check')->once()->andReturn(['tests' => 'ok']);
 
-        $this->request->shouldReceive('check')->never();
-        $this->disk->shouldReceive('check')->never();
-        $this->database->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->scheduler->shouldReceive('getScheduledEvents')->never();
         $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->database->shouldReceive('check')->never();
+        $this->request->shouldReceive('check')->never();
+        $this->email->shouldReceive('send')->never();
+        $this->disk->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'log_stats' => ['tests' => 'ok']]), $response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());        
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
