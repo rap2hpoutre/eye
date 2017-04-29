@@ -42,6 +42,10 @@ If you are running Laravel 4.2 - you should use [the Eyewitness Laravel 4.2 pack
 
 If you are running Lumen please get in contact with us `support@eyewitness.io` and we'll organise to get you beta access to the package currently under development.
 
+### Documentation & Support
+
+Please visit our help center and documentation page if you need more assistance: [http://docs.eyewitness.io](http://docs.eyewitness.io)
+
 ### Security Vulnerabilites
 
 If you discover a security vulnerability within this pacakge, please email security@eyewitness.io instead of using the issue tracker. All security vulnerabilities will be promptly addressed.
