@@ -10,7 +10,8 @@
 
 ### Changed
 - Refactored install command for new applications to be simplier.
-
+- Include current application environment when polling.
+- Include eyewitness config setup when polling.
 
 
 ## v1.3.1 (2017-04-24)
