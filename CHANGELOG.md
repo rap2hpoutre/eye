@@ -1,6 +1,6 @@
 # Release Notes
 
-## Unreleased
+## v1.4.0 (2017-04-30)
 
 ### Added
 - Now track the status of `config:cache` and `route:cache` for the application.
