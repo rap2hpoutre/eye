@@ -1,5 +1,11 @@
 # Release Notes
 
+## v1.4.1 (2017-05-02)
+
+### Fixed
+- Allow for PHP 5.6 support
+
+
 ## v1.4.0 (2017-04-30)
 
 ### Added
