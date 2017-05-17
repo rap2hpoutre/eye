@@ -1,5 +1,11 @@
 # Release Notes
 
+## v1.4.2 (2017-05-17)
+
+### Changed
+- Provide better installation debug information during installation failures
+
+
 ## v1.4.1 (2017-05-02)
 
 ### Fixed
