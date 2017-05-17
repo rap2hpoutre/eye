@@ -2,8 +2,12 @@
 
 ## v1.4.3 (2017-05-17)
 
+### Fixed
+- Allow for PDOs that only return as arrays for database checking
+
 ### Changed
 - Improve Guzzle version testing
+- Improve database checking error tracking
 
 
 ## v1.4.2 (2017-05-17)
