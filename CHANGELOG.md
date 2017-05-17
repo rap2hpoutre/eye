@@ -1,5 +1,11 @@
 # Release Notes
 
+## v1.4.3 (2017-05-17)
+
+### Changed
+- Improve Guzzle version testing
+
+
 ## v1.4.2 (2017-05-17)
 
 ### Changed
