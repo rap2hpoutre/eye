@@ -35,5 +35,12 @@
             "Eyewitness\\Eye\\Test\\": "tests"
         },
         "classmap": ["tests/TestCase.php"]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Eyewitness\\Eye\\EyeServiceProvider"
+            ]
+        }
     }
 }
