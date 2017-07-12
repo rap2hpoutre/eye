@@ -175,15 +175,15 @@ class Api
     {
         $this->headers['headers'] = ['Accept' => 'application/json'];
 
-        if ($this->isRunningGuzzle5()) {
-            $this->headers['body'] = ['lock' => fopen(config('eyewitness.composer_lock_file_location'), 'r')];
-        } else {
-            $this->headers['multipart'] = [['name' => 'lock', 'contents' => fopen(config('eyewitness.composer_lock_file_location'), 'r')]];
-        }
-
         $response = null;
 
         try {
+            if ($this->isRunningGuzzle5()) {
+                $this->headers['body'] = ['lock' => fopen(config('eyewitness.composer_lock_file_location'), 'r')];
+            } else {
+                $this->headers['multipart'] = [['name' => 'lock', 'contents' => fopen(config('eyewitness.composer_lock_file_location'), 'r')]];
+            }
+
             $response = $this->client->post('https://security.sensiolabs.org/check_lock', $this->headers);
             $response = json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
