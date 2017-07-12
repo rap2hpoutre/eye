@@ -1,5 +1,19 @@
 # Release Notes
 
+## v1.5.0 (2017-07-12)
+
+### Added
+- Added support for Auto-Discovery for Laravel 5.5 (thanks @m1guelpf)
+
+### Fixed
+- Improved error handling during Composer Lock file detection (thanks @mevtho)
+- Improved log facade use in certain PHP environments (thanks @mevtho)
+
+### Changed
+- Modified commands to support new Laravel 5.5 core handle functions
+
+
+
 ## v1.4.3 (2017-05-17)
 
 ### Fixed
