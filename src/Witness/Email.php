@@ -2,8 +2,8 @@
 
 namespace Eyewitness\Eye\Witness;
 
-use Eyewitness\Eye\Mail\PingEyewitness;
 use Illuminate\Support\Facades\Log as LogFacade;
+use Eyewitness\Eye\Mail\PingEyewitness;
 use Illuminate\Support\Facades\Mail;
 use Exception;
 
