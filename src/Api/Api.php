@@ -175,8 +175,6 @@ class Api
     {
         $this->headers['headers'] = ['Accept' => 'application/json'];
 
-        $response = null;
-
         try {
             if ($this->isRunningGuzzle5()) {
                 $this->headers['body'] = ['lock' => fopen(config('eyewitness.composer_lock_file_location'), 'r')];
@@ -185,12 +183,12 @@ class Api
             }
 
             $response = $this->client->post('https://security.sensiolabs.org/check_lock', $this->headers);
-            $response = json_decode($response->getBody()->getContents(), true);
+            return json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
             Log::error('SensioLabs Composer Lock check failed due to: '.$e->getMessage());
         }
 
-        return $response;
+        return null;
     }
 
     /**
