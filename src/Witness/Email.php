@@ -3,9 +3,9 @@
 namespace Eyewitness\Eye\Witness;
 
 use Eyewitness\Eye\Mail\PingEyewitness;
+use Illuminate\Support\Facades\Log as LogFacade;
 use Illuminate\Support\Facades\Mail;
 use Exception;
-use Log;
 
 class Email
 {
@@ -23,7 +23,7 @@ class Email
                 $this->sendImmediateMail();
             }
         } catch (Exception $e) {
-            Log::error('Unable to send Eyewitness.io email: '.$e->getMessage());
+            LogFacade::error('Unable to send Eyewitness.io email: '.$e->getMessage());
         }
     }
 
