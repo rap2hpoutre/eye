@@ -8,6 +8,7 @@
 ### Fixed
 - Improved error handling during Composer Lock file detection (thanks @mevtho)
 - Improved log facade use in certain PHP environments (thanks @mevtho)
+- Fixed issue with Scheduler on some older versions of Laravel 5.2
 
 ### Changed
 - Modified commands to support new Laravel 5.5 core handle functions

@@ -19,9 +19,7 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
         $eventResults = [];
 
         foreach ($this->schedule->dueEvents($this->laravel) as $event) {
-            // We need to check what version we are running, as Laravel <=5.1 does not have the filtersPass()
-            // function to check against
-            if (laravel_version_greater_than_or_equal_to(5.2) && (! $event->filtersPass($this->laravel))) {
+            if ($this->canAccessFiltersPass($event) && (! $event->filtersPass($this->laravel))) {
                 continue;
             }
 
@@ -69,5 +67,17 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     public function handle()
     {
         return $this->fire();
+    }
+
+    /**
+     * Due to PR https://github.com/laravel/framework/pull/11646/ we should check
+     * if the filtersPass() method can be called or not.
+     *
+     * @param  $event
+     * @return bool
+     */
+    protected function canAccessFiltersPass($event)
+    {
+        return is_callable([$event, 'filtersPass']);
     }
 }
