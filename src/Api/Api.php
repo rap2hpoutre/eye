@@ -2,9 +2,9 @@
 
 namespace Eyewitness\Eye\Api;
 
+use Illuminate\Support\Facades\Log as LogFacade;
 use GuzzleHttp\Client;
 use Exception;
-use Log;
 
 class Api
 {
@@ -185,7 +185,7 @@ class Api
             $response = $this->client->post('https://security.sensiolabs.org/check_lock', $this->headers);
             return json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
-            Log::error('SensioLabs Composer Lock check failed due to: '.$e->getMessage());
+            LogFacade::error('SensioLabs Composer Lock check failed due to: '.$e->getMessage());
         }
 
         return null;
