@@ -1,6 +1,6 @@
 <?php
 
-namespace Eyewitness\Eye\Commands;
+namespace Eyewitness\Eye\Commands\Legacy;
 
 use Illuminate\Queue\Console\WorkCommand as OriginalWorkCommand;
 
@@ -11,7 +11,7 @@ class LegacyWorkCommand extends OriginalWorkCommand
      * version <=5.2.
      *
      * These were changes added to 5.3 onwards, so we are effectively just
-     * back porting the features to ensure consistency and adding the 
+     * back porting the features to ensure consistency and adding the
      * ability to effectively monitor what is required.
      *
      * We also add a small way to store the current connection *name* in

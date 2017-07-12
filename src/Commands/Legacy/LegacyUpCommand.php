@@ -1,20 +1,20 @@
 <?php
 
-namespace Eyewitness\Eye\Commands;
+namespace Eyewitness\Eye\Commands\Legacy;
 
 use Illuminate\Foundation\Console\UpCommand as OriginalUpCommand;
 use Eyewitness\Eye\Eye;
 
-class UpCommand extends OriginalUpCommand
+class LegacyUpCommand extends OriginalUpCommand
 {
     /**
      * Execute the console command.
      *
      * @return void
      */
-    public function handle()
+    public function fire()
     {
-        parent::handle();
+        parent::fire();
 
         app(Eye::class)->api()->up();
     }

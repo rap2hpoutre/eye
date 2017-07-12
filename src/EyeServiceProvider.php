@@ -5,11 +5,13 @@ namespace Eyewitness\Eye;
 use Eyewitness\Eye\Http\Middleware\CaptureRequestLegacy;
 use Eyewitness\Eye\Http\Middleware\EnabledComposerRoute;
 use Eyewitness\Eye\Http\Middleware\EnabledQueueRoute;
+use Eyewitness\Eye\Commands\Legacy\LegacyWorkCommand;
+use Eyewitness\Eye\Commands\Legacy\LegacyDownCommand;
+use Eyewitness\Eye\Commands\Legacy\LegacyUpCommand;
 use Eyewitness\Eye\Http\Middleware\EnabledLogRoute;
 use Eyewitness\Eye\Http\Middleware\CaptureRequest;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Eyewitness\Eye\Commands\ScheduleRunCommand;
-use Eyewitness\Eye\Commands\LegacyWorkCommand;
 use Eyewitness\Eye\Http\Middleware\AuthRoute;
 use Illuminate\Console\Scheduling\Schedule;
 use Eyewitness\Eye\Commands\InstallCommand;
@@ -174,13 +176,13 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadMaintenanceMonitor()
     {
         if (config('eyewitness.monitor_maintenance_mode')) {
-            $this->app->extend('command.down', function () {
-                return new DownCommand();
-            });
-
-            $this->app->extend('command.up', function() {
-                return new UpCommand();
-            });
+            if (laravel_version_less_than_or_equal_to(5.4)) {
+                $this->app->extend('command.down', function () { return new LegacyDownCommand(); });
+                $this->app->extend('command.up', function() { return new LegacyUpCommand(); });
+            } else {
+                $this->app->extend('command.down', function () { return new DownCommand(); });
+                $this->app->extend('command.up', function() { return new UpCommand(); });
+            }
         }
     }
 

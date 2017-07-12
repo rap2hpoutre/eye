@@ -59,4 +59,15 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
         // Cache the heartbeat for 6 mins - so we only ping when required, not every cycle.
         $this->laravel['cache']->driver()->add('eyewitness_scheduler_heartbeat', 1, 6);
     }
+
+    /**
+     * Allow for simulatenous support of Laravel 5.5 and <=5.4 which is due to changes
+     * in PR https://github.com/laravel/framework/pull/19827
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        return $this->fire();
+    }
 }
