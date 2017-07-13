@@ -4,6 +4,8 @@
 
 ### Added
 - Added support for Auto-Discovery for Laravel 5.5 (thanks @m1guelpf)
+- Added `eyewitness:who-am-i` command for better remote assistance
+- Added `eyewitness:test-connection` command for better remote assistance
 
 ### Fixed
 - Improved error handling during Composer Lock file detection (thanks @mevtho)

@@ -74,6 +74,16 @@ class Api
     }
 
     /**
+     * Send a test ping to the API server.
+     *
+     * @return mixed
+     */
+    public function sendTestConnectionPing()
+    {
+        return $this->ping('test/ping');
+    }
+
+    /**
      * Send a ping for the queue.
      *
      * @param  string  $connection
@@ -196,12 +206,12 @@ class Api
      *
      * @param  string  $route
      * @param  array   $data
-     * @return void
+     * @return mixed
      */
     protected function ping($route, $data = [])
     {
         if ( ! config('eyewitness.api_enabled')) {
-            return;
+            return [false, 'Api Disabled'];
         }
 
         $data['app_token'] = config('eyewitness.app_token');
@@ -210,10 +220,12 @@ class Api
         $this->headers['json'] = $data;
 
         try {
-            $this->client->post($this->api."/$route", $this->headers);
+            $response = $this->client->post($this->api."/$route", $this->headers);
         } catch (Exception $e) {
-            //
+            return [false, $e->getMessage()];
         }
+
+        return [$response->getStatusCode(), $response->getReasonPhrase()];
     }
 
     /**

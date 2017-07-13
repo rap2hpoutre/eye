@@ -5,7 +5,7 @@ namespace Eyewitness\Eye\Commands;
 use Illuminate\Console\Command;
 use Eyewitness\Eye\Eye;
 
-class PollCommand extends Command
+class TestConnectionCommand extends Command
 {
     /**
      * The eye instance.
@@ -19,17 +19,17 @@ class PollCommand extends Command
      *
      * @var string
      */
-    protected $name = 'eyewitness:poll';
+    protected $name = 'eyewitness:test-connection';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Eyewitness.io poll command';
+    protected $description = 'Eyewitness.io test connection to server command for debugging';
 
     /**
-     * Create the Poll command.
+     * Create the Test Connection command.
      *
      * @param  \Eyewitness\Eye\Eye  $eye
      * @return void
@@ -48,8 +48,14 @@ class PollCommand extends Command
      */
     public function handle()
     {
-        $this->eye->api()->sendServerPing($this->eye->runAllChecks());
+        $results = $this->eye->api()->sendTestConnectionPing();
 
-        $this->info('Eyewitness.io server poll command complete.');
+        if ($results[0] == "200") {
+            $this->info("Status Code: ".$results[0]);
+            $this->info("Status Message: ".$results[1]);
+        } else {
+            $this->error("Status Code: ".$results[0]);
+            $this->error("Status Message: ".$results[1]);
+        }
     }
 }
