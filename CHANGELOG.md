@@ -1,5 +1,11 @@
 # Release Notes
 
+## v1.6.0 (2017-07-13)
+
+### Changed
+- Moved API route to prevent possible classes with other packages that catch all `api/*` routes
+
+
 ## v1.5.0 (2017-07-12)
 
 ### Added

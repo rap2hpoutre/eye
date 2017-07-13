@@ -2,10 +2,10 @@
 
 namespace Eyewitness\Eye\Http\Controllers;
 
-use Illuminate\Routing\Controller;
+use Eyewitness\Eye\Http\Controllers\BaseController;
 use Eyewitness\Eye\Eye;
 
-class ComposerController extends Controller
+class ComposerController extends BaseController
 {
     /**
      * Create a new ComposerController instance.

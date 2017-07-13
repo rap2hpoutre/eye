@@ -2,21 +2,14 @@
 
 namespace Eyewitness\Eye\Http\Controllers;
 
+use Eyewitness\Eye\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Eyewitness\Eye\Eye;
 use Exception;
 
-class FailedQueueController extends Controller
+class FailedQueueController extends BaseController
 {
-    /**
-     * The request instance.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    protected $request;
-
     /**
      * Create a new FailedQueueController instance.
      *
@@ -90,17 +83,5 @@ class FailedQueueController extends Controller
         }
 
         return $this->jsonp(['msg' => 'Success']);
-    }
-
-    /**
-     * Return an optional JSONP response.
-     *
-     * @param  array   $data
-     * @param  string  $status_code
-     * @return json
-     */
-    protected function jsonp($data, $status_code = 200)
-    {
-        return response()->json($data, $status_code)->setCallback($this->request->input('callback'));
     }
 }

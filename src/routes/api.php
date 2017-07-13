@@ -1,7 +1,7 @@
 <?php
 
-Route::group(['prefix' => 'api/eyewitness/v1', 'middleware' => 'eyewitness_auth'], function () {
-    
+Route::group(['prefix' => 'eyewitness_api/v1', 'middleware' => 'eyewitness_auth'], function () {
+
     Route::get('composer', 'Eyewitness\Eye\Http\Controllers\ComposerController@ping');
 
     Route::get('server', 'Eyewitness\Eye\Http\Controllers\ServerController@ping');
@@ -13,4 +13,9 @@ Route::group(['prefix' => 'api/eyewitness/v1', 'middleware' => 'eyewitness_auth'
 
     Route::get('log', 'Eyewitness\Eye\Http\Controllers\LogController@index');
     Route::get('log/show', 'Eyewitness\Eye\Http\Controllers\LogController@show');
+});
+
+
+Route::group(['prefix' => 'api/eyewitness/v1', 'middleware' => 'eyewitness_auth'], function () {
+    Route::get('{r1?}/{r2?}/{r3?}', 'Eyewitness\Eye\Http\Controllers\ServerController@moved');
 });

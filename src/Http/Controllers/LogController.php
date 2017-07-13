@@ -3,12 +3,12 @@
 namespace Eyewitness\Eye\Http\Controllers;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller;
+use Eyewitness\Eye\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use Eyewitness\Eye\Eye;
 use Exception;
 
-class LogController extends Controller
+class LogController extends BaseController
 {
     use ValidatesRequests;
 
@@ -18,13 +18,6 @@ class LogController extends Controller
      * @var \Eyewitness\Eye\Witness\Log
      */
     protected $log;
-
-    /**
-     * The request instance.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    protected $request;
 
     /**
      * Create a new LogController instance.
@@ -92,17 +85,5 @@ class LogController extends Controller
         }
 
         return $this->jsonp(['msg' => 'Log deleted']);
-    }
-
-    /**
-     * Return an optional JSONP response.
-     *
-     * @param  array   $data
-     * @param  string  $status_code
-     * @return json
-     */
-    protected function jsonp($data, $status_code = 200)
-    {
-        return response()->json($data, $status_code)->setCallback($this->request->input('callback'));
     }
 }

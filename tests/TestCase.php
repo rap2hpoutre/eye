@@ -15,7 +15,7 @@ abstract class TestCase extends Orchestra\Testbench\TestCase
      * @var string
      */
     protected $app_token;
-    
+
     /**
      * The secret_key to use while testing the application.
      *
@@ -47,7 +47,7 @@ abstract class TestCase extends Orchestra\Testbench\TestCase
         $this->secret_key = config('eyewitness.secret_key');
         $this->auth = "?app_token=".$this->app_token.'&secret_key='.$this->secret_key;
 
-        $this->api = 'api/eyewitness/v1/';
+        $this->api = 'eyewitness_api/v1/';
     }
 
     /**
