@@ -4,6 +4,7 @@ namespace Eyewitness\Eye\Witness;
 
 use Illuminate\Support\Facades\Log as LogFacade;
 use Eyewitness\Eye\Mail\PingEyewitness;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Exception;
 
@@ -17,10 +18,12 @@ class Email
     public function send()
     {
         try {
-            if (config('eyewitness.send_queued_emails')) {
-                $this->sendQueuedMail();
-            } else {
-                $this->sendImmediateMail();
+            if ($this->eyewitnessEmailHeartBeat()) {
+                if (config('eyewitness.send_queued_emails')) {
+                    $this->sendQueuedMail();
+                } else {
+                    $this->sendImmediateMail();
+                }
             }
         } catch (Exception $e) {
             LogFacade::error('Unable to send Eyewitness.io email: '.$e->getMessage());
@@ -55,5 +58,22 @@ class Email
             $message->to(config('eyewitness.app_token').'@eyew.io', 'Eyewitness.io');
             $message->subject('Ping Eyewitness');
         });
+    }
+
+    /**
+     * Check if we have recently pinged Eyewitness for email. Only
+     * ping if the cache has expired.
+     *
+     * @return void
+     */
+    protected function eyewitnessEmailHeartBeat()
+    {
+        if (Cache::has('eyewitness_email_heartbeat')) {
+            return false;
+        }
+
+        Cache::add('eyewitness_email_heartbeat', 1, config('eyewitness.email_frequency', 15));
+
+        return true;
     }
 }

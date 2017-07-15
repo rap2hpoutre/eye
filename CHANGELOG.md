@@ -1,5 +1,11 @@
 # Release Notes
 
+## dev-master
+
+### Added
+- New config option to set email send frequency. If you are upgrading and want to set a different value from the default (15) - you should add "email_frequency => 30," to your eyewitness config file (values can be 15, 30, 60, 90, 120 or 180).
+
+
 ## v1.6.0 (2017-07-13)
 
 ### Changed

@@ -69,8 +69,8 @@ return [
      |
      | Below is a more advanced example of how you can monitor multiple queue
      | connections and tubes.
-     | 
-     | 'queue_tube_list' => ['connection1' => ['tube1', 'tube2'], 
+     |
+     | 'queue_tube_list' => ['connection1' => ['tube1', 'tube2'],
      |                       'connection2' => ['tube1', 'tube2', 'tube3']],
      |
      | Not sure the best option for your application? Send us a quick email
@@ -115,12 +115,35 @@ return [
      | to false by default.
      |
      | But depending on your application and specific circumstances - you might
-     | want to force the email to still go via the queue - so we provide that 
+     | want to force the email to still go via the queue - so we provide that
      | option.
      |
      */
 
     'send_queued_emails' => false,
+
+
+    /*
+     |--------------------------------------------------------------------------
+     | Email frequency
+     |--------------------------------------------------------------------------
+     |
+     | This determines how often your application will send a test email. The
+     | default is once every 15 minutes.
+     |
+     | The eyewitness server will automatically detect this value and alert you
+     | if we dont receive emails in the relatively appropriate timeframe.
+     |
+     | The shorter the timeframe the sooner you will know about an email problem,
+     | but the more emails your system will send (and use up your email provider
+     | quotas).
+     |
+     | Valid choices are: 15, 30, 60, 90, 120 or 180 (any other value will be ignored
+     | by the server).
+     |
+     */
+
+    'email_frequency' => 15,
 
 
     /*

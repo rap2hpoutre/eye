@@ -122,7 +122,6 @@ class Eye
     public function runAllChecks($email = true)
     {
         $data['server_stats'] = $this->server()->check();
-
         $data['eyewitness_version'] = $this->version();
         $data['application_environment'] = app()->environment();
         $data['eyewitness_config'] = config('eyewitness');
@@ -147,7 +146,7 @@ class Eye
             $data['disk_stats'] = $this->disk()->check();
         }
 
-        if (config('eyewitness.monitor_email') && ($email)) {
+        if (config('eyewitness.monitor_email') && $email) {
             $this->email()->send();
         }
 
