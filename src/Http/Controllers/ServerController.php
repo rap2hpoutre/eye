@@ -15,7 +15,7 @@ class ServerController extends BaseController
      */
     public function ping(Eye $eye)
     {
-        return response()->json($eye->runAllChecks(), 200);
+        return response()->json($eye->runAllChecks($this->request->get('send_email', 1), 200));
     }
 
     /**
