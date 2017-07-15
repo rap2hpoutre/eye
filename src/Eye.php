@@ -18,7 +18,7 @@ class Eye
     const QUEUE_TUBE_PLACEHOLDER = 'QUEUE_TUBE_PLACEHOLDER';
     const SECRET_KEY_PLACEHOLDER = 'SECRET_KEY_PLACEHOLDER';
     const APP_TOKEN_PLACEHOLDER = 'APP_TOKEN_PLACEHOLDER';
-    const EYE_VERSION = '1.6.0';
+    const EYE_VERSION = '1.6.1';
 
     /**
      * The Scheduler witness.
