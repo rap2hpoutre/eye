@@ -148,6 +148,23 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Capture cron scheduler output
+     |--------------------------------------------------------------------------
+     |
+     | If your cron schedulers are being monitored, then as part of that you can
+     | have the output from the cron job captured and sent to Eyewitness - allowing
+     | you to view it online at a later stage if needed.
+     |
+     | If you set this to false, the output is never captured or ever sent to
+     | the Eyewitness server.
+     |
+     */
+
+    'capture_cron_output' => true,
+
+
+    /*
+     |--------------------------------------------------------------------------
      | Eyewitness.io Routes
      |--------------------------------------------------------------------------
      |

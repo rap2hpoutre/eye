@@ -15,7 +15,6 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
      */
     public function fire()
     {
-        $eventsRan = false;
         $eventResults = [];
 
         foreach ($this->schedule->dueEvents($this->laravel) as $event) {
@@ -23,34 +22,13 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
                 continue;
             }
 
-            $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());
-
-            // Run the command
-            $start_time = microtime(true);
-            $event->run($this->laravel);
-            $end_time = microtime(true);
-
-            // Capture the command and how long it took to run
-            $eventResults[] = ['command' => $this->getCommandName($event),
-                               'schedule' => $event->expression,
-                               'timezone' => $event->timezone,
-                               'time' => round($end_time - $start_time, 4)];
-
-            $eventsRan = true;
+            $eventResults[] = $this->runScheduledEvent($event);
         }
 
-        $eye = app(Eye::class);
-
-        if ($eventsRan) {
-            // Ping the Eyewitness server with the scheduler result
-            $eye->api()->sendSchedulerPing($eventResults);
+        if (count($eventResults)) {
+            app(Eye::class)->api()->sendSchedulerPing($eventResults);
         } else {
-            // Check if we have pinged Eyewitness recently
-            if (! $this->laravel['cache']->driver()->has('eyewitness_scheduler_heartbeat')) {
-                // We need to ping Eyewitness, even though no events ran. This just confirms
-                // that the scheduler itself is working, just nothing to process
-                $eye->api()->sendSchedulerPing();
-            }
+            $this->sendSchedulerHeartBeat();
             $this->info('No scheduled commands are ready to run.');
         }
 
@@ -59,10 +37,87 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     }
 
     /**
-     * Allow for simulatenous support of Laravel 5.5 and <=5.4 which is due to changes
-     * in PR https://github.com/laravel/framework/pull/19827
+     * Run the scheduled event.
+     *
+     * @param  $event
+     * @return array
+     */
+    protected function runScheduledEvent($event)
+    {
+        if (config('eyewitness.capture_cron_output')) {
+            $event = $this->ensureOutputIsBeingCapturedForEyewitness($event);
+        }
+
+        $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());
+
+        // Run the command
+        $start_time = microtime(true);
+        $event->run($this->laravel);
+        $end_time = microtime(true);
+
+        // Capture the command and how long it took to run
+        return ['command' => $this->getCommandName($event),
+                'schedule' => $event->expression,
+                'timezone' => $event->timezone,
+                'time' => round($end_time - $start_time, 4),
+                'output' => $this->captureOutput($event)];
+    }
+
+    /**
+     * Ensure that output is being captured for Eyewitness.
+     *
+     * @param  $event
+     * @return mixed
+     */
+    protected function ensureOutputIsBeingCapturedForEyewitness($event)
+    {
+        if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
+            $event->output = storage_path('eyewitness_cron_output_'.sha1($event->expression.$event->command).'.cron.log');
+        }
+
+        return $event;
+    }
+
+    /**
+     * Get the output from the last scheduled job. Only remove the file if we created
+     * it specifically for Eyewitness - otherwise leave it alone for the framework
+     * to handle as normal.
+     *
+     * @param  $event
+     * @return mixed
+     */
+    protected function captureOutput($event)
+    {
+        if ((! config('eyewitness.capture_cron_output')) || (! file_exists($event->output))) {
+            return null;
+        }
+
+        $text = file_get_contents($event->output);
+
+        if (str_contains($event->output, 'eyewitness_cron_output_')) {
+            unlink($event->output);
+        }
+
+        return $text;
+    }
+
+    /**
+     * Determine if we need to ping Eyewitness, even though no events ran. This just confirms
+     * that the scheduler itself is working, just nothing to process.
      *
      * @return void
+     */
+    protected function sendSchedulerHeartBeat()
+    {
+        if (! $this->laravel['cache']->driver()->has('eyewitness_scheduler_heartbeat')) {
+            app(Eye::class)->api()->sendSchedulerPing();
+        }
+    }
+    /**
+     * Allow for simulatenous support of Laravel 5.5 and <=5.4 which is due to changes
+     * in PR https://github.com/laravel/framework/pull/19827.
+     *
+     * @return mixed
      */
     public function handle()
     {
@@ -83,7 +138,7 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
 
     /**
      * If the schedule command is a closure, we need to use the description if available,
-     * using the same outline as a command
+     * using the same outline as a command.
      *
      * @param  $event
      * @return string

@@ -1,9 +1,10 @@
 # Release Notes
 
-## v1.6.2 (2017-07-17)
+## v1.7.0 (2017-07-17)
 
 ### Added
-- Now support closure based Cron Schedules calls. Please ensure you have a `->name()` or short `->description()` on the closure in order to be able to easily identify it on the website and on any alerts generated.
+- Cron schedules can now include their "output" from the last job displayed on the Eyewitness website. *Note:* if you are upgrading from a previous eyewitness package version, you need to add `'capture_cron_output' => true,` to your `eyewitness.php` config file to enable the package to send the output data to the server.
+- Package now supports closure based Cron Schedules calls. Please ensure you have a `->name()` or short `->description()` on the closure in order to be able to easily identify it on the website and on any alerts generated (otherwise it will be labelled *Unknown*.
 
 
 ## v1.6.1 (2017-07-16)
