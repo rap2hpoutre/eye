@@ -31,7 +31,7 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
             $end_time = microtime(true);
 
             // Capture the command and how long it took to run
-            $eventResults[] = ['command' => $event->command,
+            $eventResults[] = ['command' => $this->getCommandName($event),
                                'schedule' => $event->expression,
                                'timezone' => $event->timezone,
                                'time' => round($end_time - $start_time, 4)];
@@ -79,5 +79,21 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     protected function canAccessFiltersPass($event)
     {
         return is_callable([$event, 'filtersPass']);
+    }
+
+    /**
+     * If the schedule command is a closure, we need to use the description if available,
+     * using the same outline as a command
+     *
+     * @param  $event
+     * @return string
+     */
+    protected function getCommandName($event)
+    {
+        if (is_null($event->command)) {
+            return 'php artisan '.$event->description;
+        }
+
+        return $event->command;
     }
 }

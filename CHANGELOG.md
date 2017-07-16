@@ -1,5 +1,11 @@
 # Release Notes
 
+## v1.6.2 (2017-07-17)
+
+### Added
+- Now support closure based Cron Schedules calls. Please ensure you have a `->name()` or short `->description()` on the closure in order to be able to easily identify it on the website and on any alerts generated.
+
+
 ## v1.6.1 (2017-07-16)
 
 ### Added
