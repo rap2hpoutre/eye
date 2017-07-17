@@ -71,7 +71,7 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
      */
     protected function ensureOutputIsBeingCapturedForEyewitness($event)
     {
-        if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
+        if (! $this->checkIfOutputSet($event)) {
             $event->output = storage_path('eyewitness_cron_output_'.sha1($event->expression.$event->command).'.cron.log');
         }
 
@@ -150,5 +150,25 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
         }
 
         return $event->command;
+    }
+
+    /**
+     * Check what the event output is set to. We only want to change it if it is the
+     * default - otherwise we can use whatever is already set.
+     *
+     * @param  $event
+     * @return bool
+     */
+    protected function checkIfOutputSet($event)
+    {
+        if (is_null($event->output)) {
+            return false;
+        }
+
+        if (is_callable([$event, 'getDefaultOutput'])) {
+            return $event->output == $event->getDefaultOutput();
+        }
+
+        return in_array($event->output, ['NUL', '/dev/null']);
     }
 }

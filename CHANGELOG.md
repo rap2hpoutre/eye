@@ -1,5 +1,11 @@
 # Release Notes
 
+## v1.7.1 (2017-07-17)
+
+### Fixed
+- Fix bug with scheduler updates and compatability with some older versions of Laravel
+
+
 ## v1.7.0 (2017-07-17)
 
 ### Added
