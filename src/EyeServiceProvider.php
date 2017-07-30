@@ -10,13 +10,12 @@ use Eyewitness\Eye\Commands\Legacy\LegacyDownCommand;
 use Eyewitness\Eye\Commands\Legacy\LegacyUpCommand;
 use Eyewitness\Eye\Http\Middleware\EnabledLogRoute;
 use Eyewitness\Eye\Http\Middleware\CaptureRequest;
-use Eyewitness\Eye\Commands\TestConnectionCommand;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Eyewitness\Eye\Commands\ScheduleRunCommand;
 use Eyewitness\Eye\Http\Middleware\AuthRoute;
 use Illuminate\Console\Scheduling\Schedule;
 use Eyewitness\Eye\Commands\InstallCommand;
-use Eyewitness\Eye\Commands\WhoAmICommand;
+use Eyewitness\Eye\Commands\DebugCommand;
 use Eyewitness\Eye\Commands\PollCommand;
 use Eyewitness\Eye\Commands\WorkCommand;
 use Eyewitness\Eye\Commands\DownCommand;
@@ -134,8 +133,7 @@ class EyeServiceProvider extends ServiceProvider
 
         $this->commands([InstallCommand::class,
                          PollCommand::class,
-                         WhoAmICommand::class,
-                         TestConnectionCommand::class]);
+                         DebugCommand::class]);
 
         $this->loadServerPolling();
         $this->loadSchedulerMonitor();

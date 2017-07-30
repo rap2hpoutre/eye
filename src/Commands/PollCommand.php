@@ -22,11 +22,18 @@ class PollCommand extends Command
     protected $name = 'eyewitness:poll';
 
     /**
+     * Indicates whether the command should be shown in the Artisan command list.
+     *
+     * @var bool
+     */
+    protected $hidden = true;
+
+    /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Eyewitness.io poll command';
+    protected $description = 'Eyewitness.io - command to poll the server. Will be called automatically.';
 
     /**
      * Create the Poll command.

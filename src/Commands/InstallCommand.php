@@ -27,7 +27,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Eyewitness.io installation';
+    protected $description = 'Eyewitness.io - initial package installation and configuration';
 
     /**
      * Create the Install command.
