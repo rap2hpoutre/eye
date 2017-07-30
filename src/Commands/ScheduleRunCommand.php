@@ -60,18 +60,19 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
                 'schedule' => $event->expression,
                 'timezone' => $event->timezone,
                 'time' => round($end_time - $start_time, 4),
-                'output' => $this->captureOutput($event)];
+                'output' => $this->captureOutput($event),
+                'background' => $event->runInBackground];
     }
 
     /**
-     * Ensure that output is being captured for Eyewitness.
+     * Ensure that output is being captured if not already set by the event.
      *
      * @param  $event
      * @return mixed
      */
     protected function ensureOutputIsBeingCapturedForEyewitness($event)
     {
-        if (! $this->checkIfOutputSet($event)) {
+        if ($this->checkNoOutputSet($event)) {
             $event->output = storage_path('eyewitness_cron_output_'.sha1($event->expression.$event->command).'.cron.log');
         }
 
@@ -88,7 +89,7 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
      */
     protected function captureOutput($event)
     {
-        if ((! config('eyewitness.capture_cron_output')) || (! file_exists($event->output))) {
+        if ((! config('eyewitness.capture_cron_output')) || (! file_exists($event->output)) || $event->runInBackground) {
             return null;
         }
 
@@ -102,8 +103,8 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     }
 
     /**
-     * Determine if we need to ping Eyewitness, even though no events ran. This just confirms
-     * that the scheduler itself is working, just nothing to process.
+     * Determine if we need to ping Eyewitness, even though no events ran. This just
+     * confirms that the scheduler itself is working, just nothing to process.
      *
      * @return void
      */
@@ -137,8 +138,8 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     }
 
     /**
-     * If the schedule command is a closure, we need to use the description if available,
-     * using the same outline as a command.
+     * If the schedule command is a closure, we need to use the description if
+     * available, using the same outline as a command.
      *
      * @param  $event
      * @return string
@@ -153,20 +154,19 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     }
 
     /**
-     * Check what the event output is set to. We only want to change it if it is the
-     * default - otherwise we can use whatever is already set.
+     * Check if the event output is still set to the default.
      *
      * @param  $event
      * @return bool
      */
-    protected function checkIfOutputSet($event)
+    protected function checkNoOutputSet($event)
     {
         if (is_null($event->output)) {
-            return false;
+            return true;
         }
 
         if (is_callable([$event, 'getDefaultOutput'])) {
-            return $event->output == $event->getDefaultOutput();
+            return $event->output === $event->getDefaultOutput();
         }
 
         return in_array($event->output, ['NUL', '/dev/null']);
