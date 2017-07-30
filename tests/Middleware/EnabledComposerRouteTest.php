@@ -1,6 +1,6 @@
 <?php
 
-use Eyewitness\Eye\Http\Middleware\EnabledComposerRoute;
+use Eyewitness\Eye\App\Http\Middleware\EnabledComposerRoute;
 use Illuminate\Http\Request;
 
 class EnabledComposerRouteTest extends TestCase

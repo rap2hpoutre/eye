@@ -15,15 +15,15 @@ class EyeTest extends TestCase
 
     public function testEyeIsConstructedCorrectly()
     {
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Scheduler::class, $this->eye->scheduler());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Database::class, $this->eye->database());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Request::class, $this->eye->request());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Server::class, $this->eye->server());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Queue::class, $this->eye->queue());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Email::class, $this->eye->email());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Disk::class, $this->eye->disk());
-        $this->assertInstanceOf(Eyewitness\Eye\Witness\Log::class, $this->eye->log());
-        $this->assertInstanceOf(Eyewitness\Eye\Api\Api::class, $this->eye->api());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Scheduler::class, $this->eye->scheduler());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Database::class, $this->eye->database());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Request::class, $this->eye->request());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Server::class, $this->eye->server());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Queue::class, $this->eye->queue());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Email::class, $this->eye->email());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Disk::class, $this->eye->disk());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Log::class, $this->eye->log());
+        $this->assertInstanceOf(Eyewitness\Eye\App\Api\Api::class, $this->eye->api());
     }
 
     public function testConstsAreSet()

@@ -1,5 +1,15 @@
 # Release Notes
 
+## v2.0.0 (unreleased)
+
+### Fixed
+- Fixed bug in scheduled output capture
+
+### Changed
+- Refactored structure of package
+- Refactored some core eyewitness command names
+
+
 ## v1.7.1 (2017-07-17)
 
 ### Fixed

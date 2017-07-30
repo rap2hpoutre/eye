@@ -1,5 +1,7 @@
 <?php
 
+use Eyewitness\Eye\App\Witness\Queue;
+
 class FailedQueueControllerTest extends TestCase
 {
     public function testControllerRequiredAuthentication()
@@ -36,8 +38,8 @@ class FailedQueueControllerTest extends TestCase
 
     public function testIndexGetsFailedJobs()
     {
-        $queueMock = Mockery::mock(Eyewitness\Eye\Witness\Queue::class);
-        $this->app->instance(Eyewitness\Eye\Witness\Queue::class, $queueMock);
+        $queueMock = Mockery::mock(Queue::class);
+        $this->app->instance(Queue::class, $queueMock);
         $queueMock->shouldReceive('getFailedJobs')->once()->andReturn(['example' => 'job']);
 
         $response = $this->call('GET', $this->api.'failed_queue'.$this->auth);

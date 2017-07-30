@@ -1,6 +1,6 @@
 <?php
 
-use Eyewitness\Eye\Http\Middleware\AuthRoute;
+use Eyewitness\Eye\App\Http\Middleware\AuthRoute;
 use Illuminate\Http\Request;
 
 class AuthRouteTest extends TestCase

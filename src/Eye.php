@@ -2,15 +2,15 @@
 
 namespace Eyewitness\Eye;
 
-use Eyewitness\Eye\Witness\Scheduler;
-use Eyewitness\Eye\Witness\Database;
-use Eyewitness\Eye\Witness\Request;
-use Eyewitness\Eye\Witness\Server;
-use Eyewitness\Eye\Witness\Queue;
-use Eyewitness\Eye\Witness\Email;
-use Eyewitness\Eye\Witness\Disk;
-use Eyewitness\Eye\Witness\Log;
-use Eyewitness\Eye\Api\Api;
+use Eyewitness\Eye\App\Witness\Scheduler;
+use Eyewitness\Eye\App\Witness\Database;
+use Eyewitness\Eye\App\Witness\Request;
+use Eyewitness\Eye\App\Witness\Server;
+use Eyewitness\Eye\App\Witness\Queue;
+use Eyewitness\Eye\App\Witness\Email;
+use Eyewitness\Eye\App\Witness\Disk;
+use Eyewitness\Eye\App\Witness\Log;
+use Eyewitness\Eye\App\Api\Api;
 
 class Eye
 {
@@ -23,56 +23,56 @@ class Eye
     /**
      * The Scheduler witness.
      *
-     * @var \Eyewitness\Eye\Witness\Scheduler
+     * @var \Eyewitness\Eye\App\Witness\Scheduler
      */
     protected $scheduler;
 
     /**
      * The Database witness.
      *
-     * @var \Eyewitness\Eye\Witness\Database
+     * @var \Eyewitness\Eye\App\Witness\Database
      */
     protected $database;
 
     /**
      * The Request witness.
      *
-     * @var \Eyewitness\Eye\Witness\Request
+     * @var \Eyewitness\Eye\App\Witness\Request
      */
     protected $request;
 
     /**
      * The Server witness.
      *
-     * @var \Eyewitness\Eye\Witness\Server
+     * @var \Eyewitness\Eye\App\Witness\Server
      */
     protected $server;
 
     /**
      * The Queue wintess.
      *
-     * @var \Eyewitness\Eye\Witness\Queue
+     * @var \Eyewitness\Eye\App\Witness\Queue
      */
     protected $queue;
 
     /**
      * The Email witness.
      *
-     * @var \Eyewitness\Eye\Witness\Email
+     * @var \Eyewitness\Eye\App\Witness\Email
      */
     protected $email;
 
     /**
      * The Disk witness.
      *
-     * @var \Eyewitness\Eye\Witness\Disk
+     * @var \Eyewitness\Eye\App\Witness\Disk
      */
     protected $disk;
 
     /**
      * The Log witness.
      *
-     * @var \Eyewitness\Eye\Witness\Log
+     * @var \Eyewitness\Eye\App\Witness\Log
      */
     protected $log;
 
@@ -160,7 +160,7 @@ class Eye
     /**
      * Return the Scheduler instance.
      *
-     * @return \Eyewitness\Eye\Witness\Scheduler
+     * @return \Eyewitness\Eye\App\Witness\Scheduler
      */
     public function scheduler()
     {
@@ -174,7 +174,7 @@ class Eye
     /**
      * Return the Database instance.
      *
-     * @return \Eyewitness\Eye\Witness\Database
+     * @return \Eyewitness\Eye\App\Witness\Database
      */
     public function database()
     {
@@ -188,7 +188,7 @@ class Eye
     /**
      * Return the Request instance.
      *
-     * @return \Eyewitness\Eye\Witness\Request
+     * @return \Eyewitness\Eye\App\Witness\Request
      */
     public function request()
     {
@@ -202,7 +202,7 @@ class Eye
     /**
      * Return the Server instance.
      *
-     * @return \Eyewitness\Eye\Witness\Server
+     * @return \Eyewitness\Eye\App\Witness\Server
      */
     public function server()
     {
@@ -215,7 +215,7 @@ class Eye
     /**
      * Return the Queue instance.
      *
-     * @return \Eyewitness\Eye\Witness\Queue
+     * @return \Eyewitness\Eye\App\Witness\Queue
      */
     public function queue()
     {
@@ -229,7 +229,7 @@ class Eye
     /**
      * Return the Email instance.
      *
-     * @return \Eyewitness\Eye\Witness\Email
+     * @return \Eyewitness\Eye\App\Witness\Email
      */
     public function email()
     {
@@ -243,7 +243,7 @@ class Eye
     /**
      * Return the Disk instance.
      *
-     * @return \Eyewitness\Eye\Witness\Disk
+     * @return \Eyewitness\Eye\App\Witness\Disk
      */
     public function disk()
     {
@@ -257,7 +257,7 @@ class Eye
     /**
      * Return the Log instance.
      *
-     * @return \Eyewitness\Eye\Log
+     * @return \Eyewitness\Eye\App\Witness\Log
      */
     public function log()
     {
@@ -271,7 +271,7 @@ class Eye
     /**
      * Return the Api instance.
      *
-     * @return \Eyewitness\Eye\Api
+     * @return \Eyewitness\Eye\App\Api
      */
     public function api()
     {

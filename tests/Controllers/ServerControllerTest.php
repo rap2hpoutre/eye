@@ -1,13 +1,13 @@
 <?php
 
-use Eyewitness\Eye\Witness\Scheduler;
-use Eyewitness\Eye\Witness\Database;
-use Eyewitness\Eye\Witness\Request;
-use Eyewitness\Eye\Witness\Server;
-use Eyewitness\Eye\Witness\Queue;
-use Eyewitness\Eye\Witness\Email;
-use Eyewitness\Eye\Witness\Disk;
-use Eyewitness\Eye\Witness\Log;
+use Eyewitness\Eye\App\Witness\Scheduler;
+use Eyewitness\Eye\App\Witness\Database;
+use Eyewitness\Eye\App\Witness\Request;
+use Eyewitness\Eye\App\Witness\Server;
+use Eyewitness\Eye\App\Witness\Queue;
+use Eyewitness\Eye\App\Witness\Email;
+use Eyewitness\Eye\App\Witness\Disk;
+use Eyewitness\Eye\App\Witness\Log;
 use Eyewitness\Eye\Eye;
 
 class ServerControllerTest extends TestCase

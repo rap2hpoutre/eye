@@ -1,5 +1,7 @@
 <?php
 
+use Eyewitness\Eye\App\Witness\Log;
+
 class LogControllerTest extends TestCase
 {
     protected $logMock;
@@ -8,8 +10,8 @@ class LogControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->logMock = Mockery::mock(Eyewitness\Eye\Witness\Log::class);
-        $this->app->instance(Eyewitness\Eye\Witness\Log::class, $this->logMock);
+        $this->logMock = Mockery::mock(Log::class);
+        $this->app->instance(Log::class, $this->logMock);
     }
 
     public function testLogControllerRequiredAuthentication()

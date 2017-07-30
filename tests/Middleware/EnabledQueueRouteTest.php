@@ -1,6 +1,6 @@
 <?php
 
-use Eyewitness\Eye\Http\Middleware\EnabledQueueRoute;
+use Eyewitness\Eye\App\Http\Middleware\EnabledQueueRoute;
 use Illuminate\Http\Request;
 
 class EnabledQueueRouteTest extends TestCase

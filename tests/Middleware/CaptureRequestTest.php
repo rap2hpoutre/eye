@@ -1,6 +1,6 @@
 <?php
 
-use Eyewitness\Eye\Http\Middleware\CaptureRequest;
+use Eyewitness\Eye\App\Http\Middleware\CaptureRequest;
 
 class CaptureRequestTest extends TestCase
 {
@@ -27,7 +27,7 @@ class CaptureRequestTest extends TestCase
 
         $m = Mockery::mock(CaptureRequest::class)->makePartial();
         $m->shouldReceive('getCycleTime')->once()->with($request)->andReturn(5);
-        
+
         Cache::shouldReceive('add')
              ->with('eyewitness_request_count_'.$this->tag, 0, 100)
              ->once();

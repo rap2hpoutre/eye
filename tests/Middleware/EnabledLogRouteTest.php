@@ -1,6 +1,6 @@
 <?php
 
-use Eyewitness\Eye\Http\Middleware\EnabledLogRoute;
+use Eyewitness\Eye\App\Http\Middleware\EnabledLogRoute;
 use Illuminate\Http\Request;
 
 class EnabledLogRouteTest extends TestCase

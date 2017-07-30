@@ -2,28 +2,28 @@
 
 namespace Eyewitness\Eye;
 
-use Eyewitness\Eye\Http\Middleware\CaptureRequestLegacy;
-use Eyewitness\Eye\Http\Middleware\EnabledComposerRoute;
-use Eyewitness\Eye\Http\Middleware\EnabledQueueRoute;
-use Eyewitness\Eye\Commands\Legacy\LegacyWorkCommand;
-use Eyewitness\Eye\Commands\Legacy\LegacyDownCommand;
-use Eyewitness\Eye\Commands\Legacy\LegacyUpCommand;
-use Eyewitness\Eye\Http\Middleware\EnabledLogRoute;
-use Eyewitness\Eye\Http\Middleware\CaptureRequest;
+use Eyewitness\Eye\App\Http\Middleware\CaptureRequestLegacy;
+use Eyewitness\Eye\App\Http\Middleware\EnabledComposerRoute;
+use Eyewitness\Eye\App\Http\Middleware\EnabledQueueRoute;
+use Eyewitness\Eye\App\Commands\Legacy\LegacyWorkCommand;
+use Eyewitness\Eye\App\Commands\Legacy\LegacyDownCommand;
+use Eyewitness\Eye\App\Commands\Legacy\LegacyUpCommand;
+use Eyewitness\Eye\App\Http\Middleware\EnabledLogRoute;
+use Eyewitness\Eye\App\Http\Middleware\CaptureRequest;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Eyewitness\Eye\Commands\ScheduleRunCommand;
-use Eyewitness\Eye\Http\Middleware\AuthRoute;
+use Eyewitness\Eye\App\Commands\ScheduleRunCommand;
+use Eyewitness\Eye\App\Http\Middleware\AuthRoute;
 use Illuminate\Console\Scheduling\Schedule;
-use Eyewitness\Eye\Commands\InstallCommand;
-use Eyewitness\Eye\Commands\DebugCommand;
-use Eyewitness\Eye\Commands\PollCommand;
-use Eyewitness\Eye\Commands\WorkCommand;
-use Eyewitness\Eye\Commands\DownCommand;
+use Eyewitness\Eye\App\Commands\InstallCommand;
+use Eyewitness\Eye\App\Commands\DebugCommand;
+use Eyewitness\Eye\App\Commands\PollCommand;
+use Eyewitness\Eye\App\Commands\WorkCommand;
+use Eyewitness\Eye\App\Commands\DownCommand;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Events\JobFailed;
-use Eyewitness\Eye\Commands\UpCommand;
+use Eyewitness\Eye\App\Commands\UpCommand;
 use Illuminate\Queue\QueueManager;
-use Eyewitness\Eye\Queue\Worker;
+use Eyewitness\Eye\App\Queue\Worker;
 use Illuminate\Routing\Router;
 use Eyewitness\Eye\Eye;
 
