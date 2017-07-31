@@ -55,7 +55,7 @@ class PollCommand extends Command
      */
     public function handle()
     {
-        $this->eye->api()->sendServerPing($this->eye->runAllChecks());
+        $this->eye->api()->sendServerPing($this->eye->runAllChecks(), true);
 
         $this->info('Eyewitness.io server poll command complete.');
     }

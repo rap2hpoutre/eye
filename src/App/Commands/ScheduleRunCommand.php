@@ -9,31 +9,27 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
 {
     /**
      * Execute the console command. This is an extension of the original run command
-     * but we just insert our timing and ping calls throughout.
+     * but allows us to insert our tracking.
      *
      * @return void
      */
     public function fire()
     {
-        $eventResults = [];
+        $eventsRan = false;
 
         foreach ($this->schedule->dueEvents($this->laravel) as $event) {
             if ($this->canAccessFiltersPass($event) && (! $event->filtersPass($this->laravel))) {
                 continue;
             }
 
-            $eventResults[] = $this->runScheduledEvent($event);
+            $this->runScheduledEvent($event);
+
+            $eventsRan = true;
         }
 
-        if (count($eventResults)) {
-            app(Eye::class)->api()->sendSchedulerPing($eventResults);
-        } else {
-            $this->sendSchedulerHeartBeat();
+        if (! $eventsRan) {
             $this->info('No scheduled commands are ready to run.');
         }
-
-        // Cache the heartbeat for 6 mins - so we only ping when required, not every cycle.
-        $this->laravel['cache']->driver()->add('eyewitness_scheduler_heartbeat', 1, 6);
     }
 
     /**
@@ -102,18 +98,6 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
         return $text;
     }
 
-    /**
-     * Determine if we need to ping Eyewitness, even though no events ran. This just
-     * confirms that the scheduler itself is working, just nothing to process.
-     *
-     * @return void
-     */
-    protected function sendSchedulerHeartBeat()
-    {
-        if (! $this->laravel['cache']->driver()->has('eyewitness_scheduler_heartbeat')) {
-            app(Eye::class)->api()->sendSchedulerPing();
-        }
-    }
     /**
      * Allow for simulatenous support of Laravel 5.5 and <=5.4 which is due to changes
      * in PR https://github.com/laravel/framework/pull/19827.

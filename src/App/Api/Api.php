@@ -101,9 +101,9 @@ class Api
      * @param  array   $data
      * @return void
      */
-    public function sendServerPing($data)
+    public function sendServerPing($data, $scheduler = false)
     {
-        $this->ping('server/ping', ['data' => $data]);
+        $this->ping('server/ping', ['data' => $data, 'scheduler' => $scheduler]);
     }
 
     /**
