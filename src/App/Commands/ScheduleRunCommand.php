@@ -3,13 +3,16 @@
 namespace Eyewitness\Eye\App\Commands;
 
 use Illuminate\Console\Scheduling\ScheduleRunCommand as OriginalScheduleRunCommand;
+use Eyewitness\Eye\App\Scheduling\ConvertsEvent;
 use Eyewitness\Eye\Eye;
 
 class ScheduleRunCommand extends OriginalScheduleRunCommand
 {
+    use ConvertsEvent;
+
     /**
      * Execute the console command. This is an extension of the original run command
-     * but allows us to insert our tracking.
+     * but allows us to insert our custom event and tracking.
      *
      * @return void
      */
@@ -18,11 +21,15 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
         $eventsRan = false;
 
         foreach ($this->schedule->dueEvents($this->laravel) as $event) {
+            $event = $this->convertEvent($event);
+
             if ($this->canAccessFiltersPass($event) && (! $event->filtersPass($this->laravel))) {
                 continue;
             }
 
-            $this->runScheduledEvent($event);
+            $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());
+
+            $event->run($this->laravel);
 
             $eventsRan = true;
         }
@@ -30,72 +37,6 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
         if (! $eventsRan) {
             $this->info('No scheduled commands are ready to run.');
         }
-    }
-
-    /**
-     * Run the scheduled event.
-     *
-     * @param  $event
-     * @return array
-     */
-    protected function runScheduledEvent($event)
-    {
-        if (config('eyewitness.capture_cron_output')) {
-            $event = $this->ensureOutputIsBeingCapturedForEyewitness($event);
-        }
-
-        $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());
-
-        // Run the command
-        $start_time = microtime(true);
-        $event->run($this->laravel);
-        $end_time = microtime(true);
-
-        // Capture the command and how long it took to run
-        return ['command' => $this->getCommandName($event),
-                'schedule' => $event->expression,
-                'timezone' => $event->timezone,
-                'time' => round($end_time - $start_time, 4),
-                'output' => $this->captureOutput($event),
-                'background' => $event->runInBackground];
-    }
-
-    /**
-     * Ensure that output is being captured if not already set by the event.
-     *
-     * @param  $event
-     * @return mixed
-     */
-    protected function ensureOutputIsBeingCapturedForEyewitness($event)
-    {
-        if ($this->checkNoOutputSet($event)) {
-            $event->output = storage_path('eyewitness_cron_output_'.sha1($event->expression.$event->command).'.cron.log');
-        }
-
-        return $event;
-    }
-
-    /**
-     * Get the output from the last scheduled job. Only remove the file if we created
-     * it specifically for Eyewitness - otherwise leave it alone for the framework
-     * to handle as normal.
-     *
-     * @param  $event
-     * @return mixed
-     */
-    protected function captureOutput($event)
-    {
-        if ((! config('eyewitness.capture_cron_output')) || (! file_exists($event->output)) || $event->runInBackground) {
-            return null;
-        }
-
-        $text = file_get_contents($event->output);
-
-        if (str_contains($event->output, 'eyewitness_cron_output_')) {
-            unlink($event->output);
-        }
-
-        return $text;
     }
 
     /**
@@ -119,40 +60,5 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     protected function canAccessFiltersPass($event)
     {
         return is_callable([$event, 'filtersPass']);
-    }
-
-    /**
-     * If the schedule command is a closure, we need to use the description if
-     * available, using the same outline as a command.
-     *
-     * @param  $event
-     * @return string
-     */
-    protected function getCommandName($event)
-    {
-        if (is_null($event->command)) {
-            return 'php artisan '.$event->description;
-        }
-
-        return $event->command;
-    }
-
-    /**
-     * Check if the event output is still set to the default.
-     *
-     * @param  $event
-     * @return bool
-     */
-    protected function checkNoOutputSet($event)
-    {
-        if (is_null($event->output)) {
-            return true;
-        }
-
-        if (is_callable([$event, 'getDefaultOutput'])) {
-            return $event->output === $event->getDefaultOutput();
-        }
-
-        return in_array($event->output, ['NUL', '/dev/null']);
     }
 }

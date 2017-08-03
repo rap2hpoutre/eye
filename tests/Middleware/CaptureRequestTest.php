@@ -18,7 +18,7 @@ class CaptureRequestTest extends TestCase
 
     public function testCacheMinutes()
     {
-        $this->assertEquals(100, $this->capture_request->cacheMinutes);
+        $this->assertEquals(180, $this->capture_request->cacheMinutes);
     }
 
     public function testTerminateCallsRequestAndCycleIncrements()
@@ -29,7 +29,7 @@ class CaptureRequestTest extends TestCase
         $m->shouldReceive('getCycleTime')->once()->with($request)->andReturn(5);
 
         Cache::shouldReceive('add')
-             ->with('eyewitness_request_count_'.$this->tag, 0, 100)
+             ->with('eyewitness_request_count_'.$this->tag, 0, 180)
              ->once();
 
         Cache::shouldReceive('increment')
@@ -37,7 +37,7 @@ class CaptureRequestTest extends TestCase
              ->once();
 
         Cache::shouldReceive('add')
-             ->with('eyewitness_total_execution_time_'.$this->tag, 0, 100)
+             ->with('eyewitness_total_execution_time_'.$this->tag, 0, 180)
              ->once();
 
         Cache::shouldReceive('increment')

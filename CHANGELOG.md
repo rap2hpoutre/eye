@@ -2,12 +2,18 @@
 
 ## v2.0.0 (unreleased)
 
+### Added
+- Completely refactored scheduling event tracking to add more detailed tracking options
+- Added environment variable to all API calls
+- Added additional variable tracking in server monitoring
+
 ### Fixed
-- Fixed bug in scheduled output capture
 
 ### Changed
-- Refactored structure of package
+- Refactored structure layout of package
 - Refactored some core eyewitness command names
+- Tweaked request tracking timer
+
 
 
 ## v1.7.1 (2017-07-17)

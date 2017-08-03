@@ -12,7 +12,7 @@ class CaptureRequest
      *
      * @var int
      */
-    public $cacheMinutes = 100;
+    public $cacheMinutes = 180;
 
     /**
      * Handle an incoming request.

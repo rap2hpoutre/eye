@@ -18,7 +18,7 @@ class Eye
     const QUEUE_TUBE_PLACEHOLDER = 'QUEUE_TUBE_PLACEHOLDER';
     const SECRET_KEY_PLACEHOLDER = 'SECRET_KEY_PLACEHOLDER';
     const APP_TOKEN_PLACEHOLDER = 'APP_TOKEN_PLACEHOLDER';
-    const EYE_VERSION = '1.7.1';
+    const EYE_VERSION = '2.0.0-alpha';
 
     /**
      * The Scheduler witness.
@@ -124,6 +124,7 @@ class Eye
         $data['server_stats'] = $this->server()->check();
         $data['eyewitness_version'] = $this->version();
         $data['application_environment'] = app()->environment();
+        $data['application_debug'] =  config('app.debug');
         $data['eyewitness_config'] = config('eyewitness');
 
         if (config('eyewitness.monitor_database')) {

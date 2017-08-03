@@ -135,14 +135,14 @@ class Api
     }
 
     /**
-     * Send a ping for the scheduled events.
+     * Send a ping for the scheduled event.
      *
-     * @param  array  $events
+     * @param  array  $event
      * @return void
      */
-    public function sendSchedulerPing($events = null)
+    public function sendSchedulerPing($event)
     {
-        $this->ping('scheduler/ping', ['events' => $events]);
+        $this->ping('scheduler/event', ['event' => $event]);
     }
 
     /**
@@ -216,6 +216,7 @@ class Api
 
         $data['app_token'] = config('eyewitness.app_token');
         $data['secret_key'] = config('eyewitness.secret_key');
+        $data['application_environment'] = app()->environment();
 
         $this->headers['json'] = $data;
 

@@ -10,20 +10,21 @@ use Eyewitness\Eye\App\Commands\Legacy\LegacyDownCommand;
 use Eyewitness\Eye\App\Commands\Legacy\LegacyUpCommand;
 use Eyewitness\Eye\App\Http\Middleware\EnabledLogRoute;
 use Eyewitness\Eye\App\Http\Middleware\CaptureRequest;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Eyewitness\Eye\App\Commands\BackgroundRunCommand;
 use Eyewitness\Eye\App\Commands\ScheduleRunCommand;
 use Eyewitness\Eye\App\Http\Middleware\AuthRoute;
-use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Eyewitness\Eye\App\Commands\InstallCommand;
 use Eyewitness\Eye\App\Commands\DebugCommand;
 use Eyewitness\Eye\App\Commands\PollCommand;
 use Eyewitness\Eye\App\Commands\WorkCommand;
 use Eyewitness\Eye\App\Commands\DownCommand;
+use Illuminate\Console\Scheduling\Schedule;
+use Eyewitness\Eye\App\Commands\UpCommand;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Events\JobFailed;
-use Eyewitness\Eye\App\Commands\UpCommand;
-use Illuminate\Queue\QueueManager;
 use Eyewitness\Eye\App\Queue\Worker;
+use Illuminate\Queue\QueueManager;
 use Illuminate\Routing\Router;
 use Eyewitness\Eye\Eye;
 
@@ -132,6 +133,7 @@ class EyeServiceProvider extends ServiceProvider
         $this->publishes([__DIR__.'/config/eyewitness.php' => config_path('eyewitness.php')]);
 
         $this->commands([InstallCommand::class,
+                         BackgroundRunCommand::class,
                          PollCommand::class,
                          DebugCommand::class]);
 
