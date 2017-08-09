@@ -3,6 +3,7 @@
 namespace Eyewitness\Eye\App\Api;
 
 use Illuminate\Support\Facades\Log as LogFacade;
+use Eyewitness\Eye\Eye;
 use GuzzleHttp\Client;
 use Exception;
 
@@ -38,6 +39,8 @@ class Api
     public function __construct()
     {
         $this->client = app(Client::class);
+
+        $this->eye = app(Eye::class);
 
         $this->api = config('eyewitness.api_url');
 
@@ -217,6 +220,7 @@ class Api
         $data['app_token'] = config('eyewitness.app_token');
         $data['secret_key'] = config('eyewitness.secret_key');
         $data['application_environment'] = app()->environment();
+        $data['eyewitness_version'] = $this->eye->version();
 
         $this->headers['json'] = $data;
 
