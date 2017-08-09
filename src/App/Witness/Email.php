@@ -37,7 +37,7 @@ class Email
      */
     protected function sendQueuedMail()
     {
-        if (laravel_version_less_than_or_equal_to(5.3)) {
+        if (laravel_version_is('<', '5.4.0')) {
             Mail::queue('eyewitness::email', ['timestamp' => time()], function ($message) {
                 $message->to(config('eyewitness.app_token').'@eyew.io', 'Eyewitness.io');
                 $message->subject('Ping Eyewitness');

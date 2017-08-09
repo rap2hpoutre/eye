@@ -110,7 +110,7 @@ class EyeServiceProvider extends ServiceProvider
      */
     protected function loadMiddleware($router)
     {
-        if (laravel_version_greater_than_or_equal_to(5.4)) {
+        if (laravel_version_is('>=', '5.4.0')) {
             $router->aliasMiddleware('eyewitness_log_route', EnabledLogRoute::class);
             $router->aliasMiddleware('eyewitness_queue_route', EnabledQueueRoute::class);
             $router->aliasMiddleware('eyewitness_composer_route', EnabledComposerRoute::class);
@@ -181,7 +181,7 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadMaintenanceMonitor()
     {
         if (config('eyewitness.monitor_maintenance_mode')) {
-            if (laravel_version_less_than_or_equal_to(5.4)) {
+            if (laravel_version_is('<', '5.5.0')) {
                 $this->app->extend('command.down', function () { return new LegacyDownCommand(); });
                 $this->app->extend('command.up', function() { return new LegacyUpCommand(); });
             } else {
@@ -213,7 +213,7 @@ class EyeServiceProvider extends ServiceProvider
      */
     protected function registerFailingQueueHandler()
     {
-        if (laravel_version_less_than_or_equal_to(5.1)) {
+        if (laravel_version_is('<', '5.2.0')) {
             app(QueueManager::class)->failing(function ($connection, $job, $data) {
                 app(Eye::class)->api()->sendQueueFailingPing($connection,
                                                              app(Eye::class)->queue()->resolveLegacyName($job),
@@ -239,7 +239,7 @@ class EyeServiceProvider extends ServiceProvider
     protected function registerQueueWorker()
     {
         $this->app->singleton('queue.worker', function () {
-            if (laravel_version_greater_than_or_equal_to(5.3)) {
+            if (laravel_version_is('>=', '5.3.0')) {
                 return new Worker($this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]);
             } else {
                 return new Worker($this->app['queue'], $this->app['queue.failer'], $this->app['events']);
@@ -255,7 +255,7 @@ class EyeServiceProvider extends ServiceProvider
     protected function registerWorkCommand()
     {
         $this->app->extend('command.queue.work', function () {
-            if (laravel_version_less_than_or_equal_to(5.2)) {
+            if (laravel_version_is('<', '5.3.0')) {
                 return new LegacyWorkCommand($this->app['queue.worker']);
             } else {
                 return new WorkCommand($this->app['queue.worker']);
@@ -271,7 +271,7 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadRequestTracking()
     {
         if (config('eyewitness.monitor_request')) {
-            if (laravel_version_greater_than_or_equal_to(5.1)) {
+            if (laravel_version_is('>=', '5.1.0')) {
                 $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequest::class);
             } else {
                 $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware(CaptureRequestLegacy::class);

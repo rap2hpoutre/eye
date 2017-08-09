@@ -2,29 +2,18 @@
 
 class VersioningTest extends TestCase
 {
-    public function testGetLaravelVersion()
+    public function testVersion()
     {
-        $this->assertEquals(5.4, get_laravel_version());
-    }
-    
-    public function testLaravelVersionGreaterThanOrEqualTo()
-    {
-        $this->assertTrue(laravel_version_greater_than_or_equal_to(5.3));
-        $this->assertTrue(laravel_version_greater_than_or_equal_to(5.4));
-        $this->assertFalse(laravel_version_greater_than_or_equal_to(5.5));
+        $pretend_version = '5.4.3';
+
+        $this->assertFalse(laravel_version_is('>=', '5.5.0', $pretend_version));
+        $this->assertFalse(laravel_version_is('>=', '5.4.4', $pretend_version));
+        $this->assertTrue(laravel_version_is('>=', '5.4.3', $pretend_version));
+        $this->assertTrue(laravel_version_is('>=', '5.3.0', $pretend_version));
+
+        $this->assertFalse(laravel_version_is('>=', '5.5.1', $pretend_version));
+        $this->assertTrue(laravel_version_is('>=', '4.2.4', $pretend_version));
+        $this->assertTrue(laravel_version_is('>=', '5.4.10', '5.4.30'));
     }
 
-    public function testLaravelVersionLessThanOrEqualTo()
-    {
-        $this->assertFalse(laravel_version_less_than_or_equal_to(5.3));
-        $this->assertTrue(laravel_version_less_than_or_equal_to(5.4));
-        $this->assertTrue(laravel_version_less_than_or_equal_to(5.5));
-    }
-
-    public function testLaravelVersionEqualTo()
-    {
-        $this->assertFalse(laravel_version_equal_to(5.5));
-        $this->assertTrue(laravel_version_equal_to(5.4));
-        $this->assertFalse(laravel_version_equal_to(5.3));
-    }
 }
