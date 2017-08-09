@@ -50,9 +50,10 @@ class Event extends OriginalEvent
     /**
      * Run the foreground process.
      *
+     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return void
      */
-    protected function runForegroundProcess()
+    protected function runForegroundProcess(Container $container)
     {
        $this->exitcode = (new Process($this->buildForegroundCommand(), base_path(), null, null, null))->run();
     }

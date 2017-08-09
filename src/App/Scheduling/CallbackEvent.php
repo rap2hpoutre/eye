@@ -2,10 +2,11 @@
 
 namespace Eyewitness\Eye\App\Scheduling;
 
-use Illuminate\Console\Scheduling\Event as OriginalCallbackEvent;
+use Illuminate\Console\Scheduling\CallbackEvent as OriginalCallbackEvent;
 use Eyewitness\Eye\App\Scheduling\BaseEventTrait;
 use Illuminate\Contracts\Container\Container;
 use Eyewitness\Eye\Eye;
+use Exception;
 
 class CallbackEvent extends OriginalCallbackEvent
 {
@@ -15,10 +16,10 @@ class CallbackEvent extends OriginalCallbackEvent
      * Create a new custom child event instance.
      * https://stackoverflow.com/a/4722587/1317935
      *
-     * @param  \Illuminate\Console\Scheduling\Event  $object
+     * @param  \Illuminate\Console\Scheduling\CallbackEvent  $object
      * @return void
      */
-    public function __construct(OriginalEvent $object)
+    public function __construct(OriginalCallbackEvent $object)
     {
         foreach($object as $property => $value) {
             $this->$property = $value;
@@ -51,11 +52,20 @@ class CallbackEvent extends OriginalCallbackEvent
     /**
      * Run the foreground process.
      *
+     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return void
      */
-    protected function runForegroundProcess()
+    protected function runForegroundProcess($container)
     {
-       $this->exitcode = $container->call($this->callback, $this->parameters);
+        try {
+            $container->call($this->callback, $this->parameters);
+        } catch (Exception $e) {
+            echo(' [Exception] '.$e->getMessage());
+            $this->exitcode = 1;
+            throw $e;
+        }
+
+        $this->exitcode = 0;
     }
 
     /**
@@ -73,9 +83,7 @@ class CallbackEvent extends OriginalCallbackEvent
     }
 
     /**
-     * Get the output from the last scheduled job. Only remove the file if we created
-     * it specifically for Eyewitness - otherwise leave it alone for the framework
-     * to handle as normal.
+     * Get the output from the last scheduled job.
      *
      * @return mixed
      */
@@ -85,7 +93,7 @@ class CallbackEvent extends OriginalCallbackEvent
             return null;
         }
 
-        $output = $this->storeOutput(ob_get_contents());
+        $output = ob_get_contents();
         ob_end_flush();
 
         return $output;

@@ -200,7 +200,7 @@ trait BaseEventTrait
         $this->callBeforeCallbacks($container);
 
         try {
-            $this->runForegroundProcess();
+            $this->runForegroundProcess($container);
         } finally {
             $this->callAfterCallbacks($container);
             $this->sendEndPing();
