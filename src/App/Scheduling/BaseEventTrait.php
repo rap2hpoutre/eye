@@ -160,7 +160,7 @@ trait BaseEventTrait
         $this->jobId = $this->generateJobId();
         $this->exitcode = 1;
 
-        $this->eye->api()->sendSchedulerPing([
+        $this->eye->api()->sendSchedulerStartPing([
             'job_id' => $this->jobId,
             'command' => $this->getCommandName(),
             'schedule' => $this->expression,
@@ -175,9 +175,9 @@ trait BaseEventTrait
      *
      * @return void
      */
-    protected function sendEndPing()
+    protected function sendFinishPing()
     {
-        $this->eye->api()->sendSchedulerPing([
+        $this->eye->api()->sendSchedulerFinishPing([
             'job_id' => $this->jobId,
             'command' => $this->getCommandName(),
             'schedule' => $this->expression,
@@ -213,7 +213,7 @@ trait BaseEventTrait
             $this->runForegroundProcess($container);
         } finally {
             $this->callAfterCallbacks($container);
-            $this->sendEndPing();
+            $this->sendFinishPing();
             $this->forgetMutex();
         }
     }

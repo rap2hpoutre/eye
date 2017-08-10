@@ -58,10 +58,16 @@ class ApiTest extends TestCase
         $this->api->sendQueueFailingPing('test', 'other', 'default', null, null);
     }
 
-    public function testSendSchedulerPing()
+    public function testSendSchedulerStartPing()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
-        $this->api->sendSchedulerPing([]);
+        $this->api->sendSchedulerStartPing([]);
+    }
+
+    public function testSendSchedulerFinishPing()
+    {
+        $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
+        $this->api->sendSchedulerFinishPing([]);
     }
 
     public function testSendWebhookPing()

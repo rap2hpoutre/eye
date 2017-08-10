@@ -138,14 +138,25 @@ class Api
     }
 
     /**
-     * Send a ping for the scheduled event.
+     * Send a start ping for the scheduled event.
      *
      * @param  array  $event
      * @return void
      */
-    public function sendSchedulerPing($event)
+    public function sendSchedulerStartPing($event)
     {
-        $this->ping('scheduler/event', ['event' => $event]);
+        $this->ping('scheduler/event/start', ['event' => $event]);
+    }
+
+    /**
+     * Send a finish ping for the scheduled event.
+     *
+     * @param  array  $event
+     * @return void
+     */
+    public function sendSchedulerFinishPing($event)
+    {
+        $this->ping('scheduler/event/finish', ['event' => $event]);
     }
 
     /**
