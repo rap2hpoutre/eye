@@ -40,7 +40,7 @@ class CallbackEvent extends OriginalCallbackEvent
      */
     public function run(Container $container)
     {
-        if ((! $this->ignoreMutex) && $this->description && $this->withoutOverlapping && (! $this->mutex->create($this))) {
+        if ((! $this->ignoreMutex) && $this->description && $this->withoutOverlapping && (! $this->setMutex())) {
             return;
         }
 
@@ -93,9 +93,22 @@ class CallbackEvent extends OriginalCallbackEvent
             return null;
         }
 
-        $output = ob_get_contents();
-        ob_end_flush();
+        $output = ob_get_flush();
 
         return $output;
+    }
+
+    /**
+     * Get the mutex name for the scheduled command.
+     *
+     * @return string
+     */
+    public function mutexName()
+    {
+        if (laravel_version_is('<', '5.2.0')) {
+            return 'framework/schedule-'.md5($this->description);
+        }
+
+        return 'framework/schedule-'.sha1($this->description);
     }
 }

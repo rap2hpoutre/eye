@@ -18,6 +18,13 @@ class BackgroundRunCommand extends Command
     protected $signature = 'eyewitness:background {id} {--force}';
 
     /**
+     * The console command name (duplicated for Laravel 5.0).
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Indicates whether the command should be shown in the Artisan command list.
      *
      * @var bool
@@ -48,6 +55,8 @@ class BackgroundRunCommand extends Command
     {
         $this->schedule = $schedule;
 
+        $this->name = $this->signature;
+
         parent::__construct();
     }
 
@@ -77,6 +86,10 @@ class BackgroundRunCommand extends Command
     protected function findEventMutex()
     {
         return collect($this->schedule->events())->filter(function ($value) {
+            if (laravel_version_is('<=', '5.4.0')) {
+                $value = $this->convertEvent($value);
+            }
+
             return $value->mutexName() === $this->argument('id');
         })->first();
     }

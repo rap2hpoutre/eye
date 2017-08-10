@@ -12,7 +12,7 @@ use Eyewitness\Eye\Eye;
 
 class Event extends OriginalEvent
 {
-    use BaseEventTrait;
+    use BaseEventTrait, ApplicationBackportTrait;
 
     /**
      * Create a new custom child event instance.
@@ -38,12 +38,12 @@ class Event extends OriginalEvent
      */
     public function run(Container $container)
     {
-        if ((! $this->ignoreMutex) && $this->withoutOverlapping && (! $this->mutex->create($this))) {
+        if ((! $this->ignoreMutex) && $this->withoutOverlapping && (! $this->setMutex())) {
             return;
         }
 
         ((! $this->forceRunInForeground) && $this->runInBackground)
-            ? $this->runCommandInBackground($container)
+            ? $this->newCommandInBackground($container)
             : $this->runCommandInForeground($container);
     }
 
@@ -64,7 +64,7 @@ class Event extends OriginalEvent
      * @param  \Illuminate\Contracts\Container\Container  $container
      * @return void
      */
-    protected function runCommandInBackground(Container $container)
+    protected function newCommandInBackground(Container $container)
     {
         (new Process($this->buildBackgroundCommand(), base_path(), null, null, null))->run();
     }
@@ -78,7 +78,21 @@ class Event extends OriginalEvent
     {
         $output = ProcessUtils::escapeArgument($this->output);
 
-        return $this->ensureCorrectUser($this->command.($this->shouldAppendOutput ? ' >> ' : ' > ').$output.' 2>&1');
+        return $this->ensureCorrectUser($this->command.$this->getAppendOutput().$output.' 2>&1');
+    }
+
+    /**
+     * Determine if we are amending output.
+     *
+     * @return string
+     */
+    protected function getAppendOutput()
+    {
+        if (laravel_version_is('<', '5.1.0')) {
+            return '>';
+        }
+
+        return $this->shouldAppendOutput ? ' >> ' : ' > ';
     }
 
     /**
@@ -94,7 +108,7 @@ class Event extends OriginalEvent
      */
     public function buildBackgroundCommand()
     {
-        $background = Application::formatCommandString('eyewitness:background').' "'.$this->mutexName().'" --force';
+        $background = $this->formatCommandString('eyewitness:background').' "'.$this->mutexName().'" --force';
         $output = ProcessUtils::escapeArgument($this->getDefaultOutput());
 
         return $this->ensureCorrectUser('('.$background.' > '.$output.' 2>&1) > '.$output.' 2>&1 &');
@@ -142,7 +156,7 @@ class Event extends OriginalEvent
 
         $text = file_get_contents($this->output);
 
-        if (str_contains($this->output, 'eyewitness_cron_')) {
+        if (str_contains($this->output, 'eyewitness_cron_') && file_exists($this->output)) {
             unlink($this->output);
         }
 

@@ -28,6 +28,13 @@ trait BaseEventTrait
     public $forceRunInForeground = false;
 
     /**
+     * Indicates if the command should run in background.
+     *
+     * @var bool
+     */
+    public $runInBackground = false;
+
+    /**
      * The start time of the job.
      *
      * @var float
@@ -191,19 +198,92 @@ trait BaseEventTrait
      */
     protected function runCommandInForeground(Container $container)
     {
+        \Log::info('try to register');
         register_shutdown_function(function () {
-            $this->mutex->forget($this);
+            $this->forgetMutex();
         });
+        \Log::info('register done');
 
         $this->ensureOutputIsBeingCapturedForEyewitness();
         $this->sendStartPing();
-        $this->callBeforeCallbacks($container);
+
+        if (laravel_version_is('>=', '5.1.0')) {
+            $this->callBeforeCallbacks($container);
+        }
 
         try {
             $this->runForegroundProcess($container);
         } finally {
             $this->callAfterCallbacks($container);
             $this->sendEndPing();
+            $this->forgetMutex();
         }
+
+        \Log::info('done');
+    }
+
+    /**
+     * Get the mutex name for the scheduled command.
+     *
+     * @return string
+     */
+    public function mutexName()
+    {
+        if (laravel_version_is('<', '5.2.0')) {
+            return 'framework/schedule-'.md5($this->expression.$this->command);
+        }
+
+        return 'framework'.DIRECTORY_SEPARATOR.'schedule-'.sha1($this->expression.$this->command);
+    }
+
+    /**
+     * Get the mutex path for the scheduled command.
+     *
+     * @return string
+     */
+    public function mutexPath()
+    {
+        return storage_path($this->mutexName());
+    }
+
+    /**
+     * Run the correct shutdown function based upon the Laravel version.
+     *
+     * @return void
+     */
+    protected function forgetMutex()
+    {
+        if (laravel_version_is('<', '5.4.0')) {
+            if (file_exists($this->mutexPath())) {
+                try {
+                    \Log::info('try to unlink');
+                    unlink($this->mutexPath());
+                    \Log::info('unlinked');
+                } catch (\Exception $e) {
+                    \Log::info('cant unlink: '.$e->getMessage());
+                }
+            }
+        } elseif (laravel_version_is('<=', '5.4.16')) {
+            $this->cache->forget($this->mutexName());
+        } else {
+            $this->mutex->forget($this);
+        }
+    }
+
+
+    /**
+     * Run the correct mutex based upon the Laravel version.
+     *
+     * @return bool
+     */
+    protected function setMutex()
+    {
+        if (laravel_version_is('<', '5.4.0')) {
+            return touch($this->mutexPath());
+        } elseif (laravel_version_is('<=', '5.4.16')) {
+            return $this->cache->add($this->mutexName(), true, 1440);
+        }
+
+        return $this->mutex->create($this);
     }
 }
