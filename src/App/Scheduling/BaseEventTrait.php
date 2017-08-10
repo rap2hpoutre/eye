@@ -198,11 +198,9 @@ trait BaseEventTrait
      */
     protected function runCommandInForeground(Container $container)
     {
-        \Log::info('try to register');
         register_shutdown_function(function () {
             $this->forgetMutex();
         });
-        \Log::info('register done');
 
         $this->ensureOutputIsBeingCapturedForEyewitness();
         $this->sendStartPing();
@@ -218,8 +216,6 @@ trait BaseEventTrait
             $this->sendEndPing();
             $this->forgetMutex();
         }
-
-        \Log::info('done');
     }
 
     /**
@@ -255,13 +251,7 @@ trait BaseEventTrait
     {
         if (laravel_version_is('<', '5.4.0')) {
             if (file_exists($this->mutexPath())) {
-                try {
-                    \Log::info('try to unlink');
-                    unlink($this->mutexPath());
-                    \Log::info('unlinked');
-                } catch (\Exception $e) {
-                    \Log::info('cant unlink: '.$e->getMessage());
-                }
+                unlink($this->mutexPath());
             }
         } elseif (laravel_version_is('<=', '5.4.16')) {
             $this->cache->forget($this->mutexName());
