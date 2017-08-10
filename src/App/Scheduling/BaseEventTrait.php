@@ -166,6 +166,7 @@ trait BaseEventTrait
             'schedule' => $this->expression,
             'timezone' => $this->timezone,
             'background' => $this->runInBackground,
+            'overlapping' => $this->withoutOverlapping,
             'mutex' => $this->mutexName(),
         ]);
     }
@@ -183,6 +184,7 @@ trait BaseEventTrait
             'schedule' => $this->expression,
             'timezone' => $this->timezone,
             'background' => $this->runInBackground,
+            'overlapping' => $this->withoutOverlapping,
             'mutex' => $this->mutexName(),
             'time' => $this->calculateRunTime(),
             'exitcode' => $this->exitcode,
