@@ -253,7 +253,7 @@ trait BaseEventTrait
             if (file_exists($this->mutexPath())) {
                 unlink($this->mutexPath());
             }
-        } elseif (laravel_version_is('<=', '5.4.16')) {
+        } elseif (laravel_version_is('<', '5.4.17')) {
             $this->cache->forget($this->mutexName());
         } else {
             $this->mutex->forget($this);
@@ -270,7 +270,7 @@ trait BaseEventTrait
     {
         if (laravel_version_is('<', '5.4.0')) {
             return touch($this->mutexPath());
-        } elseif (laravel_version_is('<=', '5.4.16')) {
+        } elseif (laravel_version_is('<', '5.4.17')) {
             return $this->cache->add($this->mutexName(), true, 1440);
         }
 
