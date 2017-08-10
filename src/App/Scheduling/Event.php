@@ -160,6 +160,6 @@ class Event extends OriginalEvent
             unlink($this->output);
         }
 
-        return $text;
+        return substr($text, 0, 15000);
     }
 }
