@@ -86,7 +86,7 @@ class BackgroundRunCommand extends Command
     protected function findEventMutex()
     {
         return collect($this->schedule->events())->filter(function ($value) {
-            if (laravel_version_is('<=', '5.4.0')) {
+            if (laravel_version_is('<', '5.4.0')) {
                 $value = $this->convertEvent($value);
             }
 
