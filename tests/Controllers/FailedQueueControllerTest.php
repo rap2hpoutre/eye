@@ -4,14 +4,14 @@ use Eyewitness\Eye\App\Witness\Queue;
 
 class FailedQueueControllerTest extends TestCase
 {
-    public function testControllerRequiredAuthentication()
+    public function test_controller_requires_authentication()
     {
         $response = $this->call('GET', $this->api.'failed_queue');
         $this->assertEquals(json_encode(['error' => 'Unauthorized']), $response->getContent());
         $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testFailedQueueHonoursConfig()
+    public function test_failed_queue_honours_config()
     {
         $this->app['config']->set('eyewitness.routes_queue', false);
 
@@ -36,7 +36,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testIndexGetsFailedJobs()
+    public function test_index_gets_failed_jobs()
     {
         $queueMock = Mockery::mock(Queue::class);
         $this->app->instance(Queue::class, $queueMock);
@@ -48,7 +48,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testDeleteFailedJobIsSuccessful()
+    public function test_delete_failed_job_is_successful()
     {
         $m = Mockery::mock(Illuminate\Queue\Failed\NullFailedJobProvider::class);
 
@@ -67,7 +67,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testDeleteFailedJobThatDoesNotExistGeneratesError()
+    public function test_delete_failed_job_that_does_not_exist_generates_error()
     {
         $m = Mockery::mock(Illuminate\Queue\Failed\NullFailedJobProvider::class);
 
@@ -86,7 +86,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    public function testDeleteFailedJobCatchesException()
+    public function test_delete_failed_job_catches_exception()
     {
         $m = Mockery::mock(Illuminate\Queue\Failed\NullFailedJobProvider::class);
 
@@ -105,7 +105,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(500, $response->getStatusCode());
     }
 
-    public function testDeleteAllFailedJobIsSuccessful()
+    public function test_delete_all_failed_job_is_successful()
     {
         $m = Mockery::mock(Illuminate\Queue\Failed\NullFailedJobProvider::class);
 
@@ -123,7 +123,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testDeleteAllFailedJobThatDoesNotExistIsOk()
+    public function test_delete_all_failed_job_that_does_not_exist_is_ok()
     {
         $m = Mockery::mock(Illuminate\Queue\Failed\NullFailedJobProvider::class);
 
@@ -141,7 +141,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testDeleteAllFailedJobCatchesException()
+    public function test_delete_all_failed_job_catches_exception()
     {
         $m = Mockery::mock(Illuminate\Queue\Failed\NullFailedJobProvider::class);
 
@@ -159,7 +159,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(500, $response->getStatusCode());
     }
 
-    public function testRetryJobIsSuccessful()
+    public function test_retry_job_is_successful()
     {
         Artisan::shouldReceive('call')
                ->with('queue:retry', ['id' => [1]])
@@ -172,7 +172,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testRetryJobHandlesException()
+    public function test_retry_job_handles_exception()
     {
         Artisan::shouldReceive('call')
                ->with('queue:retry', ['id' => [1]])
@@ -185,7 +185,7 @@ class FailedQueueControllerTest extends TestCase
         $this->assertEquals(500, $response->getStatusCode());
     }
 
-    public function testRetryAllJobIsSuccessful()
+    public function test_retry_all_job_is_successful()
     {
         Artisan::shouldReceive('call')
                ->with('queue:retry', ['id' => ['all']])

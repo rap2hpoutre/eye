@@ -2,7 +2,7 @@
 
 class VersioningTest extends TestCase
 {
-    public function testVersion()
+    public function test_laravel_version_checks()
     {
         $pretend_version = '5.4.3';
 

@@ -14,14 +14,14 @@ class LogControllerTest extends TestCase
         $this->app->instance(Log::class, $this->logMock);
     }
 
-    public function testLogControllerRequiredAuthentication()
+    public function test_log_controller_required_authentication()
     {
         $response = $this->call('GET', $this->api.'log');
         $this->assertEquals(json_encode(['error' => 'Unauthorized']), $response->getContent());
         $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testLogHonoursConfig()
+    public function test_log_honours_config()
     {
         $this->app['config']->set('eyewitness.routes_log', false);
 
@@ -34,7 +34,7 @@ class LogControllerTest extends TestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testLogIndexGetsLogFiles()
+    public function test_log_index_gets_log_files()
     {
         $this->logMock->shouldReceive('getLogFiles')
                       ->once()
@@ -46,7 +46,7 @@ class LogControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testLogShowHandlesFileNotFound()
+    public function test_log_show_handles_file_not_found()
     {
         $this->logMock->shouldReceive('readLogFile')->never();
         $this->logMock->shouldReceive('getLogFilenames')
@@ -59,7 +59,7 @@ class LogControllerTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    public function testLogShow()
+    public function test_log_show()
     {
         $this->logMock->shouldReceive('getLogFilenames')
                       ->once()

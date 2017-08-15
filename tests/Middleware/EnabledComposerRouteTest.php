@@ -16,7 +16,7 @@ class EnabledComposerRouteTest extends TestCase
         $this->middleware = new EnabledComposerRoute();
     }
 
-    public function testGivesDisabledRouteWhenConfigDoesAllowIt()
+    public function test_gives_disabled_route_when_config_does_not_allow_it()
     {
         $this->app['config']->set('eyewitness.monitor_composer_lock', false);
 
@@ -29,7 +29,7 @@ class EnabledComposerRouteTest extends TestCase
         $this->assertEquals(json_encode(['error' => 'The composer route is disabled on the server']), $response->getContent());
     }
 
-    public function testAllowsRouteWhenConfigOk()
+    public function test_allows_route_when_config_ok()
     {
         $this->app['config']->set('eyewitness.monitor_composer_lock', true);
 

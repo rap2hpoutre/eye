@@ -16,12 +16,12 @@ class CaptureRequestTest extends TestCase
         $this->tag = gmdate('Y_m_d_H');
     }
 
-    public function testCacheMinutes()
+    public function test_cache_minutes()
     {
         $this->assertEquals(180, $this->capture_request->cacheMinutes);
     }
 
-    public function testTerminateCallsRequestAndCycleIncrements()
+    public function test_terminate_calls_request_and_cycle_increments()
     {
         $request = new \Illuminate\Http\Request;
 
@@ -47,7 +47,7 @@ class CaptureRequestTest extends TestCase
         $m->terminate($request, null);
     }
 
-    public function testGetCycleTime()
+    public function test_get_cycle_time()
     {
         $m = new CaptureRequest;
         $request = new Illuminate\Http\Request;

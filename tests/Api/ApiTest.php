@@ -23,7 +23,7 @@ class ApiTest extends TestCase
         $this->response = new Response(200, ['Content-Type' => 'application/json'], json_encode(['ok']));
     }
 
-    public function testDoesNotSendIfApiDisabled()
+    public function test_does_not_send_if_api_disabled()
     {
         $this->app['config']->set('eyewitness.api_enabled', false);
 
@@ -32,7 +32,7 @@ class ApiTest extends TestCase
         $this->api->up();
     }
 
-    public function testInstall()
+    public function test_install()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $result = $this->api->install(['example' => 'test']);
@@ -40,49 +40,49 @@ class ApiTest extends TestCase
         $this->assertEquals(['ok'], $result);
     }
 
-    public function testSendInstallEmail()
+    public function test_send_install_email()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->sendInstallEmail([]);
     }
 
-    public function testSendQueuePing()
+    public function test_send_queue_ping()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->sendQueuePing('test', 0, []);
     }
 
-    public function testSendQueueFailingPing()
+    public function test_send_queue_failing_ping()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->sendQueueFailingPing('test', 'other', 'default', null, null);
     }
 
-    public function testSendSchedulerStartPing()
+    public function test_send_scheduler_start_ping()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->sendSchedulerStartPing([]);
     }
 
-    public function testSendSchedulerFinishPing()
+    public function test_send_scheduler_finish_ping()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->sendSchedulerFinishPing([]);
     }
 
-    public function testSendWebhookPing()
+    public function test_send_webhook_ping()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->sendWebhookPing([]);
     }
 
-    public function testUp()
+    public function test_up()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->up();
     }
 
-    public function testDown()
+    public function test_down()
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->down();

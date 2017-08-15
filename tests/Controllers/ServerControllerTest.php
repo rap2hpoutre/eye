@@ -65,7 +65,7 @@ class ServerControllerTest extends TestCase
         $this->app['config']->set('eyewitness.monitor_log', false);
     }
 
-    public function testPingServerHonoursConfig()
+    public function test_ping_server_honors_config()
     {
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
 
@@ -83,7 +83,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testScheduler()
+    public function test_scheduler()
     {
         $this->app['config']->set('eyewitness.monitor_scheduler', true);
 
@@ -103,7 +103,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testEmail()
+    public function test_email()
     {
         $this->app['config']->set('eyewitness.monitor_email', true);
 
@@ -123,7 +123,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testQueue()
+    public function test_queue()
     {
         $this->app['config']->set('eyewitness.monitor_queue', true);
 
@@ -143,7 +143,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testDatabase()
+    public function test_database()
     {
         $this->app['config']->set('eyewitness.monitor_database', true);
 
@@ -163,7 +163,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testRequest()
+    public function test_request()
     {
         $this->app['config']->set('eyewitness.monitor_request', true);
 
@@ -183,7 +183,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testDisk()
+    public function test_disk()
     {
         $this->app['config']->set('eyewitness.monitor_disk', true);
 
@@ -203,7 +203,7 @@ class ServerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testLog()
+    public function test_log()
     {
         $this->app['config']->set('eyewitness.monitor_log', true);
 

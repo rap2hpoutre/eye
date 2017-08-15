@@ -13,7 +13,7 @@ class EyeTest extends TestCase
         $this->eye = new Eye;
     }
 
-    public function testEyeIsConstructedCorrectly()
+    public function test_eye_is_constructed_correctly()
     {
         $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Scheduler::class, $this->eye->scheduler());
         $this->assertInstanceOf(Eyewitness\Eye\App\Witness\Database::class, $this->eye->database());
@@ -26,7 +26,7 @@ class EyeTest extends TestCase
         $this->assertInstanceOf(Eyewitness\Eye\App\Api\Api::class, $this->eye->api());
     }
 
-    public function testConstsAreSet()
+    public function test_constants_are_set()
     {
         $this->assertEquals('QUEUE_CONNECTION_PLACEHOLDER', $this->eye::QUEUE_CONNECTION_PLACEHOLDER);
         $this->assertEquals('QUEUE_TUBE_PLACEHOLDER', $this->eye::QUEUE_TUBE_PLACEHOLDER);
@@ -35,7 +35,7 @@ class EyeTest extends TestCase
         $this->assertTrue($this->eye::EYE_VERSION !== '');
     }
 
-    public function testConfigCorrectDetectsIfValid()
+    public function test_config_correctly_detects_if_settings_are_valid()
     {
         $this->app['config']->set('eyewitness.app_token', '');
         $this->app['config']->set('eyewitness.secret_key', '');

@@ -16,7 +16,7 @@ class EnabledLogRouteTest extends TestCase
         $this->middleware = new EnabledLogRoute();
     }
 
-    public function testGivesDisabledRouteWhenConfigDoesAllowIt()
+    public function test_gives_disabled_route_when_config_does_not_allow_it()
     {
         $this->app['config']->set('eyewitness.routes_log', false);
 
@@ -29,7 +29,7 @@ class EnabledLogRouteTest extends TestCase
         $this->assertEquals(json_encode(['error' => 'The log route is disabled on the server']), $response->getContent());
     }
 
-    public function testAllowsRouteWhenConfigOk()
+    public function test_allows_route_when_config_is_ok()
     {
         $this->app['config']->set('eyewitness.routes_log', true);
 

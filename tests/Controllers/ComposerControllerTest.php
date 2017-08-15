@@ -14,14 +14,14 @@ class ComposerControllerTest extends TestCase
         $this->app->instance(Api::class, $this->eyeapi);
     }
 
-    public function testControllerRequiredAuthentication()
+    public function test_controller_required_authentication()
     {
         $response = $this->call('GET', $this->api.'composer');
         $this->assertEquals(json_encode(['error' => 'Unauthorized']), $response->getContent());
         $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testControllerHonoursConfig()
+    public function test_controller_honours_config()
     {
         $this->app['config']->set('eyewitness.monitor_composer_lock', false);
 
@@ -32,7 +32,7 @@ class ComposerControllerTest extends TestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testSuccessfulComposerCheck()
+    public function test_successful_composer_check()
     {
         $this->eyeapi->shouldReceive('runComposerLockCheck')->once()->andReturn(['example' => 'test']);
 
@@ -41,7 +41,7 @@ class ComposerControllerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testFailedComposerCheck()
+    public function test_failed_composer_check()
     {
         $this->eyeapi->shouldReceive('runComposerLockCheck')->once()->andReturn(null);
 

@@ -16,7 +16,7 @@ class EnabledSchedulerRouteTest extends TestCase
         $this->middleware = new EnabledSchedulerRoute();
     }
 
-    public function testGivesDisabledRouteWhenConfigDoesAllowIt()
+    public function test_gives_disabled_route_when_config_does_not_allow_it()
     {
         $this->app['config']->set('eyewitness.routes_scheduler', false);
 
@@ -29,7 +29,7 @@ class EnabledSchedulerRouteTest extends TestCase
         $this->assertEquals(json_encode(['error' => 'The scheduler route is disabled on the server']), $response->getContent());
     }
 
-    public function testAllowsRouteWhenConfigOk()
+    public function test_allows_route_when_config_ok()
     {
         $this->app['config']->set('eyewitness.routes_scheduler', true);
 

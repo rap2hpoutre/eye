@@ -20,7 +20,7 @@ class AuthRouteTest extends TestCase
         $this->ar = new AuthRoute();
     }
 
-    public function testPreventsUnauthorizedAccess()
+    public function test_prevents_unauthoized_access()
     {
         $response = $this->ar->handle($this->request, function() {});
         $this->assertEquals(401, $response->getStatusCode());
@@ -36,7 +36,7 @@ class AuthRouteTest extends TestCase
         $this->assertEquals(json_encode(['error' => 'Unauthorized']), $response->getContent());
     }
 
-    public function testAllowsAuthorizedAccessWhenCredentialsAreCorrect()
+    public function test_allows_authorized_access_when_credentials_are_correct()
     {
         $this->request->replace([
             'app_token' => 'app_correct',
