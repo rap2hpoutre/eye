@@ -73,7 +73,12 @@ class Log
             $files[$id]['filename'] = basename($file);
             $files[$id]['size'] = filesize($file);
             $files[$id]['log_count'] = $this->getLogCount($file);
+            $files[$id]['filemtime'] = filemtime($file);
         }
+
+        usort($files, function($a,$b){
+          return $b['filemtime'] - $a['filemtime'];
+        });
 
         return $files;
     }

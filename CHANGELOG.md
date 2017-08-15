@@ -4,6 +4,7 @@
 
 ### Added
 - Completely refactored scheduling event tracking to add more detailed tracking options
+- Allow remote pausing, resuming and mutex handling of scheduler events
 - Added environment variable to all API calls
 - Added additional variable tracking in server monitoring
 
@@ -13,6 +14,7 @@
 - Refactored structure layout of package
 - Refactored some core eyewitness command names
 - Tweaked request tracking timer
+- Add log file sorting
 
 
 
