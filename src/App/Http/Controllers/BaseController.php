@@ -2,11 +2,14 @@
 
 namespace Eyewitness\Eye\App\Http\Controllers;
 
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
+    use ValidatesRequests;
+
     /**
      * The request instance.
      *

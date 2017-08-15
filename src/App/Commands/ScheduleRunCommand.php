@@ -3,23 +3,44 @@
 namespace Eyewitness\Eye\App\Commands;
 
 use Illuminate\Console\Scheduling\ScheduleRunCommand as OriginalScheduleRunCommand;
-use Eyewitness\Eye\App\Scheduling\ConvertsEvent;
+use Eyewitness\Eye\App\Scheduling\CustomEvents;
 use Eyewitness\Eye\Eye;
 
 class ScheduleRunCommand extends OriginalScheduleRunCommand
 {
-    use ConvertsEvent;
+    use CustomEvents;
 
     /**
-     * Execute the console command. This is an extension of the original run command
-     * but allows us to insert our custom event and tracking.
+     * Determine if any events ran.
+     *
+     * @var bool
+     */
+    protected $eventsRan = false;
+
+    /**
+     * Execute the console command.
      *
      * @return void
      */
     public function fire()
     {
-        $eventsRan = false;
+        $this->runScheduledEvents();
 
+        $this->runAdhocEvents();
+
+        if (! $this->eventsRan) {
+            $this->info('No scheduled commands are ready to run.');
+        }
+    }
+
+    /**
+     * Run the scheduled events. This is an extension of the original run command
+     * but allows us to insert our custom event and tracking.
+     *
+     * @return void
+     */
+    protected function runScheduledEvents()
+    {
         foreach ($this->schedule->dueEvents($this->laravel) as $event) {
             $event = $this->convertEvent($event);
 
@@ -31,11 +52,29 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
 
             $event->run($this->laravel);
 
-            $eventsRan = true;
+            $this->eventsRan = true;
         }
+    }
 
-        if (! $eventsRan) {
-            $this->info('No scheduled commands are ready to run.');
+    /**
+     * Run any adhoc event requests we received via the API.
+     *
+     * @return void
+     */
+    protected function runAdhocEvents()
+    {
+        if (app()->make('cache')->has('eyewitness_scheduler_adhoc')) {
+            foreach(json_decode(app()->make('cache')->pull('eyewitness_scheduler_adhoc'), true) as $mutex) {
+                if (! $event = $this->findEventMutex($mutex)) {
+                    continue;
+                }
+
+                $this->line('<info>Running adhoc command: </info> '.$event->getSummaryForDisplay());
+
+                $this->runEvent($event);
+            }
+
+            $this->eventsRan = true;
         }
     }
 

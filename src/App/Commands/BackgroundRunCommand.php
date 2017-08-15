@@ -2,13 +2,13 @@
 
 namespace Eyewitness\Eye\App\Commands;
 
-use Eyewitness\Eye\App\Scheduling\ConvertsEvent;
+use Eyewitness\Eye\App\Scheduling\CustomEvents;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Console\Command;
 
 class BackgroundRunCommand extends Command
 {
-    use ConvertsEvent;
+    use CustomEvents;
 
     /**
      * The console command signature.
@@ -67,30 +67,11 @@ class BackgroundRunCommand extends Command
      */
     public function handle()
     {
-        if (! $event = $this->findEventMutex()) {
+        if (! $event = $this->findEventMutex($this->argument('id'))) {
             $this->error('No scheduled event could be found that matches the given id.');
             return;
         }
 
-        $this->convertEvent($event)
-             ->ignoreMutex($this->option('force'))
-             ->runInForeground()
-             ->run($this->laravel);
-    }
-
-    /**
-     * Find the event that matches the mutex
-     *
-     * @return mixd
-     */
-    protected function findEventMutex()
-    {
-        return collect($this->schedule->events())->filter(function ($value) {
-            if (laravel_version_is('<', '5.4.0')) {
-                $value = $this->convertEvent($value);
-            }
-
-            return $value->mutexName() === $this->argument('id');
-        })->first();
+        $this->runEvent($event, $this->option('force'));
     }
 }

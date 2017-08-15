@@ -110,9 +110,10 @@ trait BaseEventTrait
     /**
      * State that the command should be forced to run regardless of mutex.
      *
+     * @param  $force
      * @return $this
      */
-    public function ignoreMutex($force)
+    public function ignoreMutex($force = true)
     {
         $this->ignoreMutex = $force;
 

@@ -168,18 +168,21 @@ return [
      | Eyewitness.io Routes
      |--------------------------------------------------------------------------
      |
-     | Eyewitness.io allows you to view your log files and queue information
+     | Eyewitness.io allows you to view your log, scheduler and queue information
      | from the Eyewitness.io website. This occurs via routing, so no information
      | is actually stored on the Eyewitness.io server.
      |
      | These routes are protected by your secret key - so they are not accessible
      | by unauthorized people.
      |
-     | You can choose to turn these routes off if you do not use them.
+     | You can choose to turn these routes off if you do not use them, but this
+     | will reduce your ability to manage and control these features from
+     | your Eyewitness.io dashboard.
      |
      */
 
     'routes_queue' => true,
     'routes_log' => true,
+    'routes_scheduler' => true,
 
 ];

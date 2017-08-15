@@ -15,7 +15,7 @@ class EnabledQueueRoute
      */
     public function handle($request, Closure $next)
     {
-        if ( ! config('eyewitness.routes_queue')) {
+        if (! config('eyewitness.routes_queue')) {
             return response()->json(['error' => 'The queue route is disabled on the server'], 405)
                              ->setCallback($request->input('callback'));
         }

@@ -3,15 +3,12 @@
 namespace Eyewitness\Eye\App\Http\Controllers;
 
 use Eyewitness\Eye\App\Http\Controllers\BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Eyewitness\Eye\Eye;
 use Exception;
 
 class LogController extends BaseController
 {
-    use ValidatesRequests;
-
     /**
      * The log witness.
      *

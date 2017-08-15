@@ -2,6 +2,7 @@
 
 namespace Eyewitness\Eye;
 
+use Eyewitness\Eye\App\Http\Middleware\EnabledSchedulerRoute;
 use Eyewitness\Eye\App\Http\Middleware\CaptureRequestLegacy;
 use Eyewitness\Eye\App\Http\Middleware\EnabledComposerRoute;
 use Eyewitness\Eye\App\Http\Middleware\EnabledQueueRoute;
@@ -112,11 +113,13 @@ class EyeServiceProvider extends ServiceProvider
     {
         if (laravel_version_is('>=', '5.4.0')) {
             $router->aliasMiddleware('eyewitness_log_route', EnabledLogRoute::class);
+            $router->aliasMiddleware('eyewitness_scheduler_route', EnabledSchedulerRoute::class);
             $router->aliasMiddleware('eyewitness_queue_route', EnabledQueueRoute::class);
             $router->aliasMiddleware('eyewitness_composer_route', EnabledComposerRoute::class);
             $router->aliasMiddleware('eyewitness_auth', AuthRoute::class);
         } else {
             $router->middleware('eyewitness_log_route', EnabledLogRoute::class);
+            $router->middleware('eyewitness_scheduler_route', EnabledSchedulerRoute::class);
             $router->middleware('eyewitness_queue_route', EnabledQueueRoute::class);
             $router->middleware('eyewitness_composer_route', EnabledComposerRoute::class);
             $router->middleware('eyewitness_auth', AuthRoute::class);
