@@ -11,6 +11,13 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
     use CustomEvents;
 
     /**
+     * An instance of the cache.
+     *
+     * @var bool
+     */
+    protected $cache;
+
+    /**
      * Determine if any events ran.
      *
      * @var bool
@@ -24,6 +31,10 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
      */
     public function fire()
     {
+        $this->cache = app()->make('cache');
+
+        $this->runForgetMutexChecks();
+
         $this->runScheduledEvents();
 
         $this->runAdhocEvents();
@@ -48,6 +59,11 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
                 continue;
             }
 
+            if ($this->cache->has('eyewitness_scheduler_mutex_'.$event->mutexName())) {
+                $this->line('<error>Skipping command due to Eyewitness pause:</error> '.$event->getSummaryForDisplay());
+                continue;
+            }
+
             $this->line('<info>Running scheduled command:</info> '.$event->getSummaryForDisplay());
 
             $event->run($this->laravel);
@@ -63,8 +79,8 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
      */
     protected function runAdhocEvents()
     {
-        if (app()->make('cache')->has('eyewitness_scheduler_adhoc')) {
-            foreach(json_decode(app()->make('cache')->pull('eyewitness_scheduler_adhoc'), true) as $mutex) {
+        if ($this->cache->has('eyewitness_scheduler_adhoc')) {
+            foreach(json_decode($this->cache->pull('eyewitness_scheduler_adhoc'), true) as $mutex) {
                 if (! $event = $this->findEventMutex($mutex)) {
                     continue;
                 }
@@ -75,6 +91,24 @@ class ScheduleRunCommand extends OriginalScheduleRunCommand
             }
 
             $this->eventsRan = true;
+        }
+    }
+
+    /**
+     * Allow the removal of any mutexes requested by the API.
+     *
+     * @return void
+     */
+    protected function runForgetMutexChecks()
+    {
+        if ($this->cache->has('eyewitness_scheduler_forget_mutex')) {
+            foreach(json_decode($this->cache->pull('eyewitness_scheduler_forget_mutex'), true) as $mutex) {
+                if (! $event = $this->findEventMutex($mutex)) {
+                    continue;
+                }
+
+                $event->forgetMutex();
+            }
         }
     }
 

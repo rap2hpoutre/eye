@@ -250,7 +250,7 @@ trait BaseEventTrait
      *
      * @return void
      */
-    protected function forgetMutex()
+    public function forgetMutex()
     {
         if (laravel_version_is('<', '5.4.0')) {
             if (file_exists($this->mutexPath())) {
