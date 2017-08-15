@@ -205,7 +205,7 @@ class Api
             } else {
                 $this->headers['multipart'] = [['name' => 'lock', 'contents' => fopen(config('eyewitness.composer_lock_file_location'), 'r')]];
             }
-            $response = $this->client->post('https://security.sensiolabs.org/check_lock', $this->headers);;
+            $response = $this->client->post('https://security.sensiolabs.org/check_lock', $this->headers);
             return json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
             LogFacade::error('SensioLabs Composer Lock check failed due to: '.$e->getMessage());
