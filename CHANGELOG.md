@@ -14,6 +14,7 @@
 - Refactored structure layout of package
 - Refactored some core eyewitness command names
 - Tweaked request tracking timer
+- Improved failed queue data
 - Add log file sorting
 
 
