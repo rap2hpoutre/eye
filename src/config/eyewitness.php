@@ -134,12 +134,12 @@ return [
      | The eyewitness server will automatically detect this value and alert you
      | if we dont receive emails in the relatively appropriate timeframe.
      |
-     | The shorter the timeframe the sooner you will know about an email problem,
+     | The shorter the timeframe the earlier you will know about an email problem,
      | but the more emails your system will send (and use up your email provider
      | quotas).
      |
-     | Valid choices are: 15, 30, 60, 90, 120 or 180 (any other value will be ignored
-     | by the server).
+     | Valid choices are: 15, 30, 60, 90, 120 or 180 (any other value will be
+     | ignored by the server).
      |
      */
 
