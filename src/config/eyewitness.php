@@ -129,7 +129,7 @@ return [
      |--------------------------------------------------------------------------
      |
      | This determines how often your application will send a test email. The
-     | default is once every 15 minutes.
+     | default is once every 60 minutes.
      |
      | The eyewitness server will automatically detect this value and alert you
      | if we dont receive emails in the relatively appropriate timeframe.
@@ -143,7 +143,7 @@ return [
      |
      */
 
-    'email_frequency' => 15,
+    'email_frequency' => 60,
 
 
     /*
