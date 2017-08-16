@@ -16,6 +16,7 @@
 - Tweaked request tracking timer
 - Improved failed queue data
 - Add log file sorting
+- Add offset to cron poll scheduler to help balance out server load
 
 
 
