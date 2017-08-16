@@ -82,7 +82,13 @@ class Queue
             $list = collect(app('queue.failer')->all());
             $list->map(function ($job) {
                 $payload = json_decode($job->payload);
-                $job->job = isset($payload->job) ? $payload->job : 'Unknown';
+                $job->job = isset($payload->displayName) ? $payload->displayName : (isset($payload->job) ? $payload->job : 'Unknown');
+                $job->attempts = isset($payload->attempts) ? $payload->attempts : null;
+                $job->maxTries = isset($payload->maxTries) ? $payload->maxTries : null;
+                $job->timeout = isset($payload->timeout) ? $payload->timeout : null;
+                $job->job_id = isset($payload->id) ? $payload->id : null;
+                $job->exception = isset($job->exception) ? $job->exception : null;
+                $job->payload =isset($payload->data->command) ? json_encode($payload->data->command) : (isset($payload->data) ? json_encode($payload->data) : $job->payload);
                 return $job;
             });
             return $list;
