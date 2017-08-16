@@ -155,7 +155,7 @@ class EyeServiceProvider extends ServiceProvider
     {
         $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
-            $schedule->command('eyewitness:poll')->cron('2,8,14,20,26,32,38,44,50,56 * * * * *');
+            $schedule->command('eyewitness:poll')->cron(app(Eye::class)->getPollSchedule());
         });
     }
 

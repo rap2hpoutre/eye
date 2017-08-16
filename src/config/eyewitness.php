@@ -198,4 +198,5 @@ return [
      */
 
     'api_url' => env('EYEWITNESS_API_URL', 'https://eyew.io/api/v1'),
+    'cron_offset' => 'CRON_OFFSET_PLACEHOLDER',
 ];

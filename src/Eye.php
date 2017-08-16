@@ -15,6 +15,7 @@ use Eyewitness\Eye\App\Api\Api;
 class Eye
 {
     const QUEUE_CONNECTION_PLACEHOLDER = 'QUEUE_CONNECTION_PLACEHOLDER';
+    const CRON_OFFSET_PLACEHOLDER = 'CRON_OFFSET_PLACEHOLDER';
     const QUEUE_TUBE_PLACEHOLDER = 'QUEUE_TUBE_PLACEHOLDER';
     const SECRET_KEY_PLACEHOLDER = 'SECRET_KEY_PLACEHOLDER';
     const APP_TOKEN_PLACEHOLDER = 'APP_TOKEN_PLACEHOLDER';
@@ -103,15 +104,37 @@ class Eye
         $app_token = config('eyewitness.app_token');
         $secret_key = config('eyewitness.secret_key');
 
-        if (($app_token == '') || (is_null($app_token)) || ($app_token === self::APP_TOKEN_PLACEHOLDER)) {
+        if ($app_token == '' || is_null($app_token) || $app_token === self::APP_TOKEN_PLACEHOLDER) {
             return false;
         }
 
-        if (($secret_key == '') || (is_null($secret_key)) || ($secret_key === self::SECRET_KEY_PLACEHOLDER)) {
+        if ($secret_key == '' || is_null($secret_key) || $secret_key === self::SECRET_KEY_PLACEHOLDER) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Get the poll schedule cron based upon the config setting.
+     *
+     * @return string
+     */
+    public function getPollSchedule()
+    {
+        $list = ['1,7,13,19,25,31,37,43,49,55 * * * * *',
+                 '2,8,14,20,26,32,38,44,50,56 * * * * *',
+                 '3,9,15,21,27,33,39,45,51,57 * * * * *',
+                 '4,10,16,22,28,34,40,46,52,58 * * * * *',
+                 '5,11,17,23,29,35,41,47,53,59 * * * * *'];
+
+        $offset = config('eyewitness.cron_offset');
+
+        if ($offset == '' || is_null($offset) || $offset === self::CRON_OFFSET_PLACEHOLDER) {
+            return $list[0];
+        }
+
+        return $list[$offset];
     }
 
     /**

@@ -29,6 +29,7 @@ class EyeTest extends TestCase
     public function test_constants_are_set()
     {
         $this->assertEquals('QUEUE_CONNECTION_PLACEHOLDER', $this->eye::QUEUE_CONNECTION_PLACEHOLDER);
+        $this->assertEquals('CRON_OFFSET_PLACEHOLDER', $this->eye::CRON_OFFSET_PLACEHOLDER);
         $this->assertEquals('QUEUE_TUBE_PLACEHOLDER', $this->eye::QUEUE_TUBE_PLACEHOLDER);
         $this->assertEquals('SECRET_KEY_PLACEHOLDER', $this->eye::SECRET_KEY_PLACEHOLDER);
         $this->assertEquals('APP_TOKEN_PLACEHOLDER', $this->eye::APP_TOKEN_PLACEHOLDER);
@@ -52,5 +53,35 @@ class EyeTest extends TestCase
         $this->app['config']->set('eyewitness.app_token', 'blah');
         $this->app['config']->set('eyewitness.secret_key', 'blah');
         $this->assertTrue($this->eye->checkConfig());
+    }
+
+    public function test_get_poll_schedule_handles_bad_config()
+    {
+        $this->app['config']->set('eyewitness.cron_offset', $this->eye::CRON_OFFSET_PLACEHOLDER);
+        $this->assertEquals('1,7,13,19,25,31,37,43,49,55 * * * * *', $this->eye->getPollSchedule());
+
+        $this->app['config']->set('eyewitness.cron_offset', null);
+        $this->assertEquals('1,7,13,19,25,31,37,43,49,55 * * * * *', $this->eye->getPollSchedule());
+
+        $this->app['config']->set('eyewitness.cron_offset', '');
+        $this->assertEquals('1,7,13,19,25,31,37,43,49,55 * * * * *', $this->eye->getPollSchedule());
+    }
+
+    public function test_get_poll_schedule_returns_expected_schedules()
+    {
+        $this->app['config']->set('eyewitness.cron_offset', '0');
+        $this->assertEquals('1,7,13,19,25,31,37,43,49,55 * * * * *', $this->eye->getPollSchedule());
+
+        $this->app['config']->set('eyewitness.cron_offset', '1');
+        $this->assertEquals('2,8,14,20,26,32,38,44,50,56 * * * * *', $this->eye->getPollSchedule());
+
+        $this->app['config']->set('eyewitness.cron_offset', '2');
+        $this->assertEquals('3,9,15,21,27,33,39,45,51,57 * * * * *', $this->eye->getPollSchedule());
+
+        $this->app['config']->set('eyewitness.cron_offset', '3');
+        $this->assertEquals('4,10,16,22,28,34,40,46,52,58 * * * * *', $this->eye->getPollSchedule());
+
+        $this->app['config']->set('eyewitness.cron_offset', '4');
+        $this->assertEquals('5,11,17,23,29,35,41,47,53,59 * * * * *', $this->eye->getPollSchedule());
     }
 }
