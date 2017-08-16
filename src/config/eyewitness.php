@@ -4,7 +4,7 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Eyewitness.io
+     | Environment setting
      |--------------------------------------------------------------------------
      |
      | Communication to the Eyewitness.io API is enabled by default. You can
@@ -12,15 +12,16 @@ return [
      | development environment so you do not trigger false alerts when
      | developing etc.
      |
+     | You should set this to false in your development .env file
+     |
      */
 
     'api_enabled' => env('EYEWITNESS_API_ENABLED', true),
-    'api_url' => env('EYEWITNESS_API_URL', 'https://eyew.io/api/v1'),
 
 
     /*
      |--------------------------------------------------------------------------
-     | Eyewitness.io Application Token & Secret Key
+     | Application token & secret key
      |--------------------------------------------------------------------------
      |
      | Your unique Eyewitness.io application token & secret key. These settings
@@ -39,7 +40,7 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Eyewitness.io Monitoring
+     | Configure monitoring
      |--------------------------------------------------------------------------
      |
      | You can turn off certain parts of the monitoring. For example, if your
@@ -60,7 +61,7 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Eyewitness.io Queue Tube List
+     | Queue tube monitoring list
      |--------------------------------------------------------------------------
      |
      | If you run multiple queue tubes, please list them below for monitoring.
@@ -101,7 +102,7 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Queued Emails
+     | Queued emails
      |--------------------------------------------------------------------------
      |
      | When monitoring emails - the default is to send the test email immediately
@@ -165,7 +166,7 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Eyewitness.io Routes
+     | API routes
      |--------------------------------------------------------------------------
      |
      | Eyewitness.io allows you to view your log, scheduler and queue information
@@ -185,4 +186,16 @@ return [
     'routes_log' => true,
     'routes_scheduler' => true,
 
+
+    /*
+     |--------------------------------------------------------------------------
+     | Eyewitness.io API URL
+     |--------------------------------------------------------------------------
+     |
+     | This is the URL for the Eyewitness API servers. This should be left as
+     | the default unless you are asked to change it by our support team.
+     |
+     */
+
+    'api_url' => env('EYEWITNESS_API_URL', 'https://eyew.io/api/v1'),
 ];
