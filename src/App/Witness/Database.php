@@ -25,10 +25,12 @@ class Database
         foreach ($connections as $connection) {
             try {
                 $data[] = ['connection' => $connection,
+                           'driver' => $this->getDriverName($connection),
                            'status' => $this->checkDatabaseStatus($connection),
                            'size' => $this->checkDatabaseSize($connection)];
             } catch (Exception $e) {
                 $data[] = ['connection' => $connection,
+                           'driver' => 'unknown',
                            'status' => false,
                            'size' => -1];
             }
@@ -62,7 +64,7 @@ class Database
      */
     protected function checkDatabaseSize($connection)
     {
-        switch(DB::connection($connection)->getDriverName()) {
+        switch($this->getDriverName($connection)) {
             case 'mysql':
                 return $this->checkMySqlDatabaseSize($connection);
             case 'sqlite':
@@ -130,5 +132,16 @@ class Database
         } catch (Exception $e) {
             return -1;
         }
+    }
+
+    /**
+     * Get the name of the database driver.
+     *
+     * @param  string  $connection
+     * @return bool
+     */
+    protected function getDriverName($connection)
+    {
+        return DB::connection($connection)->getDriverName();
     }
 }
