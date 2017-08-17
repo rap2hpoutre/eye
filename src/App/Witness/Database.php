@@ -20,13 +20,17 @@ class Database
             $connections = [config('database.default')];
         }
 
+        $data = [];
+
         foreach ($connections as $connection) {
             try {
-                $data[$connection]['db_status'] = $this->checkDatabaseStatus($connection);
-                $data[$connection]['db_size'] = $this->checkDatabaseSize($connection);
+                $data[] = ['connection' => $connection,
+                           'status' => $this->checkDatabaseStatus($connection),
+                           'size' => $this->checkDatabaseSize($connection)];
             } catch (Exception $e) {
-                $data[$connection]['db_status'] = false;
-                $data[$connection]['db_size'] = -1;
+                $data[] = ['connection' => $connection,
+                           'status' => false,
+                           'size' => -1];
             }
         }
 
