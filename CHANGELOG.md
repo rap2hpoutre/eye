@@ -8,6 +8,7 @@
 - Add environment variable to all API calls
 - Add additional variable tracking in server monitoring
 - Add "backoff" retry attempts on failed API calls
+- Add support for monitoring of multiple databases
 
 ### Fixed
 

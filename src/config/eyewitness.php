@@ -84,6 +84,28 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Database monitoring list
+     |--------------------------------------------------------------------------
+     |
+     | If your application uses multiple databases, then you can list them below
+     | and each will be monitored.
+     |
+     | The array should contain names corresponding to one of the connections
+     | listed in your "config/database.php" configuration file. Below is an
+     | example of how you can monitor multiple databases.
+     |
+     | 'database_connections' => ['mysql_main', 'other_database'],
+     |
+     | Note an null value will simply use the "default" connection - which is
+     | sufficient for most applications.
+     |
+     */
+
+    'database_connections' => null,
+
+
+    /*
+     |--------------------------------------------------------------------------
      | Composer.lock location
      |--------------------------------------------------------------------------
      |
