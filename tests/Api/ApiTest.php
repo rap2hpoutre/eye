@@ -12,6 +12,8 @@ class ApiTest extends TestCase
 
     protected $response;
 
+    protected $bad;
+
     public function setUp()
     {
         parent::setUp();
@@ -21,6 +23,7 @@ class ApiTest extends TestCase
 
         $this->api = new Api;
         $this->response = new Response(200, ['Content-Type' => 'application/json'], json_encode(['ok']));
+        $this->bad = new Response(500, ['Content-Type' => 'application/json'], json_encode(['error']));
     }
 
     public function test_does_not_send_if_api_disabled()
@@ -86,5 +89,12 @@ class ApiTest extends TestCase
     {
         $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
         $this->api->down();
+    }
+
+    public function test_api_has_retry_attempts()
+    {
+        $this->guzzle->shouldReceive('post')->twice()->andReturn($this->bad);
+        $this->guzzle->shouldReceive('post')->once()->andReturn($this->response);
+        $this->api->up();
     }
 }

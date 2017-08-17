@@ -217,6 +217,8 @@ class Api
     /**
      * Send the ping notification to the Eyewitness.io API.
      *
+     * Now includes a 'backoff' retry attempt if the pings fails.
+     *
      * @param  string  $route
      * @param  array   $data
      * @return mixed
@@ -234,13 +236,20 @@ class Api
 
         $this->headers['json'] = $data;
 
-        try {
-            $response = $this->client->post($this->api."/$route", $this->headers);
-        } catch (Exception $e) {
-            return [false, $e->getMessage()];
+        for ($i=0; $i<3; $i++) {
+            sleep($i);
+            try {
+                $response = $this->client->post($this->api."/$route", $this->headers);
+                $result = [$response->getStatusCode(), $response->getReasonPhrase()];
+                if ($result[0] == "200") {
+                    return $result;
+                }
+            } catch (Exception $e) {
+                $result = [false, $e->getMessage()];
+            }
         }
 
-        return [$response->getStatusCode(), $response->getReasonPhrase()];
+        return $result;
     }
 
     /**
