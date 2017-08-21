@@ -27,7 +27,7 @@ class Database
                 $data[] = ['connection' => $connection,
                            'driver' => $this->getDriverName($connection),
                            'status' => $this->checkDatabaseStatus($connection),
-                           'size' => $this->checkDatabaseSize($connection)];
+                           'size' => $this->getDatabaseSize($connection)];
             } catch (Exception $e) {
                 $data[] = ['connection' => $connection,
                            'driver' => 'unknown',
@@ -57,23 +57,28 @@ class Database
     }
 
     /**
-     * Check the size of the database.
+     * Get the size of the database.
      *
      * @param  string  $connection
      * @return bool
      */
-    protected function checkDatabaseSize($connection)
+    protected function getDatabaseSize($connection)
     {
         switch($this->getDriverName($connection)) {
             case 'mysql':
-                return $this->checkMySqlDatabaseSize($connection);
+                $size = $this->checkMySqlDatabaseSize($connection);
+                break;
             case 'sqlite':
-                return $this->checkSqLiteDatabaseSize($connection);
+                $size = $this->checkSqLiteDatabaseSize($connection);
+                break;
             case 'pgsql':
-                return $this->checkPostgresDatabaseSize($connection);
+                $size = $this->checkPostgresDatabaseSize($connection);
+                break;
+            default:
+                return -1;
         }
 
-        return -1;
+        return round($size/1024/1024, 2);
     }
 
     /**
