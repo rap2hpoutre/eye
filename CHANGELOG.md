@@ -9,6 +9,7 @@
 - Add additional variable tracking in server monitoring
 - Add "backoff" retry attempts on failed API calls
 - Add support for monitoring of multiple databases
+- Track volume of emails sent by application
 
 ### Fixed
 
