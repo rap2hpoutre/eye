@@ -4,12 +4,41 @@ namespace Eyewitness\Eye\App\Witness;
 
 use Illuminate\Support\Facades\Log as LogFacade;
 use Eyewitness\Eye\App\Mail\PingEyewitness;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Exception;
 
 class Email
 {
+    /**
+     * Get all the email checks.
+     *
+     * @return array
+     */
+    public function check()
+    {
+        $data['email'] = $this->getSendHistory();
+
+        return $data;
+    }
+
+    /**
+     * Get the number of emails sent by the application for the past hour (if tracked).
+     *
+     * @return array
+     */
+    public function getSendHistory()
+    {
+        for ($i=0; $i<2; $i++) {
+            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
+
+            $history[$tag] = Cache::get('eyewitness_mail_send_count_'.$tag, 0);
+        }
+
+        return $history;
+    }
+
     /**
      * Try to send an email to Eyewitness to confirm emails are ok.
      *
@@ -28,6 +57,36 @@ class Email
         } catch (Exception $e) {
             LogFacade::error('Unable to send Eyewitness.io email for token: '.config('eyewitness.app_token').' : '.$e->getMessage());
         }
+    }
+
+    /**
+     * Log the emails numbers being sent.
+     *
+     * @return void
+     */
+    public function logEmail()
+    {
+        if (laravel_version_is('<', '5.2.0')) {
+            app('events')->listen('mailer.sending', function ($message) {
+                $this->incrementCacheCounter();
+            });
+        } else {
+            app('events')->listen(MessageSending::class, function ($message) {
+                $this->incrementCacheCounter();
+            });
+        }
+    }
+
+    /**
+     * Increment the email cache counter.
+     *
+     * @return void
+     */
+    protected function incrementCacheCounter()
+    {
+        $tag = gmdate('Y_m_d_H');
+        Cache::add('eyewitness_mail_send_count_'.$tag, 0, 180);
+        Cache::increment('eyewitness_mail_send_count_'.$tag, 1);
     }
 
     /**

@@ -56,6 +56,7 @@ class EyeServiceProvider extends ServiceProvider
         $this->loadRoutes();
         $this->loadViews();
         $this->loadLogTracking();
+        $this->loadEmailTracking();
         $this->loadMiddleware($router);
 
         if ($this->app->runningInConsole()) {
@@ -98,6 +99,18 @@ class EyeServiceProvider extends ServiceProvider
             app('log')->listen(function ($level, $message = null, $context = null) {
                 app(Eye::class)->log()->logError($level);
             });
+        }
+    }
+
+    /**
+     * Load the email tracking.
+     *
+     * @return void
+     */
+    protected function loadEmailTracking()
+    {
+        if (config('eyewitness.monitor_email')) {
+            app(Eye::class)->email()->logEmail();
         }
     }
 

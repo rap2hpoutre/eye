@@ -170,8 +170,11 @@ class Eye
             $data['disk_stats'] = $this->disk()->check();
         }
 
-        if (config('eyewitness.monitor_email') && $email) {
-            $this->email()->send();
+        if (config('eyewitness.monitor_email')) {
+            if ($email) {
+                $this->email()->send();
+            }
+            $data['email_stats'] = $this->email()->check();
         }
 
         if (config('eyewitness.monitor_log')) {
