@@ -7,6 +7,15 @@ use Illuminate\Console\Scheduling\Schedule;
 class Scheduler
 {
     /**
+     * Get all the scheduler checks.
+     *
+     * @return array
+     */
+    public function check()
+    {
+        return $this->getScheduledEvents();
+    }
+    /**
      * Get a list of all scheduled events and their cron frequency.
      *
      * @return array

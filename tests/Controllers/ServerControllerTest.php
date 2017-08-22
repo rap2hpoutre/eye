@@ -69,8 +69,8 @@ class ServerControllerTest extends TestCase
     {
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
 
-        $this->scheduler->shouldReceive('getScheduledEvents')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->scheduler->shouldReceive('check')->never();
+        $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
@@ -88,9 +88,9 @@ class ServerControllerTest extends TestCase
         $this->app['config']->set('eyewitness.monitor_scheduler', true);
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
-        $this->scheduler->shouldReceive('getScheduledEvents')->once()->andReturn(['example' => 'list']);
+        $this->scheduler->shouldReceive('check')->once()->andReturn(['example' => 'list']);
 
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
@@ -108,9 +108,9 @@ class ServerControllerTest extends TestCase
         $this->app['config']->set('eyewitness.monitor_queue', true);
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
-        $this->queue->shouldReceive('allTubeStats')->once()->andReturn(['list']);
+        $this->queue->shouldReceive('check')->once()->andReturn(['list']);
 
-        $this->scheduler->shouldReceive('getScheduledEvents')->never();
+        $this->scheduler->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
@@ -130,8 +130,8 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->database->shouldReceive('check')->once()->andReturn(['db_status' => true]);
 
-        $this->scheduler->shouldReceive('getScheduledEvents')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->scheduler->shouldReceive('check')->never();
+        $this->queue->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
         $this->disk->shouldReceive('check')->never();
@@ -150,8 +150,8 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->request->shouldReceive('check')->once()->andReturn(['count' => 5]);
 
-        $this->scheduler->shouldReceive('getScheduledEvents')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->scheduler->shouldReceive('check')->never();
+        $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
         $this->disk->shouldReceive('check')->never();
@@ -170,8 +170,8 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->disk->shouldReceive('check')->once()->andReturn(['size' => 7]);
 
-        $this->scheduler->shouldReceive('getScheduledEvents')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->scheduler->shouldReceive('check')->never();
+        $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();
@@ -190,8 +190,8 @@ class ServerControllerTest extends TestCase
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->log->shouldReceive('check')->once()->andReturn(['tests' => 'ok']);
 
-        $this->scheduler->shouldReceive('getScheduledEvents')->never();
-        $this->queue->shouldReceive('pingAllTubes')->never();
+        $this->scheduler->shouldReceive('check')->never();
+        $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
         $this->email->shouldReceive('send')->never();

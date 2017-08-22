@@ -9,22 +9,11 @@ use Exception;
 class Queue
 {
     /**
-     * Get the queue connection configuration.
-     *
-     * @param  string  $name
-     * @return array
-     */
-    public function getConnectionConfig($connection)
-    {
-        return app('config')["queue.connections.$connection"];
-    }
-
-    /**
-     * Get the queue stats for all tubes.
+     * Get the checks for all tubes.
      *
      * @return array
      */
-    public function allTubeStats()
+    public function check()
     {
         $stats = [];
 
@@ -167,6 +156,17 @@ class Queue
         }
 
         return $workload;
+    }
+
+    /**
+     * Get the queue connection configuration.
+     *
+     * @param  string  $name
+     * @return array
+     */
+    public function getConnectionConfig($connection)
+    {
+        return app('config')["queue.connections.$connection"];
     }
 }
 

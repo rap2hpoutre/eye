@@ -155,7 +155,7 @@ class Eye
         }
 
         if (config('eyewitness.monitor_scheduler')) {
-            $data['scheduler'] = $this->scheduler()->getScheduledEvents();
+            $data['scheduler'] = $this->scheduler()->check();
         }
 
         if (config('eyewitness.monitor_request')) {
@@ -163,7 +163,7 @@ class Eye
         }
 
         if (config('eyewitness.monitor_queue')) {
-            $data['queue_stats'] = $this->queue()->allTubeStats();
+            $data['queue_stats'] = $this->queue()->check();
         }
 
         if (config('eyewitness.monitor_disk')) {
