@@ -164,6 +164,7 @@ class Eye
 
         if (config('eyewitness.monitor_queue')) {
             $data['queue_stats'] = $this->queue()->check();
+            $this->queue()->deploySonar();
         }
 
         if (config('eyewitness.monitor_disk')) {
@@ -171,10 +172,10 @@ class Eye
         }
 
         if (config('eyewitness.monitor_email')) {
+            $data['email_stats'] = $this->email()->check();
             if ($email) {
                 $this->email()->send();
             }
-            $data['email_stats'] = $this->email()->check();
         }
 
         if (config('eyewitness.monitor_log')) {

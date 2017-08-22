@@ -109,6 +109,7 @@ class ServerControllerTest extends TestCase
 
         $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
         $this->queue->shouldReceive('check')->once()->andReturn(['list']);
+        $this->queue->shouldReceive('deploySonar')->once();
 
         $this->scheduler->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();

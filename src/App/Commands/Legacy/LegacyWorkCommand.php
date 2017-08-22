@@ -8,7 +8,7 @@ class LegacyWorkCommand extends OriginalWorkCommand
 {
     /**
      * This extends the Work Command for applications running Laravel
-     * version <=5.2.
+     * version < 5.3.0.
      *
      * These were changes added to 5.3 onwards, so we are effectively just
      * back porting the features to ensure consistency and adding the

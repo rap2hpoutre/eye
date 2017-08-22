@@ -22,6 +22,7 @@ use Eyewitness\Eye\App\Commands\WorkCommand;
 use Eyewitness\Eye\App\Commands\DownCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Eyewitness\Eye\App\Commands\UpCommand;
+use Eyewitness\Eye\App\Queue\WorkerLegacy;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Events\JobFailed;
 use Eyewitness\Eye\App\Queue\Worker;
@@ -258,7 +259,7 @@ class EyeServiceProvider extends ServiceProvider
             if (laravel_version_is('>=', '5.3.0')) {
                 return new Worker($this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]);
             } else {
-                return new Worker($this->app['queue'], $this->app['queue.failer'], $this->app['events']);
+                return new WorkerLegacy($this->app['queue'], $this->app['queue.failer'], $this->app['events']);
             }
         });
     }

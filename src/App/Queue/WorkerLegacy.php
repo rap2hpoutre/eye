@@ -3,31 +3,32 @@
 namespace Eyewitness\Eye\App\Queue;
 
 use Illuminate\Queue\Worker as OriginalWorker;
-use Illuminate\Queue\WorkerOptions;
+use Illuminate\Contracts\Queue\Job;
 use Exception;
 use Throwable;
 
-class Worker extends OriginalWorker
+class WorkerLegacy extends OriginalWorker
 {
     use WorkerTrait;
 
     /**
-     * We wrap the standard job processor, and add our tracking code around it.
+     * Process a given job from the queue.
      *
-     * @param  string  $connectionName
+     * @param  string  $connection
      * @param  \Illuminate\Contracts\Queue\Job  $job
-     * @param  \Illuminate\Queue\WorkerOptions  $options
-     * @return void
+     * @param  int  $maxTries
+     * @param  int  $delay
+     * @return array|null
      *
      * @throws \Throwable
      */
-    public function process($connectionName, $job, WorkerOptions $options)
+    public function process($connection, Job $job, $maxTries = 0, $delay = 0)
     {
         $start_time = microtime(true);
         $tag = gmdate('Y_m_d_H');
 
         try {
-            parent::process($connectionName, $job, $options);
+            parent::process($connection, $job, $maxTries, $delay);
         } catch (Exception $e) {
             $this->recordJobException($tag, $e);
         } catch (Throwable $e) {

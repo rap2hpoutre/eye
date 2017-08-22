@@ -2,12 +2,17 @@
 
 namespace Eyewitness\Eye\App\Witness;
 
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Eyewitness\Eye\App\Jobs\SonarLegacy;
 use Illuminate\Support\Facades\Cache;
+use Eyewitness\Eye\App\Jobs\Sonar;
 use Illuminate\Queue\QueueManager;
 use Exception;
 
 class Queue
 {
+    use DispatchesJobs;
+
     /**
      * Get the checks for all tubes.
      *
@@ -18,7 +23,7 @@ class Queue
         $stats = [];
 
         try {
-            foreach (config('eyewitness.queue_tube_list') as $connection => $tubes) {
+            foreach ($this->tubes() as $connection => $tubes) {
                 foreach ($tubes as $tube) {
                     $stats[] = $this->tubeStats($connection, $tube);
                 }
@@ -28,6 +33,28 @@ class Queue
         }
 
         return $stats;
+    }
+
+    /**
+     * Send a sonar tracking job on the queue for each tube.
+     *
+     * @return void
+     */
+    public function deploySonar()
+    {
+        foreach ($this->tubes() as $connection => $tubes) {
+            foreach ($tubes as $tube) {
+                if (! Cache::has('eyewitness_sonar_deployed_'.$connection.'_'.$tube)) {
+                    if (laravel_version_is('<', '5.2.0')) {
+                        $job = new SonarLegacy($connection, $tube);
+                    } else {
+                        $job = new Sonar($connection, $tube);
+                    }
+                    $this->dispatch($job->onQueue($tube));
+                    Cache::put('eyewitness_sonar_deployed_'.$connection.'_'.$tube, time(), 180);
+                }
+            }
+        }
     }
 
     /**
@@ -150,9 +177,12 @@ class Queue
         for ($i=0; $i<2; $i++) {
             $tag = gmdate('Y_m_d_H', time() - (3600*$i));
 
-            $workload[$tag]['eyewitness_queue_time'] = Cache::get('eyewitness_q_time_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_queue_count'] = Cache::get('eyewitness_q_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_queue_exception_count'] = Cache::get('eyewitness_q_e_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_process_time'] = Cache::get('eyewitness_q_process_time_'.$connection.'_'.$tube.'_'.$tag, null);
+            $workload[$tag]['eyewitness_q_process_count'] = Cache::get('eyewitness_q_process_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_exception_count'] = Cache::get('eyewitness_q_exception_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_wait_time'] = Cache::get('eyewitness_q_wait_time_'.$connection.'_'.$tube.'_'.$tag, null);
+            $workload[$tag]['eyewitness_q_wait_count'] = Cache::get('eyewitness_q_wait_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_sonar_deployed'] = Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, false);
         }
 
         return $workload;
@@ -167,6 +197,16 @@ class Queue
     public function getConnectionConfig($connection)
     {
         return app('config')["queue.connections.$connection"];
+    }
+
+    /**
+     * Get all list of all tubes.
+     *
+     * @return array
+     */
+    public function tubes()
+    {
+        return config('eyewitness.queue_tube_list');
     }
 }
 
