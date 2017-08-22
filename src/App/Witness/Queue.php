@@ -2,6 +2,7 @@
 
 namespace Eyewitness\Eye\App\Witness;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\QueueManager;
 use Exception;
 
@@ -21,7 +22,7 @@ class Queue
     /**
      * Get the queue stats for all tubes.
      *
-     * @return mixed
+     * @return array
      */
     public function allTubeStats()
     {
@@ -45,7 +46,7 @@ class Queue
      *
      * @param  string  $connection
      * @param  string  $tube
-     * @return mixed
+     * @return array
      */
     public function tubeStats($connection, $tube)
     {
@@ -53,6 +54,7 @@ class Queue
         $stats['tube'] = $tube;
         $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
         $stats['failed_count'] = $this->getFailedJobsCount($connection, $tube);
+        $stats['workload'] = $this->getQueueWorkload($connection, $tube);
 
         return $stats;
     }
@@ -74,7 +76,7 @@ class Queue
     /**
      * Get a list of failed jobs.
      *
-     * @return mixed
+     * @return collection
      */
     public function getFailedJobs()
     {
@@ -145,6 +147,26 @@ class Queue
         }
 
         return $name;
+    }
+
+    /**
+     * Get the cache workload results of the queue.
+     *
+     * @param  string  $connection
+     * @param  string  $tube
+     * @return array
+     */
+    public function getQueueWorkload($connection, $tube)
+    {
+        for ($i=0; $i<2; $i++) {
+            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
+
+            $workload[$tag]['eyewitness_queue_time'] = Cache::get('eyewitness_q_time_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_queue_count'] = Cache::get('eyewitness_q_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_queue_exception_count'] = Cache::get('eyewitness_q_e_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+        }
+
+        return $workload;
     }
 }
 

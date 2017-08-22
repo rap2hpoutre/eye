@@ -18,6 +18,7 @@
 - Refactored some core eyewitness command names
 - Tweaked request tracking timer
 - Improved failed queue data
+- Improved queue tracking logic
 - Add log file sorting
 - Add offset to cron poll scheduler to help balance out server load
 
