@@ -63,7 +63,7 @@ class Email
      *
      * @return void
      */
-    protected function incrementCacheCounter()
+    public function incrementCacheCounter()
     {
         $tag = gmdate('Y_m_d_H');
         Cache::add('eyewitness_mail_send_count_'.$tag, 0, 180);
