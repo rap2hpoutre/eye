@@ -2,7 +2,8 @@
 
 namespace Eyewitness\Eye\App\Witness;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Support\Facades\Queue as QueueFacade;
+use Eyewitness\Eye\App\Jobs\SonarLegacy50;
 use Eyewitness\Eye\App\Jobs\SonarLegacy;
 use Illuminate\Support\Facades\Cache;
 use Eyewitness\Eye\App\Jobs\Sonar;
@@ -11,8 +12,6 @@ use Exception;
 
 class Queue
 {
-    use DispatchesJobs;
-
     /**
      * Get the checks for all tubes.
      *
@@ -36,7 +35,7 @@ class Queue
     }
 
     /**
-     * Send a sonar tracking job on the queue for each tube.
+     * Send a sonar tracking job on the queue for each connection and tube.
      *
      * @return void
      */
@@ -44,14 +43,15 @@ class Queue
     {
         foreach ($this->tubes() as $connection => $tubes) {
             foreach ($tubes as $tube) {
-                if (! Cache::has('eyewitness_sonar_deployed_'.$connection.'_'.$tube)) {
-                    if (laravel_version_is('<', '5.2.0')) {
-                        $job = new SonarLegacy($connection, $tube);
+                if (! Cache::has('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube)) {
+                    if (laravel_version_is('<', '5.1.0')) {
+                        QueueFacade::connection($connection)->pushOn($tube, new SonarLegacy50($connection, $tube));
+                    } elseif (laravel_version_is('<', '5.2.0')) {
+                        QueueFacade::connection($connection)->pushOn($tube, new SonarLegacy($connection, $tube));
                     } else {
-                        $job = new Sonar($connection, $tube);
+                        QueueFacade::connection($connection)->pushOn($tube, new Sonar($connection, $tube));
                     }
-                    $this->dispatch($job->onQueue($tube));
-                    Cache::put('eyewitness_sonar_deployed_'.$connection.'_'.$tube, time(), 180);
+                    Cache::put('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time(), 180);
                 }
             }
         }
@@ -71,6 +71,7 @@ class Queue
         $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
         $stats['failed_count'] = $this->getFailedJobsCount($connection, $tube);
         $stats['workload'] = $this->getQueueWorkload($connection, $tube);
+        $stats['sonar_deployed'] = time()-Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time());
 
         return $stats;
     }
@@ -106,13 +107,36 @@ class Queue
                 $job->timeout = isset($payload->timeout) ? $payload->timeout : null;
                 $job->job_id = isset($payload->id) ? $payload->id : null;
                 $job->exception = isset($job->exception) ? $job->exception : null;
-                $job->payload =isset($payload->data->command) ? json_encode($payload->data->command) : (isset($payload->data) ? json_encode($payload->data) : $job->payload);
+                $job->payload = isset($payload->data->command) ? json_encode($payload->data->command) : (isset($payload->data) ? json_encode($payload->data) : $job->payload);
                 return $job;
             });
             return $list;
         } catch (Exception $e) {
             return collect([]);
         }
+    }
+
+    /**
+     * Get the cache workload results of the queue.
+     *
+     * @param  string  $connection
+     * @param  string  $tube
+     * @return array
+     */
+    public function getQueueWorkload($connection, $tube)
+    {
+        for ($i=0; $i<2; $i++) {
+            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
+
+            $workload[$tag]['eyewitness_q_process_time'] = Cache::get('eyewitness_q_process_time_'.$connection.'_'.$tube.'_'.$tag, null);
+            $workload[$tag]['eyewitness_q_process_count'] = Cache::get('eyewitness_q_process_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_exception_count'] = Cache::get('eyewitness_q_exception_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_wait_time'] = Cache::get('eyewitness_q_wait_time_'.$connection.'_'.$tube.'_'.$tag, null);
+            $workload[$tag]['eyewitness_q_wait_count'] = Cache::get('eyewitness_q_wait_count_'.$connection.'_'.$tube.'_'.$tag, 0);
+            $workload[$tag]['eyewitness_q_latest_wait_time'] = Cache::get('eyewitness_q_latest_wait_time_'.$connection.'_'.$tube.'_'.$tag, null);
+        }
+
+        return $workload;
     }
 
     /**
@@ -163,29 +187,6 @@ class Queue
         }
 
         return $name;
-    }
-
-    /**
-     * Get the cache workload results of the queue.
-     *
-     * @param  string  $connection
-     * @param  string  $tube
-     * @return array
-     */
-    public function getQueueWorkload($connection, $tube)
-    {
-        for ($i=0; $i<2; $i++) {
-            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
-
-            $workload[$tag]['eyewitness_q_process_time'] = Cache::get('eyewitness_q_process_time_'.$connection.'_'.$tube.'_'.$tag, null);
-            $workload[$tag]['eyewitness_q_process_count'] = Cache::get('eyewitness_q_process_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_q_exception_count'] = Cache::get('eyewitness_q_exception_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_q_wait_time'] = Cache::get('eyewitness_q_wait_time_'.$connection.'_'.$tube.'_'.$tag, null);
-            $workload[$tag]['eyewitness_q_wait_count'] = Cache::get('eyewitness_q_wait_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_q_sonar_deployed'] = Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, false);
-        }
-
-        return $workload;
     }
 
     /**

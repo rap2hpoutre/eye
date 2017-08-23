@@ -23,7 +23,7 @@ class Worker extends OriginalWorker
      */
     public function process($connectionName, $job, WorkerOptions $options)
     {
-        $start_time = microtime(true);
+        $startTime = microtime(true);
         $tag = gmdate('Y_m_d_H');
 
         try {
@@ -33,7 +33,7 @@ class Worker extends OriginalWorker
         } catch (Throwable $e) {
             $this->recordJobException($tag, $e);
         } finally {
-            $this->recordJobEnd($start_time, $tag);
+            $this->recordJobEnd($startTime, $tag);
         }
     }
 }

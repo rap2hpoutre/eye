@@ -12,7 +12,7 @@ class WorkerLegacy extends OriginalWorker
     use WorkerTrait;
 
     /**
-     * Process a given job from the queue.
+     * We wrap the standard job processor, and add our tracking code around it.
      *
      * @param  string  $connection
      * @param  \Illuminate\Contracts\Queue\Job  $job
@@ -24,17 +24,20 @@ class WorkerLegacy extends OriginalWorker
      */
     public function process($connection, Job $job, $maxTries = 0, $delay = 0)
     {
-        $start_time = microtime(true);
+        $startTime = microtime(true);
         $tag = gmdate('Y_m_d_H');
+        $result = null;
 
         try {
-            parent::process($connection, $job, $maxTries, $delay);
+            $result = parent::process($connection, $job, $maxTries, $delay);
         } catch (Exception $e) {
             $this->recordJobException($tag, $e);
         } catch (Throwable $e) {
             $this->recordJobException($tag, $e);
         } finally {
-            $this->recordJobEnd($start_time, $tag);
+            $this->recordJobEnd($startTime, $tag);
         }
+
+        return $result;
     }
 }

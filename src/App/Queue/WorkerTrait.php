@@ -69,16 +69,16 @@ trait WorkerTrait
     /**
      * Record the end of the job details.
      *
-     * @param  float  $start_time
+     * @param  float  $startTime
      * @param  string  $tag
      * @return void
      */
-    public function recordJobEnd($start_time, $tag)
+    public function recordJobEnd($startTime, $tag)
     {
-        $end_time = round((microtime(true) - $start_time)*1000);
+        $endTime = round((microtime(true) - $startTime)*1000);
 
         Cache::add('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, 0, 180);
-        Cache::increment('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, $end_time);
+        Cache::increment('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, $endTime);
         Cache::add('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, 0, 180);
         Cache::increment('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag);
     }
