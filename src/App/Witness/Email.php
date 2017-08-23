@@ -4,7 +4,6 @@ namespace Eyewitness\Eye\App\Witness;
 
 use Illuminate\Support\Facades\Log as LogFacade;
 use Eyewitness\Eye\App\Mail\PingEyewitness;
-use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Exception;
@@ -56,24 +55,6 @@ class Email
             }
         } catch (Exception $e) {
             LogFacade::error('Unable to send Eyewitness.io email for token: '.config('eyewitness.app_token').' : '.$e->getMessage());
-        }
-    }
-
-    /**
-     * Log the emails numbers being sent.
-     *
-     * @return void
-     */
-    public function logEmail()
-    {
-        if (laravel_version_is('<', '5.2.0')) {
-            app('events')->listen('mailer.sending', function ($message) {
-                $this->incrementCacheCounter();
-            });
-        } else {
-            app('events')->listen(MessageSending::class, function ($message) {
-                $this->incrementCacheCounter();
-            });
         }
     }
 

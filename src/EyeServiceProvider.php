@@ -23,6 +23,7 @@ use Eyewitness\Eye\App\Commands\DownCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Eyewitness\Eye\App\Commands\UpCommand;
 use Eyewitness\Eye\App\Queue\WorkerLegacy;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Events\JobFailed;
 use Eyewitness\Eye\App\Queue\Worker;
@@ -111,7 +112,15 @@ class EyeServiceProvider extends ServiceProvider
     protected function loadEmailTracking()
     {
         if (config('eyewitness.monitor_email')) {
-            app(Eye::class)->email()->logEmail();
+            if (laravel_version_is('<', '5.2.0')) {
+                app('events')->listen('mailer.sending', function ($message) {
+                    app(Eye::class)->email()->incrementCacheCounter();
+                });
+            } else {
+                app('events')->listen(MessageSending::class, function ($message) {
+                    app(Eye::class)->email()->incrementCacheCounter();
+                });
+            }
         }
     }
 

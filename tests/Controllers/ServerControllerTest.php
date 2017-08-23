@@ -73,7 +73,7 @@ class ServerControllerTest extends TestCase
         $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
@@ -93,13 +93,34 @@ class ServerControllerTest extends TestCase
         $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
 
         $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'application_environment' => 'testing', 'application_debug' => '1', 'eyewitness_config' => config('eyewitness'), 'scheduler' => ['example' => 'list']]), $response->getContent());
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function test_email()
+    {
+        $this->app['config']->set('eyewitness.monitor_email', true);
+
+        $this->server->shouldReceive('check')->once()->andReturn(['php' => 'example']);
+        $this->email->shouldReceive('check')->once()->andReturn(['email' => 'testing']);
+        $this->email->shouldReceive('send')->once();
+
+        $this->scheduler->shouldReceive('check')->never();
+        $this->queue->shouldReceive('check')->never();
+        $this->database->shouldReceive('check')->never();
+        $this->request->shouldReceive('check')->never();
+        $this->disk->shouldReceive('check')->never();
+        $this->log->shouldReceive('check')->never();
+
+        $response = $this->call('GET', $this->api.'server'.$this->auth);
+
+        $this->assertEquals(json_encode(['server_stats' => ['php' => 'example'], 'eyewitness_version' => Eye::EYE_VERSION, 'application_environment' => 'testing', 'application_debug' => '1', 'eyewitness_config' => config('eyewitness'), 'email_stats' => ['email' => 'testing']]), $response->getContent());
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -114,7 +135,7 @@ class ServerControllerTest extends TestCase
         $this->scheduler->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
@@ -134,7 +155,7 @@ class ServerControllerTest extends TestCase
         $this->scheduler->shouldReceive('check')->never();
         $this->queue->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
@@ -154,7 +175,7 @@ class ServerControllerTest extends TestCase
         $this->scheduler->shouldReceive('check')->never();
         $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
@@ -175,7 +196,7 @@ class ServerControllerTest extends TestCase
         $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->log->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
@@ -195,7 +216,7 @@ class ServerControllerTest extends TestCase
         $this->queue->shouldReceive('check')->never();
         $this->database->shouldReceive('check')->never();
         $this->request->shouldReceive('check')->never();
-        $this->email->shouldReceive('send')->never();
+        $this->email->shouldReceive('check')->never();
         $this->disk->shouldReceive('check')->never();
 
         $response = $this->call('GET', $this->api.'server'.$this->auth);
