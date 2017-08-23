@@ -8,6 +8,7 @@ use Eyewitness\Eye\App\Jobs\SonarLegacy;
 use Illuminate\Support\Facades\Cache;
 use Eyewitness\Eye\App\Jobs\Sonar;
 use Illuminate\Queue\QueueManager;
+use Eyewitness\Eye\Eye;
 use Exception;
 
 class Queue
@@ -74,6 +75,24 @@ class Queue
         $stats['sonar_deployed'] = time()-Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time());
 
         return $stats;
+    }
+
+    /**
+     * Handle a failing queue notification.
+     *
+     * @param  string  $connection
+     * @param  string  $name
+     * @param  string  $tube
+     */
+    public function failedQueue($connection, $name, $tube)
+    {
+        if (Cache::has('eyewitness_debounce_failed_queue')) {
+            return;
+        }
+
+        Cache::add('eyewitness_debounce_failed_queue', 1, 3);
+
+        app(Eye::class)->api()->sendQueueFailingPing($connection, $name, $tube);
     }
 
     /**

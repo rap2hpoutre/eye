@@ -241,15 +241,15 @@ class EyeServiceProvider extends ServiceProvider
     {
         if (laravel_version_is('<', '5.2.0')) {
             app(QueueManager::class)->failing(function ($connection, $job, $data) {
-                app(Eye::class)->api()->sendQueueFailingPing($connection,
-                                                             app(Eye::class)->queue()->resolveLegacyName($job),
-                                                             $job->getQueue());
+                app(Eye::class)->queue()->failedQueue($connection,
+                                                      app(Eye::class)->queue()->resolveLegacyName($job),
+                                                      $job->getQueue());
             });
         } else {
             app(QueueManager::class)->failing(function (JobFailed $e) {
-                app(Eye::class)->api()->sendQueueFailingPing($e->connectionName,
-                                                             $e->job->resolveName(),
-                                                             $e->job->getQueue());
+                app(Eye::class)->queue()->failedQueue($e->connectionName,
+                                                      $e->job->resolveName(),
+                                                      $e->job->getQueue());
             });
         }
     }

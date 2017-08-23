@@ -131,7 +131,7 @@ class Api
      * @param  string  $message
      * @return void
      */
-    public function sendExceptionAlert($level, $message)
+    public function sendExceptionAlert($level, $message = null)
     {
         $this->ping('log/exception', ['level' => $level,
                                       'message' => $message]);

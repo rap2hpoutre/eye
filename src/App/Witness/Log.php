@@ -38,6 +38,14 @@ class Log
                 $tag = gmdate('Y_m_d_H');
                 Cache::add('eyewitness_error_count_'.$tag, 0, 100);
                 Cache::increment('eyewitness_error_count_'.$tag, 1);
+
+                if (Cache::has('eyewitness_debounce_exception_alert')) {
+                    return;
+                }
+
+                Cache::add('eyewitness_debounce_exception_alert', 1, 3);
+
+                app(Eye::class)->api()->sendExceptionAlert($level);
             }
         } catch (Exception $e) {
             // if we cant log - do nothing to prevent loops
