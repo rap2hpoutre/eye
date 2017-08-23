@@ -12,6 +12,7 @@
 - Track volume of emails sent by application
 
 ### Fixed
+- Allow scheduler ping to only run from one server
 
 ### Changed
 - Refactored structure layout of package
