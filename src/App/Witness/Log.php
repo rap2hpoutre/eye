@@ -25,7 +25,7 @@ class Log
     /**
      * Get the exception error and send to Eyewitness server.
      *
-     * @return array
+     * @return void
      */
     public function logError($level)
     {
