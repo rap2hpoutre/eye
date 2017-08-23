@@ -24,7 +24,7 @@ class Disk
      */
     public function checkTotalDiskSpace()
     {
-        return disk_total_space(base_path())/1024/1024/1024;
+        return round(disk_total_space(base_path())/1024/1024/1024, 4);
     }
 
     /**
@@ -34,6 +34,6 @@ class Disk
      */
     public function checkDiskFreeSpace()
     {
-        return disk_free_space(base_path())/1024/1024/1024;
+        return round(disk_free_space(base_path())/1024/1024/1024, 4);
     }
 }
