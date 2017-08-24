@@ -17,7 +17,7 @@ class Log
      */
     public function check()
     {
-        $data['logs'] = $this->getErrorHistory();
+        $data['error_count'] = $this->getErrorCount();
 
         return $data;
     }
@@ -35,9 +35,8 @@ class Log
             }
 
             if (in_array($level, ['emergency', 'alert', 'critical', 'error'])) {
-                $tag = gmdate('Y_m_d_H');
-                Cache::add('eyewitness_error_count_'.$tag, 0, 100);
-                Cache::increment('eyewitness_error_count_'.$tag, 1);
+                Cache::add('eyewitness_error_count', 0, 180);
+                Cache::increment('eyewitness_error_count', 1);
 
                 if (Cache::has('eyewitness_debounce_exception_alert')) {
                     return;
@@ -53,18 +52,13 @@ class Log
     }
 
     /**
-     * Get the error count for the server for the past hours (if tracked).
+     * Get the number of logged errors the application since the last poll.
      *
      * @return array
      */
-    public function getErrorHistory()
+    public function getErrorCount()
     {
-        for ($i=0; $i<2; $i++) {
-            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
-            $history[$tag] = Cache::get('eyewitness_error_count_'.$tag, 0);
-        }
-
-        return $history;
+        return Cache::pull('eyewitness_error_count');
     }
 
     /**
