@@ -73,8 +73,8 @@ class Queue
         $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
         $stats['exception_count'] = Cache::pull('eyewitness_q_exception_count_'.$connection.'_'.$tube);
         $stats['sonar_deployed'] = time()-Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time());
-
-        $stats['process_time'] = $this->calculateTime(Cache::pull('eyewitness_q_process_time_'.$connection.'_'.$tube), Cache::pull('eyewitness_q_process_count_'.$connection.'_'.$tube));
+        $stats['process_count'] = Cache::pull('eyewitness_q_process_count_'.$connection.'_'.$tube);
+        $stats['process_time'] = $this->calculateTime(Cache::pull('eyewitness_q_process_time_'.$connection.'_'.$tube), $stats['process_count']);
         $stats['wait_time'] = $this->calculateTime(Cache::pull('eyewitness_q_wait_time_'.$connection.'_'.$tube), Cache::pull('eyewitness_q_wait_count_'.$connection.'_'.$tube));
         $stats['idle_time'] = Cache::pull('eyewitness_q_idle_time_'.$connection.'_'.$tube);
 
