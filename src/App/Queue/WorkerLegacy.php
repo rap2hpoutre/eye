@@ -25,17 +25,16 @@ class WorkerLegacy extends OriginalWorker
     public function process($connection, Job $job, $maxTries = 0, $delay = 0)
     {
         $startTime = microtime(true);
-        $tag = gmdate('Y_m_d_H');
         $result = null;
 
         try {
             $result = parent::process($connection, $job, $maxTries, $delay);
         } catch (Exception $e) {
-            $this->recordJobException($tag, $e);
+            $this->recordJobException($e);
         } catch (Throwable $e) {
-            $this->recordJobException($tag, $e);
+            $this->recordJobException($e);
         } finally {
-            $this->recordJobEnd($startTime, $tag);
+            $this->recordJobEnd($startTime);
         }
 
         return $result;

@@ -24,16 +24,15 @@ class Worker extends OriginalWorker
     public function process($connectionName, $job, WorkerOptions $options)
     {
         $startTime = microtime(true);
-        $tag = gmdate('Y_m_d_H');
 
         try {
             parent::process($connectionName, $job, $options);
         } catch (Exception $e) {
-            $this->recordJobException($tag, $e);
+            $this->recordJobException($e);
         } catch (Throwable $e) {
-            $this->recordJobException($tag, $e);
+            $this->recordJobException($e);
         } finally {
-            $this->recordJobEnd($startTime, $tag);
+            $this->recordJobEnd($startTime);
         }
     }
 }

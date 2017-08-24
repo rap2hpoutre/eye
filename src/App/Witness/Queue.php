@@ -25,7 +25,7 @@ class Queue
         try {
             foreach ($this->tubes() as $connection => $tubes) {
                 foreach ($tubes as $tube) {
-                    $stats[] = $this->tubeStats($connection, $tube);
+                    $stats[$connection][$tube] = $this->tubeStats($connection, $tube);
                 }
             }
         } catch (Exception $e) {
@@ -45,12 +45,12 @@ class Queue
         foreach ($this->tubes() as $connection => $tubes) {
             foreach ($tubes as $tube) {
                 if (! Cache::has('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube)) {
-                    if (laravel_version_is('<', '5.1.0')) {
-                        QueueFacade::connection($connection)->pushOn($tube, new SonarLegacy50($connection, $tube));
-                    } elseif (laravel_version_is('<', '5.2.0')) {
-                        QueueFacade::connection($connection)->pushOn($tube, new SonarLegacy($connection, $tube));
-                    } else {
+                    if (laravel_version_is('>=', '5.2.0')) {
                         QueueFacade::connection($connection)->pushOn($tube, new Sonar($connection, $tube));
+                    } elseif (laravel_version_is('<', '5.1.0')) {
+                        QueueFacade::connection($connection)->pushOn($tube, new SonarLegacy50($connection, $tube));
+                    } else {
+                        QueueFacade::connection($connection)->pushOn($tube, new SonarLegacy($connection, $tube));
                     }
                     Cache::put('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time(), 180);
                 }
@@ -67,11 +67,15 @@ class Queue
      */
     public function tubeStats($connection, $tube)
     {
-        $stats['connection'] = $connection;
-        $stats['tube'] = $tube;
-        $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
         $stats['failed_count'] = $this->getFailedJobsCount($connection, $tube);
-        $stats['workload'] = $this->getQueueWorkload($connection, $tube);
+        $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
+        $stats['process_time'] = Cache::pull('eyewitness_q_process_time_'.$connection.'_'.$tube);
+        $stats['process_count'] = Cache::pull('eyewitness_q_process_count_'.$connection.'_'.$tube);
+        $stats['exception_count'] = Cache::pull('eyewitness_q_exception_count_'.$connection.'_'.$tube);
+        $stats['wait_time'] = Cache::pull('eyewitness_q_wait_time_'.$connection.'_'.$tube);
+        $stats['wait_count'] = Cache::pull('eyewitness_q_wait_count_'.$connection.'_'.$tube);
+        $stats['idle_time'] = Cache::pull('eyewitness_q_idle_time_'.$connection.'_'.$tube);
+        $stats['wait_time'] = Cache::pull('eyewitness_q_current_wait_time_'.$connection.'_'.$tube);
         $stats['sonar_deployed'] = time()-Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time());
 
         return $stats;
@@ -93,20 +97,6 @@ class Queue
         Cache::add('eyewitness_debounce_failed_queue', 1, 3);
 
         app(Eye::class)->api()->sendQueueFailingPing($connection, $name, $tube);
-    }
-
-    /**
-     * Count the number of failed jobs.
-     *
-     * @param  string  $connection
-     * @param  string  $tube
-     * @return int
-     */
-    protected function getFailedJobsCount($connection, $tube)
-    {
-        return $this->getFailedJobs()->where('queue', $tube)
-                                     ->where('connection', $connection)
-                                     ->count();
     }
 
     /**
@@ -136,26 +126,17 @@ class Queue
     }
 
     /**
-     * Get the cache workload results of the queue.
+     * Count the number of failed jobs.
      *
      * @param  string  $connection
      * @param  string  $tube
-     * @return array
+     * @return int
      */
-    public function getQueueWorkload($connection, $tube)
+    protected function getFailedJobsCount($connection, $tube)
     {
-        for ($i=0; $i<2; $i++) {
-            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
-
-            $workload[$tag]['eyewitness_q_process_time'] = Cache::get('eyewitness_q_process_time_'.$connection.'_'.$tube.'_'.$tag, null);
-            $workload[$tag]['eyewitness_q_process_count'] = Cache::get('eyewitness_q_process_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_q_exception_count'] = Cache::get('eyewitness_q_exception_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_q_wait_time'] = Cache::get('eyewitness_q_wait_time_'.$connection.'_'.$tube.'_'.$tag, null);
-            $workload[$tag]['eyewitness_q_wait_count'] = Cache::get('eyewitness_q_wait_count_'.$connection.'_'.$tube.'_'.$tag, 0);
-            $workload[$tag]['eyewitness_q_latest_wait_time'] = Cache::get('eyewitness_q_latest_wait_time_'.$connection.'_'.$tube.'_'.$tag, null);
-        }
-
-        return $workload;
+        return $this->getFailedJobs()->where('queue', $tube)
+                                     ->where('connection', $connection)
+                                     ->count();
     }
 
     /**

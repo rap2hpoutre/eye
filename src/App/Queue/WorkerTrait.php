@@ -22,6 +22,13 @@ trait WorkerTrait
     protected $eyeTube;
 
     /**
+     * The list of all tubes being processed.
+     *
+     * @var string
+     */
+    protected $eyeQueues;
+
+    /**
      * Extend the worker and place a heartbeat as it is processing. Then
      * simply "feed" the tubes into the next job parent. This provides
      * the exact same functionality, but this way we know exactly
@@ -34,14 +41,15 @@ trait WorkerTrait
     protected function getNextJob($connection, $queue)
     {
         $this->eyeConnection = config('eyewitness.temp_connection_name', 'default');
+        $this->eyeQueues = explode(',', $queue);
 
         if ($this->cache) {
-            foreach (explode(',', $queue) as $tube) {
+            foreach ($this->eyeQueues as $tube) {
                 $this->eyewitnessHeartBeat($tube);
             }
         }
 
-        foreach (explode(',', $queue) as $tube) {
+        foreach ($this->eyeQueues as $tube) {
             $job = parent::getNextJob($connection, $tube);
 
             if (! is_null($job)) {
@@ -70,33 +78,49 @@ trait WorkerTrait
      * Record the end of the job details.
      *
      * @param  float  $startTime
-     * @param  string  $tag
      * @return void
      */
-    public function recordJobEnd($startTime, $tag)
+    public function recordJobEnd($startTime)
     {
         $endTime = round((microtime(true) - $startTime)*1000);
 
-        Cache::add('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, 0, 180);
-        Cache::increment('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, $endTime);
-        Cache::add('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, 0, 180);
-        Cache::increment('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag);
+        Cache::add('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
+        Cache::increment('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube, $endTime);
+        Cache::add('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
+        Cache::increment('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube);
     }
 
     /**
      * Record the exeception count.
      *
-     * @param  string  $tag
      * @param  string  $exception
      * @return void
      *
      * @throws \Throwable
      */
-    public function recordJobException($tag, $exception)
+    public function recordJobException($exception)
     {
-        Cache::add('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag, 0, 180);
-        Cache::increment('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube.'_'.$tag);
+        Cache::add('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
+        Cache::increment('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube);
 
         throw $exception;
+    }
+
+    /**
+     * Capture how long a worker is sleeping for. We need to cycle all tubes this worker check to
+     * give each of them credit for the sleep. This allows us to handle different worker configurations
+     * and should cover all situations.
+     *
+     * @param  int   $seconds
+     * @return void
+     */
+    public function sleep($seconds)
+    {
+        foreach ($this->eyeQueues as $tube) {
+            Cache::add('eyewitness_q_idle_time_'.$this->eyeConnection.'_'.$tube, 0, 180);
+            Cache::increment('eyewitness_q_idle_time_'.$this->eyeConnection.'_'.$tube, $seconds);
+        }
+
+        parent::sleep($seconds);
     }
 }
