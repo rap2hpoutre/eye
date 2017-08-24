@@ -13,24 +13,20 @@ class Request
      */
     public function check()
     {
-        $data['requests'] = $this->getRequestHistory();
+        $data['history'] = $this->getRequestHistory();
 
         return $data;
     }
 
     /**
-     * Get the requests for the server for the past hour (if tracked).
+     * Get the request history for the server since the last poll.
      *
      * @return array
      */
     public function getRequestHistory()
     {
-        for ($i=0; $i<2; $i++) {
-            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
-
-            $history[$tag]['request_count'] = Cache::get('eyewitness_request_count_'.$tag, 0);
-            $history[$tag]['total_execution_time'] = Cache::get('eyewitness_total_execution_time_'.$tag, 0);
-        }
+        $history['request_count'] = Cache::pull('eyewitness_request_count');
+        $history['total_execution_time'] = Cache::pull('eyewitness_total_execution_time');
 
         return $history;
     }

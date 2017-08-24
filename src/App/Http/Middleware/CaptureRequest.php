@@ -8,13 +8,6 @@ use Closure;
 class CaptureRequest
 {
     /**
-     * How many minutes to cache the results.
-     *
-     * @var int
-     */
-    public $cacheMinutes = 180;
-
-    /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -35,40 +28,36 @@ class CaptureRequest
      */
     public function terminate($request, $response)
     {
-        $tag = gmdate('Y_m_d_H');
-
-        $this->incrementRequestCount($tag);
-        $this->incrementCycleTime($tag, $this->getCycleTime($request));
+        $this->incrementRequestCount();
+        $this->incrementCycleTime($this->getCycleTime($request));
     }
 
     /**
      * Increment the total request count.
      *
-     * @param  string  $tag
      * @return void
      */
-    protected function incrementRequestCount($tag)
+    protected function incrementRequestCount()
     {
-        Cache::add('eyewitness_request_count_'.$tag, 0, $this->cacheMinutes);
-        Cache::increment('eyewitness_request_count_'.$tag, 1);
+        Cache::add('eyewitness_request_count', 0, 180);
+        Cache::increment('eyewitness_request_count', 1);
     }
 
     /**
      * Increment the total cycle time count.
      *
-     * @param  string  $tag
-     * @param  integer $cycle_time
+     * @param  integer $cycleTime
      * @return void
      */
-    protected function incrementCycleTime($tag, $cycle_time)
+    protected function incrementCycleTime($cycleTime)
     {
-        Cache::add('eyewitness_total_execution_time_'.$tag, 0, $this->cacheMinutes);
-        Cache::increment('eyewitness_total_execution_time_'.$tag, $cycle_time);
+        Cache::add('eyewitness_total_execution_time', 0, 180);
+        Cache::increment('eyewitness_total_execution_time', $cycleTime);
     }
 
     /**
-     * Get the start time for this request cycle. Increments must
-     * be "whole" numbers - so we also return an integer.
+     * Get the start time for this request cycle. Increments must be "whole" numbers
+     * so we also return an integer.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return integer

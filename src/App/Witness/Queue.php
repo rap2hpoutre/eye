@@ -210,7 +210,11 @@ class Queue
         return config('eyewitness.queue_tube_list');
     }
 
-
+    /**
+     * Calculate the times based upon the cout.
+     *
+     * @return float
+     */
     protected function calculateTime($time, $count)
     {
         if (is_null($time) || is_null($count) || $count < 1) {
