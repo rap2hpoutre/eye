@@ -9,6 +9,7 @@ Route::group(['prefix' => 'eyewitness_api/v1', 'middleware' => 'eyewitness_auth'
     Route::get('composer',                      'ComposerController@ping');
 
     Route::get('server',                        'ServerController@ping');
+    Route::get('config',                        'ServerController@config');
 
     Route::get('log',                           'LogController@index');
     Route::get('log/show',                      'LogController@show');

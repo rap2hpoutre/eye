@@ -144,11 +144,7 @@ class Eye
      */
     public function runAllChecks($email = true)
     {
-        $data['server_stats'] = $this->server()->check();
-        $data['eyewitness_version'] = $this->version();
-        $data['application_environment'] = app()->environment();
-        $data['application_debug'] =  config('app.debug');
-        $data['eyewitness_config'] = config('eyewitness');
+        $data = $this->getConfig();
 
         if (config('eyewitness.monitor_database')) {
             $data['db_stats'] = $this->database()->check();
@@ -181,6 +177,22 @@ class Eye
         if (config('eyewitness.monitor_log')) {
             $data['log_stats'] = $this->log()->check();
         }
+
+        return $data;
+    }
+
+    /**
+     * Get current configuration.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        $data['server_stats'] = $this->server()->check();
+        $data['eyewitness_version'] = $this->version();
+        $data['application_environment'] = app()->environment();
+        $data['application_debug'] =  config('app.debug');
+        $data['eyewitness_config'] = config('eyewitness');
 
         return $data;
     }
