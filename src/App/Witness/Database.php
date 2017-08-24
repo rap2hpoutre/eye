@@ -14,15 +14,9 @@ class Database
      */
     public function check()
     {
-        if (is_array(config('eyewitness.database_connections'))) {
-            $connections = config('eyewitness.database_connections');
-        } else {
-            $connections = [config('database.default')];
-        }
-
         $data = [];
 
-        foreach ($connections as $connection) {
+        foreach ($this->getMonitoredDatabases() as $connection) {
             try {
                 $data[] = ['connection' => $connection,
                            'driver' => $this->getDriverName($connection),
@@ -148,5 +142,19 @@ class Database
     protected function getDriverName($connection)
     {
         return DB::connection($connection)->getDriverName();
+    }
+
+    /**
+     * Get the list of databases we are monitoring.
+     *
+     * @return array
+     */
+    protected function getMonitoredDatabases()
+    {
+        if (is_array(config('eyewitness.database_connections'))) {
+            return config('eyewitness.database_connections');
+        }
+
+        return [config('database.default')];
     }
 }

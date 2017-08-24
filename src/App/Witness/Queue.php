@@ -25,7 +25,7 @@ class Queue
         try {
             foreach ($this->tubes() as $connection => $tubes) {
                 foreach ($tubes as $tube) {
-                    $stats[$connection][$tube] = $this->tubeStats($connection, $tube);
+                    $stats[] = $this->tubeStats($connection, $tube);
                 }
             }
         } catch (Exception $e) {
@@ -67,6 +67,8 @@ class Queue
      */
     public function tubeStats($connection, $tube)
     {
+        $stats['connection'] = $connection;
+        $stats['tube'] = $tube;
         $stats['failed_count'] = $this->getFailedJobsCount($connection, $tube);
         $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
         $stats['process_time'] = Cache::pull('eyewitness_q_process_time_'.$connection.'_'.$tube);
