@@ -30,12 +30,12 @@ class Scheduler
         $events = array_map(function ($event) {
             $e = $this->convertEvent($event);
             return [
-                'cron' => $event->expression,
-                'command' => $event->command,
-                'timezone' => $event->timezone,
-                'mutex' => $event->mutexName(),
-                'background' => $event->runInBackground,
-                'overlapping' => $event->withoutOverlapping];
+                'cron' => $e->expression,
+                'command' => $e->command,
+                'timezone' => $e->timezone,
+                'mutex' => $e->mutexName(),
+                'background' => $e->runInBackground,
+                'overlapping' => $e->withoutOverlapping];
         }, $schedule->events());
 
         return $events;

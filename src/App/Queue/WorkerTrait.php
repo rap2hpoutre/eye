@@ -2,7 +2,6 @@
 
 namespace Eyewitness\Eye\App\Queue;
 
-use Illuminate\Support\Facades\Cache;
 use Eyewitness\Eye\Eye;
 
 trait WorkerTrait
@@ -84,10 +83,10 @@ trait WorkerTrait
     {
         $endTime = round((microtime(true) - $startTime)*1000);
 
-        Cache::add('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
-        Cache::increment('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube, $endTime);
-        Cache::add('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
-        Cache::increment('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube);
+        $this->cache->add('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
+        $this->cache->increment('eyewitness_q_process_time_'.$this->eyeConnection.'_'.$this->eyeTube, $endTime);
+        $this->cache->add('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
+        $this->cache->increment('eyewitness_q_process_count_'.$this->eyeConnection.'_'.$this->eyeTube);
     }
 
     /**
@@ -100,8 +99,8 @@ trait WorkerTrait
      */
     public function recordJobException($exception)
     {
-        Cache::add('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
-        Cache::increment('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube);
+        $this->cache->add('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube, 0, 180);
+        $this->cache->increment('eyewitness_q_exception_count_'.$this->eyeConnection.'_'.$this->eyeTube);
 
         throw $exception;
     }
@@ -117,8 +116,8 @@ trait WorkerTrait
     public function sleep($seconds)
     {
         foreach ($this->eyeQueues as $tube) {
-            Cache::add('eyewitness_q_idle_time_'.$this->eyeConnection.'_'.$tube, 0, 180);
-            Cache::increment('eyewitness_q_idle_time_'.$this->eyeConnection.'_'.$tube, $seconds);
+            $this->cache->add('eyewitness_q_idle_time_'.$this->eyeConnection.'_'.$tube, 0, 180);
+            $this->cache->increment('eyewitness_q_idle_time_'.$this->eyeConnection.'_'.$tube, $seconds);
         }
 
         parent::sleep($seconds);

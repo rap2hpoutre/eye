@@ -35,8 +35,7 @@ class WorkerLegacy extends OriginalWorker
             $this->recordJobException($e);
         } finally {
             $this->recordJobEnd($startTime);
+            return $result;
         }
-
-        return $result;
     }
 }
