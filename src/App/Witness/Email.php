@@ -23,19 +23,13 @@ class Email
     }
 
     /**
-     * Get the number of emails sent by the application for the past hour (if tracked).
+     * Get the number of emails sent by the application since the last poll.
      *
-     * @return array
+     * @return mixed
      */
     public function getSendHistory()
     {
-        for ($i=0; $i<2; $i++) {
-            $tag = gmdate('Y_m_d_H', time() - (3600*$i));
-
-            $history[$tag] = Cache::get('eyewitness_mail_send_count_'.$tag, 0);
-        }
-
-        return $history;
+        return Cache::pull('eyewitness_mail_send_count');
     }
 
     /**
@@ -65,9 +59,8 @@ class Email
      */
     public function incrementCacheCounter()
     {
-        $tag = gmdate('Y_m_d_H');
-        Cache::add('eyewitness_mail_send_count_'.$tag, 0, 180);
-        Cache::increment('eyewitness_mail_send_count_'.$tag, 1);
+        Cache::add('eyewitness_mail_send_count', 0, 180);
+        Cache::increment('eyewitness_mail_send_count', 1);
     }
 
     /**

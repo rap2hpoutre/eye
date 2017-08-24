@@ -71,14 +71,12 @@ class Queue
         $stats['tube'] = $tube;
         $stats['failed_count'] = $this->getFailedJobsCount($connection, $tube);
         $stats['pending_count'] = $this->getPendingJobsCount($connection, $tube);
-        $stats['process_time'] = Cache::pull('eyewitness_q_process_time_'.$connection.'_'.$tube);
-        $stats['process_count'] = Cache::pull('eyewitness_q_process_count_'.$connection.'_'.$tube);
         $stats['exception_count'] = Cache::pull('eyewitness_q_exception_count_'.$connection.'_'.$tube);
-        $stats['wait_time'] = Cache::pull('eyewitness_q_wait_time_'.$connection.'_'.$tube);
-        $stats['wait_count'] = Cache::pull('eyewitness_q_wait_count_'.$connection.'_'.$tube);
-        $stats['idle_time'] = Cache::pull('eyewitness_q_idle_time_'.$connection.'_'.$tube);
-        $stats['wait_time'] = Cache::pull('eyewitness_q_current_wait_time_'.$connection.'_'.$tube);
         $stats['sonar_deployed'] = time()-Cache::get('eyewitness_q_sonar_deployed_'.$connection.'_'.$tube, time());
+
+        $stats['process_time'] = $this->calculateTime(Cache::pull('eyewitness_q_process_time_'.$connection.'_'.$tube), Cache::pull('eyewitness_q_process_count_'.$connection.'_'.$tube));
+        $stats['wait_time'] = $this->calculateTime(Cache::pull('eyewitness_q_wait_time_'.$connection.'_'.$tube), Cache::pull('eyewitness_q_wait_count_'.$connection.'_'.$tube));
+        $stats['idle_time'] = Cache::pull('eyewitness_q_idle_time_'.$connection.'_'.$tube);
 
         return $stats;
     }
@@ -210,6 +208,16 @@ class Queue
     public function tubes()
     {
         return config('eyewitness.queue_tube_list');
+    }
+
+
+    protected function calculateTime($time, $count)
+    {
+        if (is_null($time) || is_null($count) || $count < 1) {
+            return null;
+        }
+
+        return round($time/$count/1000, 2);
     }
 }
 

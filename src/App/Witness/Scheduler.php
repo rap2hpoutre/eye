@@ -2,10 +2,13 @@
 
 namespace Eyewitness\Eye\App\Witness;
 
+use Eyewitness\Eye\App\Scheduling\CustomEvents;
 use Illuminate\Console\Scheduling\Schedule;
 
 class Scheduler
 {
+    use CustomEvents;
+
     /**
      * Get all the scheduler checks.
      *
@@ -25,11 +28,14 @@ class Scheduler
         $schedule = app(Schedule::class);
 
         $events = array_map(function ($event) {
+            $e = $this->convertEvent($event);
             return [
                 'cron' => $event->expression,
                 'command' => $event->command,
                 'timezone' => $event->timezone,
-            ];
+                'mutex' => $event->mutexName(),
+                'background' => $event->runInBackground,
+                'overlapping' => $event->withoutOverlapping];
         }, $schedule->events());
 
         return $events;
