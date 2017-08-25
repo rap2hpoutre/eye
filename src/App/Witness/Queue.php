@@ -221,7 +221,7 @@ class Queue
             return null;
         }
 
-        return round($time/$count/1000, 2);
+        return round($time/$count/1000, 4);
     }
 }
 
