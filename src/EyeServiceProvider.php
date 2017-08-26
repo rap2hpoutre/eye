@@ -162,7 +162,7 @@ class EyeServiceProvider extends ServiceProvider
             if (laravel_version_is('>=', '5.4.0')) {
                 $this->loadMigrationsFrom(__DIR__.'/migrations');
             } else {
-                $this->publishes([__DIR__.'/migrations/' => database_path('migrations')], 'migrations');
+                $this->publishes([__DIR__.'/migrations/' => database_path('migrations')], 'eyewitness');
             }
         }
 
