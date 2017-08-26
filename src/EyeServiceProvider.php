@@ -158,6 +158,14 @@ class EyeServiceProvider extends ServiceProvider
     {
         $this->publishes([__DIR__.'/config/eyewitness.php' => config_path('eyewitness.php')]);
 
+        if (config('eyewitness.monitor_database_replication')) {
+            if (laravel_version_is('>=', '5.4.0')) {
+                $this->loadMigrationsFrom(__DIR__.'/migrations');
+            } else {
+                $this->publishes([__DIR__.'/migrations/' => database_path('migrations')], 'migrations');
+            }
+        }
+
         $this->commands([InstallCommand::class,
                          BackgroundRunCommand::class,
                          PollCommand::class,

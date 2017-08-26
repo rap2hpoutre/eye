@@ -17,17 +17,11 @@ class Database
         $data = [];
 
         foreach ($this->getMonitoredDatabases() as $connection) {
-            try {
-                $data[] = ['connection' => $connection,
-                           'driver' => $this->getDriverName($connection),
-                           'status' => $this->checkDatabaseStatus($connection),
-                           'size' => $this->getDatabaseSize($connection)];
-            } catch (Exception $e) {
-                $data[] = ['connection' => $connection,
-                           'driver' => 'unknown',
-                           'status' => false,
-                           'size' => -1];
-            }
+            $data[] = ['connection' => $connection,
+                       'driver' => $this->getDriverName($connection),
+                       'status' => $this->checkDatabaseStatus($connection),
+                       'size' => $this->getDatabaseSize($connection),
+                       'replication' => $this->checkReplication($connection)];
         }
 
         return $data;
@@ -58,7 +52,7 @@ class Database
      */
     protected function getDatabaseSize($connection)
     {
-        switch($this->getDriverName($connection)) {
+        switch ($this->getDriverName($connection)) {
             case 'mysql':
                 $size = $this->checkMySqlDatabaseSize($connection);
                 break;
@@ -134,6 +128,50 @@ class Database
     }
 
     /**
+     * Check if database replication is working.
+     *
+     * @param  string  $connection
+     * @return bool
+     */
+    protected function checkReplication($connection)
+    {
+        if (! config('eyewitness.monitor_database_replication') ||
+            is_null(app('config')["database.connections.$connection.read"]) ||
+            is_null(app('config')["database.connections.$connection.read"])) {
+            return null;
+        }
+
+        $sticky = app('config')["database.connections.$connection.sticky"];
+        app('config')["database.connections.$connection.sticky"] = false;
+
+        try {
+            $id = DB::connection($connection)->table('eyewitness_io_replication_sonar')->insertGetId(['created_at' => date('Y-m-d H:i:s')]);
+
+            for($i=0; $i<3; $i++) {
+                sleep($i);
+
+                if (DB::connection($connection)->table('eyewitness_io_replication_sonar')->where('id', $id)->first()) {
+                    DB::connection($connection)->table('eyewitness_io_replication_sonar')->where('id', $id)->delete();
+                    app('config')["database.connections.$connection.sticky"] = $sticky;
+                    return true;
+                }
+            }
+        } catch (Exception $e) {
+            //
+        }
+
+        try{
+            DB::connection($connection)->table('eyewitness_io_replication_sonar')->where('id', $id)->delete();
+        } catch (Exception $e) {
+            //
+        }
+
+        app('config')["database.connections.$connection.sticky"] = $sticky;
+
+        return false;
+    }
+
+    /**
      * Get the name of the database driver.
      *
      * @param  string  $connection
@@ -141,7 +179,11 @@ class Database
      */
     protected function getDriverName($connection)
     {
-        return DB::connection($connection)->getDriverName();
+        try {
+            return DB::connection($connection)->getDriverName();
+        } catch (Exception $e) {
+            return 'unknown';
+        }
     }
 
     /**

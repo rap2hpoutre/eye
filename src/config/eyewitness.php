@@ -84,11 +84,11 @@ return [
 
     /*
      |--------------------------------------------------------------------------
-     | Database monitoring list
+     | Database status monitoring list
      |--------------------------------------------------------------------------
      |
      | If your application uses multiple databases, then you can list them below
-     | and each will be monitored.
+     | and each will be monitored to ensure they are online and available.
      |
      | The array should contain names corresponding to one of the connections
      | listed in your "config/database.php" configuration file. Below is an
@@ -102,6 +102,22 @@ return [
      */
 
     'database_connections' => null,
+
+
+    /*
+     |--------------------------------------------------------------------------
+     | Database replication monitoring list
+     |--------------------------------------------------------------------------
+     |
+     | If your application uses a replication solution (i.e. master/slave),
+     | then you can choose for Eyewitness to monitor this.
+     |
+     | If you set this to true, you must run a database migration. We will
+     | create a single table to use and will handle everything else automtically.
+     |
+     */
+
+    'monitor_database_replication' => false,
 
 
     /*

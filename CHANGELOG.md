@@ -10,6 +10,7 @@
 - Add "backoff" retry attempts on failed API calls
 - Add support for monitoring of multiple databases
 - Track volume of emails sent by application
+- Ability to monitor database replication status
 
 ### Fixed
 - Allow scheduler ping to only run from one server
