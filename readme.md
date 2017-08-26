@@ -12,7 +12,7 @@
 
     composer require eyewitness/eye
 
-**2)** Once composer is finished, you need to add the service provider. Open `config/app.php`, and add a new item to the providers array.
+**2)** (Laravel 5.4 or below only): once composer is finished, you need to add the service provider. Open `config/app.php`, and add a new item to the providers array.
 
     Eyewitness\Eye\EyeServiceProvider::class,
 

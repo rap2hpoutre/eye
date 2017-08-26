@@ -115,6 +115,11 @@ return [
      | If you set this to true, you must run a database migration. We will
      | create a single table to use and will handle everything else automtically.
      |
+     | If you enable this option - you must then run a migration. If you are on
+     | Laravel 5.3 or below, you also need to firstly publish the migration:
+     |
+     | php artisan vendor:publish --tag=eyewitness
+     |
      */
 
     'monitor_database_replication' => false,
