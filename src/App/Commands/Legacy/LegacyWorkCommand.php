@@ -30,10 +30,11 @@ class LegacyWorkCommand extends OriginalWorkCommand
             $this->worker->setCache($this->laravel['cache']->driver());
         }
 
-        $connection = $this->getConnectionName($connection);
         $queue = $this->getQueue($queue, $connection);
+        $connection = $this->getConnectionName($connection);
 
-        config(['eyewitness.temp_connection_name' => $connection]);
+        $this->worker->eyeConnection = $connection;
+        $this->worker->eyeQueues = explode(',', $queue);
 
         return parent::runWorker($connection, $queue, $delay, $memory, $daemon);
     }

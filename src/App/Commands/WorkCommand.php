@@ -16,7 +16,8 @@ class WorkCommand extends OriginalWorkCommand
      */
     protected function runWorker($connection, $queue)
     {
-        config(['eyewitness.temp_connection_name' => $connection]);
+        $this->worker->eyeConnection = $connection;
+        $this->worker->eyeQueues = explode(',', $queue);
 
         return parent::runWorker($connection, $queue);
     }

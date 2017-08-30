@@ -11,21 +11,21 @@ trait WorkerTrait
      *
      * @var string
      */
-    protected $eyeConnection;
+    public $eyeConnection;
 
     /**
      * The current tube being processed.
      *
      * @var string
      */
-    protected $eyeTube;
+    public $eyeTube;
 
     /**
      * The list of all tubes being processed.
      *
      * @var string
      */
-    protected $eyeQueues;
+    public $eyeQueues;
 
     /**
      * Extend the worker and place a heartbeat as it is processing. Then
@@ -39,9 +39,6 @@ trait WorkerTrait
      */
     protected function getNextJob($connection, $queue)
     {
-        $this->eyeConnection = config('eyewitness.temp_connection_name', 'default');
-        $this->eyeQueues = explode(',', $queue);
-
         if ($this->cache) {
             foreach ($this->eyeQueues as $tube) {
                 $this->eyewitnessHeartBeat($tube);
