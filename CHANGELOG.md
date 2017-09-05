@@ -1,6 +1,6 @@
 # Release Notes
 
-## v2.0.0 (unreleased)
+## v2.0.0
 
 ### Added
 - Completely refactored scheduling event tracking to add more detailed tracking options
