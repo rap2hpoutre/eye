@@ -2,6 +2,8 @@
 
 namespace Eyewitness\Eye\App\Witness;
 
+use Exception;
+
 class Server
 {
     /**
@@ -28,6 +30,10 @@ class Server
      */
     public function checkServerForRebootRequired()
     {
-        return file_exists('/var/run/reboot-required');
+        try {
+            return file_exists('/var/run/reboot-required');
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }

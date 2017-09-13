@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.0.1
+
+### Fixed
+- Gracefully handle servers that do not allow for reboot checks
+
+
 ## v2.0.0
 
 ### Added
@@ -23,7 +29,6 @@
 - Improved queue tracking logic
 - Add log file sorting
 - Add offset to cron poll scheduler to help balance out server load
-
 
 
 ## v1.7.1 (2017-07-17)
@@ -65,7 +70,6 @@
 
 ### Changed
 - Modified commands to support new Laravel 5.5 core handle functions
-
 
 
 ## v1.4.3 (2017-05-17)
