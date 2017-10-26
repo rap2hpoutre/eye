@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.0.2
+
+### Changed
+- Allow for PHP5.6 compatability by slightly modifying the event traits
+
+
 ## v2.0.1
 
 ### Fixed

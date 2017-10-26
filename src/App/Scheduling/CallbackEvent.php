@@ -13,6 +13,13 @@ class CallbackEvent extends OriginalCallbackEvent
     use BaseEventTrait;
 
     /**
+     * Indicates if the command should run in background.
+     *
+     * @var bool
+     */
+    public $runInBackground = false;
+
+    /**
      * Create a new custom child event instance.
      * https://stackoverflow.com/a/4722587/1317935
      *

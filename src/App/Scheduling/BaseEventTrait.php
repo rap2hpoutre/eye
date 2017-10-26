@@ -28,13 +28,6 @@ trait BaseEventTrait
     public $forceRunInForeground = false;
 
     /**
-     * Indicates if the command should run in background.
-     *
-     * @var bool
-     */
-    public $runInBackground = false;
-
-    /**
      * The start time of the job.
      *
      * @var float
