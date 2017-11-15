@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.0.3
+
+### Changed
+- Improved eyewitness install command to allow for better upgrades
+
+
 ## v2.0.2
 
 ### Changed

@@ -62,7 +62,7 @@ class Api
 
         $response = $this->client->post($this->api.'/install', $this->headers);
 
-        return json_decode($response->getBody());
+        return json_decode($response->getBody(), true);
     }
 
     /**

@@ -16,6 +16,13 @@ class InstallCommand extends Command
     protected $eye;
 
     /**
+     * Regenerate new keys.
+     *
+     * @var bool;
+     */
+    protected $regenerate = true;
+
+    /**
      * The console command name.
      *
      * @var string
@@ -50,13 +57,14 @@ class InstallCommand extends Command
     public function handle()
     {
         if ($this->eye->checkConfig()) {
-            $this->error('It appears that this package has already been installed. You only need to run the installer once per application. Please contact "support@eyewitness.io" if you need any further assistance.');
-            return;
+            if (! $this->handleUpgrade()) {
+                return;
+            }
         }
 
         $this->displayInitialInstallMessage();
 
-        $this->callSilent('vendor:publish', ['--provider' => 'Eyewitness\Eye\EyeServiceProvider']);
+        $this->callSilent('vendor:publish', ['--provider' => 'Eyewitness\Eye\EyeServiceProvider', '--force' => true]);
 
         try {
             $this->setDefaultConfig();
@@ -71,7 +79,12 @@ class InstallCommand extends Command
         }
 
         try {
-            $keys = $this->eye->api()->install($app);
+            if ($this->regenerate) {
+                $keys = $this->eye->api()->install($app);
+            } else {
+                $keys = ['app_token' => $this->laravel['config']['eyewitness.app_token'],
+                         'secret_key' => $this->laravel['config']['eyewitness.secret_key']];
+            }
         } catch (Exception $e) {
             return $this->failedInstallation('API installation', $e);
         }
@@ -93,11 +106,11 @@ class InstallCommand extends Command
      */
     protected function setTokenAndKey($keys)
     {
-        $this->modifyConfigFile(Eye::APP_TOKEN_PLACEHOLDER, $keys->app_token);
-        $this->modifyConfigFile(Eye::SECRET_KEY_PLACEHOLDER, $keys->secret_key);
+        $this->modifyConfigFile(Eye::APP_TOKEN_PLACEHOLDER, $keys['app_token']);
+        $this->modifyConfigFile(Eye::SECRET_KEY_PLACEHOLDER, $keys['secret_key']);
 
-        $this->laravel['config']['eyewitness.app_token'] = $keys->app_token;
-        $this->laravel['config']['eyewitness.secret_key'] = $keys->secret_key;
+        $this->laravel['config']['eyewitness.app_token'] = $keys['app_token'];
+        $this->laravel['config']['eyewitness.secret_key'] = $keys['secret_key'];
     }
 
     /**
@@ -234,5 +247,30 @@ class InstallCommand extends Command
         $this->error('   File: '.$exception->getFile());
         $this->error(' ');
         $this->error('Please try again or contact us at: "support@eyewitness.io" with a copy of the exception data above and we will get back to you ASAP with a solution.');
+    }
+
+    /**
+     * Display the upgrade steps.
+     *
+     * @return bool
+     */
+    protected function handleUpgrade()
+    {
+        $this->error('______________________________________');
+        $this->error('It appears that the Eyewitness package has already been installed. You only need to run the installer once per application.');
+        $this->error('If you continue, this command will overwrite your eyewitness config file with the latest version.');
+        $this->error('______________________________________');
+
+        if (! $this->confirm('Do you wish to continue?')) {
+            $this->info('Aborted. No changes were made. If you need assistance please contact us anytime at: support@eyewitness.io');
+            return false;
+        }
+
+        $this->info('Do you want to generate a new "app_token" and "secret_key"?');
+        $this->info('If you choose "no" your current keys will be kept.');
+        $this->info('If you choose "yes" you will have new keys generated (and you will need to add these to the Eyewitness website).');
+        $this->regenerate = $this->confirm('Generate new keys?');
+
+        return true;
     }
 }
