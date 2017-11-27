@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.0.4
+
+### Added
+- Added ability to configure and control what queue data is sent to browsers via ajax
+
+
 ## v2.0.3
 
 ### Changed

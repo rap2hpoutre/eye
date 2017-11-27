@@ -115,8 +115,19 @@ class Queue
                 $job->maxTries = isset($payload->maxTries) ? $payload->maxTries : null;
                 $job->timeout = isset($payload->timeout) ? $payload->timeout : null;
                 $job->job_id = isset($payload->id) ? $payload->id : null;
-                $job->exception = isset($job->exception) ? $job->exception : null;
-                $job->payload = isset($payload->data->command) ? json_encode($payload->data->command) : (isset($payload->data) ? json_encode($payload->data) : $job->payload);
+
+                if (config('eyewitness.allow_failed_job_exception_data')) {
+                    $job->exception = isset($job->exception) ? $job->exception : null;
+                } else {
+                    $job->exception = null;
+                }
+
+                if (config('eyewitness.allow_failed_job_payload_data')) {
+                    $job->payload = isset($payload->data->command) ? json_encode($payload->data->command) : (isset($payload->data) ? json_encode($payload->data) : $job->payload);
+                } else {
+                    $job->payload = null;
+                }
+
                 return $job;
             });
             return $list;

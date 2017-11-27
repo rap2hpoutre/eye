@@ -209,6 +209,26 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Privacy and security
+     |--------------------------------------------------------------------------
+     |
+     | For some applications and systems, you might want to limit the amount
+     | of data that can ever leave your server for security purposes.
+     |
+     | Note: most of the data transfer occurs via ajax between your browser
+     | and your server and never touches the Eyewitness server anyway.
+     |
+     | But in some instances you can configure the pacakge to never send the
+     | data to your own browser.
+     |
+     */
+
+    'allow_failed_job_exception_data' => true,
+    'allow_failed_job_payload_data' => true,
+
+
+    /*
+     |--------------------------------------------------------------------------
      | API routes
      |--------------------------------------------------------------------------
      |
