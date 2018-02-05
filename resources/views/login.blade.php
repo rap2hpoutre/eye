@@ -28,6 +28,8 @@
                     <form v-on:submit.capture="formSubmit" class="form p-3 md:p-4" method="POST" action="{{ route('eyewitness.authenticate') }}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
+                        @eyewitness_tutorial('Your "app_token" and "secret_key" were shown during the installation. Alternatively they were also added to your ".env" file, so you can get them there as well.')
+
                         @if (session('error'))
                             @eyewitness_error(session("error"))
                         @elseif (session('success'))
