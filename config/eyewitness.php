@@ -173,6 +173,21 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Web route middleware
+     |
+     | https://docs.eyewitness.io/configuration/general#web-route-middleware
+     |--------------------------------------------------------------------------
+     |
+     | Here you can set what route middleware Eyewitness should use. On most
+     | applications it will be the default "web" middleware name, but if you
+     | use a custom name you will need to set it here first.
+     |
+     */
+
+    'route_middleware' => 'web',
+
+    /*
+     |--------------------------------------------------------------------------
      | Application token & secret key
      |
      | https://docs.eyewitness.io/getting-started/installation

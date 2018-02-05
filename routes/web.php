@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
         'prefix' => config('eyewitness.base_uri', 'eyewitness'),
-        'middleware' => (Eye::laravelVersionIs('>=', '5.2.0') ? ['web', 'eyewitness_auth'] : ['eyewitness_auth']),
+        'middleware' => (Eye::laravelVersionIs('>=', '5.2.0') ? [config('eyewitness.route_middleware'), 'eyewitness_auth'] : ['eyewitness_auth']),
         'namespace' => 'Eyewitness\Eye\Http\Controllers'
 ], function () {
     Route::get('dashboard',                    ['as' => 'eyewitness.dashboard',                         'uses' => 'DashboardController@index']);
