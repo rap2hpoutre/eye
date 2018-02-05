@@ -39,12 +39,12 @@
                         <div class="pt-4">
                             <div class="flex mb-8">
                                 @eyewitness_svg('key-26', 'mb-3', 24, 24)
-                                <eye-input type="text" name="app_token" label="App Token" value="{{ old('app_token', config('eyewitness.app_token')) }}"></eye-input>
+                                <eye-input type="text" name="app_token" label="App Token" value="{{ old('app_token') }}"></eye-input>
                             </div>
 
                             <div class="flex">
                                 @eyewitness_svg('lock', 'mb-3', 24, 24)
-                                <eye-input type="password" name="secret_key" label="Secret Key" value="{{ old('secret_key', config('eyewitness.secret_key')) }}"></eye-input>
+                                <eye-input type="password" name="secret_key" label="Secret Key" value="{{ old('secret_key') }}"></eye-input>
                             </div>
 
                             <div class="text-right mt-8">
