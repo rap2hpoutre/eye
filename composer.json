@@ -1,0 +1,48 @@
+{
+    "name": "eyewitness/eye",
+    "description": "Eyewitness.io client for Laravel 5 applications",
+    "keywords": [
+        "laravel 5",
+        "queue",
+        "cron",
+        "monitor",
+        "eyewitness"
+    ],
+    "homepage": "https://github.com/eyewitness/eye",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Laurence",
+            "email": "laurence@eyewitness.io"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "5.*|6.*",
+        "laravel/framework": "~5.1",
+        "nesbot/Carbon": "*",
+        "dragonmantank/cron-expression": "~2.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "~1.0",
+        "phpunit/phpunit": "~6.0",
+        "orchestra/testbench": "~3.5",
+        "fzaninotto/faker": "~1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Eyewitness\\Eye\\": "app"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Eyewitness\\Eye\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Eyewitness\\Eye\\EyeServiceProvider"
+            ]
+        }
+    }
+}

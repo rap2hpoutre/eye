@@ -1,0 +1,79 @@
+.svgcolor-white path, .svgcolor-white rect, .svgcolor-white polygon, .svgcolor-white circle {
+  fill: #ffffff;
+}
+
+.svgcolor-white line, .svgcolor-white polyline {
+  stroke: #ffffff;
+}
+
+.svgcolor-red path, .svgcolor-red rect, .svgcolor-red polygon, .svgcolor-red circle {
+  fill: #e3342f;
+}
+
+.svgcolor-red line, .svgcolor-red polyline {
+  stroke: #e3342f;
+}
+
+.svgcolor-green path, .svgcolor-green rect, .svgcolor-green polygon, .svgcolor-green circle {
+  fill: #4caf50;
+}
+
+.svgcolor-green line, .svgcolor-green polyline {
+  stroke: #4caf50;
+}
+
+.svgcolor-orange path, .svgcolor-orange rect, .svgcolor-orange polygon, .svgcolor-orange circle {
+  fill: #ffbe1a;
+}
+
+.svgcolor-orange line, .svgcolor-orange polyline {
+  stroke: #ffbe1a;
+}
+
+.svgcolor-blue path, .svgcolor-blue rect, .svgcolor-blue polygon, .svgcolor-blue circle {
+  fill: #00bcd4;
+}
+
+.svgcolor-blue line, .svgcolor-blue polyline {
+  stroke: #00bcd4;
+}
+
+a:hover svg path, a:hover svg rect, a:hover svg polygon, a:hover svg circle {
+  fill: #ffffff;
+}
+
+a:hover svg line, a:hover svg polyline {
+  stroke: #ffffff;
+}
+
+li.active a svg path, li.active a svg rect, li.active a svg polygon, li.active a svg circle {
+  fill: #ffffff;
+}
+
+li.active a svg line, li.active a svg polyline {
+  stroke: #ffffff;
+}
+
+.svgcolor-grey path, .svgcolor-grey rect, .svgcolor-grey polygon, .svgcolor-grey circle {
+  fill: #555555;
+}
+
+.svgcolor-grey line, .svgcolor-grey polyline {
+  stroke: #555555;
+}
+
+.svg-hover:hover svg path, .svg-hover:hover svg rect, .svg-hover:hover svg polygon, .svg-hover:hover svg circle {
+  fill: #ffffff;
+}
+
+.svg-hover:hover svg line, .svg-hover:hover svg polyline {
+  stroke: #ffffff;
+}
+
+.svg-hover-brand:hover svg path, .svg-hover-brand:hover svg rect, .svg-hover-brand:hover svg polygon, .svg-hover-brand:hover svg circle {
+  fill: #fb503b;
+}
+
+.svg-hover-brand:hover svg line, .svg-hover-brand:hover svg polyline {
+  stroke: #fb503b;
+}

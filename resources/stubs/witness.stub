@@ -1,0 +1,52 @@
+<?php
+
+namespace DummyNamespace;
+
+use Eyewitness\Eye\Monitors\Custom;
+
+class DummyClass extends Custom
+{
+    /**
+     |--------------------------------------------------------------------------
+     | You can get a full step by step guide to creating your own custom monitor:
+     | https://docs.eyewitness.io/monitors/custom
+     |--------------------------------------------------------------------------
+     */
+
+    /**
+     * The name of this witness to display on the website and in notifications.
+     * We recommend a short name no more than 15 characters long to fit on the
+     * menu pretty. You can do longer if you want though.
+     *
+     * @var string
+     */
+    public $displayName = 'My Witness';
+
+    /**
+     * The icon to use for this witness on the website.
+     *
+     * @var string
+     */
+    public $icon = 'parking-sensors';
+
+    /**
+     * The scheduled frequency for this monitor to run its checks. You do not
+     * need to add this to the scheduler - Eyewitness will handle it automatically.
+     *
+     * @var string
+     */
+    public $schedule = '0 * * * *';
+
+    /**
+     * Here is where you place your logic when the monitor runs. You should run any
+     * code/checks you need to here. Return "true" for a pass and "false" for a fail.
+     *
+     * In addition any uncaught exceptions will also be treated as a fail.
+     *
+     * @return boolean
+     */
+    public function run()
+    {
+        return true;
+    }
+}
