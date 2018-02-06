@@ -55,7 +55,7 @@ class SslCommand extends Command
      */
     public function handle()
     {
-        $this->eye->ssl()->poll();
+        // $this->eye->ssl()->poll();
 
         $this->info('Eyewitness SSL poll complete.');
     }
