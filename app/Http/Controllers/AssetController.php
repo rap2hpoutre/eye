@@ -31,6 +31,6 @@ class AssetController extends Controller
     public function js()
     {
         return response()->make(file_get_contents(__DIR__.'/../../../resources/assets/compiled/eyewitness.js'), 200)
-                         ->header('Content-Type', 'text/js');
+                         ->header('Content-Type', 'application/javascript');
     }
 }
