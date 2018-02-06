@@ -196,6 +196,7 @@ trait BaseEvent
                 'expected_completion' => $this->determineExpectedCompletion($this->scheduler),
             ]);
         } catch (Exception $e) {
+            dd($e->getMessage());
             app(Eye::class)->logger()->error('Unable to track scheduler',
                                              $e->getMessage(),
                                              ['expresison' => $this->expression,

@@ -57,7 +57,7 @@ class BaseEventTest extends TestCase
     public function test_record_event_start()
     {
         $this->base->expression = '0 1 * * *';
-        $this->base->timezone = 'Example';
+        $this->base->timezone = 'UTC';
         $this->base->withoutOverlapping = 1;
         $this->base->runInBackground = 0;
 
@@ -72,7 +72,7 @@ class BaseEventTest extends TestCase
             'id' => '1',
             'schedule' => '0 1 * * *',
             'command' => 'Unnamed Closure',
-            'timezone' => 'Example',
+            'timezone' => 'UTC',
             'run_in_background' => '0',
             'without_overlapping' => '1',
         ]);

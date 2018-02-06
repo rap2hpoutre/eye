@@ -20,7 +20,7 @@
         "guzzlehttp/guzzle": "5.*|6.*",
         "laravel/framework": "~5.1",
         "nesbot/Carbon": "*",
-        "dragonmantank/cron-expression": "~2.0"
+        "eyewitness/cron-expression": "~3.0"
     },
     "require-dev": {
         "mockery/mockery": "~1.0",

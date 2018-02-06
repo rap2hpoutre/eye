@@ -3,7 +3,7 @@
 namespace Eyewitness\Eye\Scheduling;
 
 use Carbon\Carbon;
-use Cron\CronExpression;
+use Eyewitness\Cron\CronExpression;
 
 trait RunDue
 {

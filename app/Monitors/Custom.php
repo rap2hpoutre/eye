@@ -4,7 +4,7 @@ namespace Eyewitness\Eye\Monitors;
 
 use Exception;
 use Carbon\Carbon;
-use Cron\CronExpression;
+use Eyewitness\Cron\CronExpression;
 use Eyewitness\Eye\Repo\History\Custom as History;
 use Eyewitness\Eye\Tools\BladeDirectives;
 use Eyewitness\Eye\Notifications\Messages\Custom\Failed;

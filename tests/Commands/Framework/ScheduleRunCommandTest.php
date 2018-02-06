@@ -36,7 +36,7 @@ class ScheduleRunCommandTest extends TestCase
 
     public function test_no_commands_due_to_run()
     {
-        $this->schedule->command('example:one')->cron('1 1 1 0 1');
+        $this->schedule->command('example:one')->cron('1 1 1 1 1');
 
         Artisan::call('schedule:run');
 
