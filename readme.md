@@ -4,8 +4,6 @@
 
 Eyewitness allows you to monitor everything about your Laravel application in one place. Simply install the package, and Eyewitness will begin to monitor your scheduler, queues, logs etc.
 
-** Please switch to the *beta* branch for the v3 trail **
-
 # Installation guide
 
 Please view the installation guide here: [https://docs.eyewitness.io/getting-started/installation](https://docs.eyewitness.io/getting-started/installation)
