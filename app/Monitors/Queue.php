@@ -196,7 +196,7 @@ class Queue extends BaseMonitor
 
         $qm = app(QueueManager::class)->connection($queue->connection);
 
-        return (new $driver_class($qm))->pendingJobsCount($queue->tube);
+        return (new $driver_class($qm, $queue))->pendingJobsCount($queue->tube);
     }
 
     /**

@@ -16,15 +16,15 @@ class DatabaseQueue extends BaseHandler
     /**
      * Create a new Database queue instance.
      *
-     * @param string  $connection
-     * @param string  $connection
+     * @param  \Illuminate\Contracts\Queue\Queue  $connection
+     * @param  \Eyewitness\Eye\Repo\Queue  $queue
      * @return void
      */
-    public function __construct($connection, $config)
+    public function __construct($connection, $queue)
     {
         $this->queue = $connection->getDatabase();
 
-        $this->table = config("queue.connnections.{$connection}.table");
+        $this->table = config("queue.connnections.{$queue->connection}.table");
     }
 
     /**

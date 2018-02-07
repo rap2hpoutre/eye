@@ -9,10 +9,11 @@ class SqsQueue extends BaseHandler
     /**
      * Create a new Sqs queue instance.
      *
-     * @param string  $connection
+     * @param  \Illuminate\Contracts\Queue\Queue  $connection
+     * @param  \Eyewitness\Eye\Repo\Queue  $queue
      * @return void
      */
-    public function __construct($connection)
+    public function __construct($connection, $queue)
     {
         $this->queue = $connection;
     }
