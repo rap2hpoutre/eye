@@ -58,6 +58,16 @@
                 <div class="pl-1 pb-3 pt-3">
                     <div class="flex">
                         <div class="w-1/3 md:w-1/5 text-right">
+                            <p class="block tracking-wide text-grey text-right mr-1">Job</p>
+                        </div>
+                        <div class="w-2/3 md:w-4/5">
+                            <p class="text-grey-darker ml-4"><span class="uppercase font-mono font-semibold rounded text-sm text-white py-1 px-2 bg-orange">{{ $job->job }}</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pl-1 pb-3 pt-3">
+                    <div class="flex">
+                        <div class="w-1/3 md:w-1/5 text-right">
                             <p class="block tracking-wide text-grey text-right mr-1">Failed</p>
                         </div>
                         <div class="w-2/3 md:w-4/5">
