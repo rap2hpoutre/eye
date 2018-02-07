@@ -4,6 +4,7 @@ namespace Eyewitness\Eye\Monitors;
 
 use Exception;
 use Eyewitness\Eye\Repo\History\Ssl as History;
+use Illuminate\Support\Facades\Cache;
 use Eyewitness\Eye\Notifications\Messages\Ssl\Invalid;
 use Eyewitness\Eye\Notifications\Messages\Ssl\Revoked;
 use Eyewitness\Eye\Notifications\Messages\Ssl\Expiring;
@@ -19,7 +20,24 @@ class Ssl extends BaseMonitor
     public function poll()
     {
         if (! count(config('eyewitness.application_domains'))) {
-            $this->eye->logger()->debug('No application domain set for SSL witness');
+            $this->eye->logger()->debug('No application domain set for SSL monitor');
+            return;
+        }
+
+        foreach (config('eyewitness.application_domains') as $domain) {
+            $this->startScan($domain);
+        }
+    }
+
+    /**
+     * Determine the SSL scan results.
+     *
+     * @return void
+     */
+    public function result()
+    {
+        if (! count(config('eyewitness.application_domains'))) {
+            $this->eye->logger()->debug('No application domain set for SSL monitor');
             return;
         }
 
@@ -34,26 +52,46 @@ class Ssl extends BaseMonitor
     }
 
     /**
-     * Check the given domain for a valid SSL certificate against the API.
+     * Start the scan for a given domain for a valid SSL certificate against the API.
      *
      * @param  string  $domain
      * @return void
      */
-    protected function getResults($domain)
+    protected function startScan($domain)
     {
-        $result = $this->eye->api()->ssl($domain);
+        $result = $this->eye->api()->sslStart($domain);
 
         if (isset($result['multiple_ips']) && isset($result['token'])) {
-            $result = $this->eye->api()->ssl($domain, $result['multiple_ips'], $result['token']);
+            $result = $this->eye->api()->sslStart($domain, $result['multiple_ips'], $result['token']);
         }
 
         if (isset($result['error'])) {
-            $this->eye->logger()->error('SSL API error', $result['error'], $domain);
+            return $this->eye->logger()->error('SSL API scan error', $result['error'], $domain);
+        }
+
+        if (($result['status_id'] == "1") && (isset($result['job_id']))) {
+            Cache::put('eyewitness_ssl_job_id_'.$domain, $result['job_id'], 50);
+        } else {
+            $this->eye->logger()->error('SSL API invalid result', print_r($result, true), $domain);
+        }
+    }
+
+    /**
+     * Get the scan results from the API.
+     *
+     * @param  string  $domain
+     * @return array|null
+     */
+    protected function getResults($domain)
+    {
+        if (! Cache::has('eyewitness_ssl_job_id_'.$domain)) {
             return null;
         }
 
-        if (! isset($result['results'])) {
-            return null;
+        $result = $this->eye->api()->sslResult(Cache::pull('eyewitness_ssl_job_id_'.$domain));
+
+        if (isset($result['error'])) {
+            return $this->eye->logger()->error('SSL API result error', $result['error'], $domain);
         }
 
         return $result;

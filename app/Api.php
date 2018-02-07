@@ -91,18 +91,18 @@ class Api
     }
 
     /**
-     * Send an SSL API check to the wonderful people at htbridge.com and their API.
+     * Start an SSL API check from the wonderful people at htbridge.com and their API.
      *
      * @param  string  $domain
      * @param  string|null  $ip
      * @param  string|null  $token
      * @return mixed
      */
-    public function ssl($domain, $ip = null, $token = null)
+    public function sslStart($domain, $ip = null, $token = null)
     {
         $headers = [
-            'connect_timeout' => 180,
-            'timeout' => 180,
+            'connect_timeout' => 60,
+            'timeout' => 60,
             'debug' => false,
             'form_params' => [
                 'domain' => $domain.':443',
@@ -121,7 +121,34 @@ class Api
             $response = $this->client->post('https://www.htbridge.com/ssl/api/v1/check/'.time().'.html', $headers);
             return json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
-            app(Eye::class)->logger()->error('Unable to check SSL', $e, $domain);
+            app(Eye::class)->logger()->error('Unable to start SSL scan', $e, $domain);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the SSL API results from the wonderful people at htbridge.com and their API.
+     *
+     * @param  string  $job_id
+     * @return mixed
+     */
+    public function sslResult($job_id)
+    {
+        $headers = [
+            'connect_timeout' => 60,
+            'timeout' => 60,
+            'debug' => false,
+            'form_params' => [
+                'job_id' => $job_id,
+            ]
+        ];
+
+        try {
+            $response = $this->client->post('https://www.htbridge.com/ssl/api/v1/get_result//'.time().'.html', $headers);
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (Exception $e) {
+            app(Eye::class)->logger()->error('Unable to get SSL results', $e, $domain);
         }
 
         return null;

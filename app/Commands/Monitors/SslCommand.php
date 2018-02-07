@@ -19,7 +19,7 @@ class SslCommand extends Command
      *
      * @var string
      */
-    protected $name = 'eyewitness:monitor-ssl';
+    protected $signature = 'eyewitness:monitor-ssl {--result}';
 
     /**
      * The console command description.
@@ -55,7 +55,11 @@ class SslCommand extends Command
      */
     public function handle()
     {
-        // $this->eye->ssl()->poll();
+        if ($this->option('result')) {
+            $this->eye->ssl()->result();
+        } else {
+            $this->eye->ssl()->poll();
+        }
 
         $this->info('Eyewitness SSL poll complete.');
     }

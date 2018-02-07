@@ -166,8 +166,10 @@ class EyeServiceProvider extends ServiceProvider
             if (config('eyewitness.monitor_ssl')) {
                 if ($this->eye->laravelVersionIs('>=', '5.2.32')) {
                     $schedule->command('eyewitness:monitor-ssl')->cron($this->eye->getMinuteSeed(1).' * * * *')->runInBackground();
+                    $schedule->command('eyewitness:monitor-ssl --result')->cron($this->eye->getMinuteSeed(31).' * * * *')->runInBackground();
                 } else {
                     $schedule->command('eyewitness:monitor-ssl')->cron($this->eye->getMinuteSeed(1).' * * * *');
+                    $schedule->command('eyewitness:monitor-ssl --result')->cron($this->eye->getMinuteSeed(31).' * * * *')->runInBackground();
                 }
             }
 

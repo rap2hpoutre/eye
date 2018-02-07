@@ -119,7 +119,8 @@
                         @eyewitness_svg('wifi-off')
                     </div>
                     <p class="text-2xl text-grey-darker font-medium mb-4">No SSL records found yet</p>
-                    <p class="text-grey max-w-sm mx-auto mb-6">Your domains are scheduled to be checked in a short time (usually within an hour). You can force a check right now by running<br/><span class="code">php artisan eyewitness:poll --force</span>.</p>
+                    <p class="text-grey max-w-sm mx-auto mb-6">Your domains are scheduled to be checked in a short time (usually within an hour).</p>
+                    <p class="text-grey max-w-sm mx-auto mb-6">Your scheduler needs to be running for this check to take effect, as we need to run a few different tasks.</p>
                 </div>
             @endif
         </div>

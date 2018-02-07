@@ -11,6 +11,7 @@ use Eyewitness\Eye\Repo\Statuses;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Eyewitness\Eye\Repo\History\Ssl as History;
+use Illuminate\Support\Facades\Cache;
 use Eyewitness\Eye\Notifications\Notifier;
 use Eyewitness\Eye\Notifications\Messages\Ssl\Revoked;
 use Eyewitness\Eye\Notifications\Messages\Ssl\Invalid;
@@ -40,28 +41,81 @@ class SslTest extends TestCase
         $this->ssl = resolve(Ssl::class);
     }
 
-    public function test_handles_no_configured_domains()
+    public function test_poll_handles_no_configured_domains()
     {
         config(['eyewitness.debug' => true]);
         config(['eyewitness.application_domains' => []]);
 
         $this->notifier->shouldReceive('alert')->never();
-        Log::shouldReceive('debug')->with('Eyewitness: No application domain set for SSL witness', ['data' => null])->once();
+        Log::shouldReceive('debug')->with('Eyewitness: No application domain set for SSL monitor', ['data' => null])->once();
 
         $this->ssl->poll();
     }
 
-    public function test_handles_bad_ssl_lookup()
+    public function test_poll_handles_bad_ssl_lookup()
     {
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['error' => 'Example Error']);
+        $this->api->shouldReceive('sslStart')->with($domain)->once()->andReturn(['error' => 'Example Error']);
 
         $this->notifier->shouldReceive('alert')->never();
-        Log::shouldReceive('error')->with('Eyewitness: SSL API error', ['exception' => 'Example Error', 'data' => $domain])->once();
+        Log::shouldReceive('error')->with('Eyewitness: SSL API scan error', ['exception' => 'Example Error', 'data' => $domain])->once();
 
         $this->ssl->poll();
+    }
+
+    public function test_poll_handles_good_ssl_lookup()
+    {
+        $domain = 'http://example.com';
+        config(['eyewitness.application_domains' => [$domain]]);
+
+        $this->api->shouldReceive('sslStart')->with($domain)->once()->andReturn(['job_id' => 'job123', 'status_id' => 1]);
+
+        $this->notifier->shouldReceive('alert')->never();
+        Log::shouldReceive('error')->never();
+        Cache::shouldReceive('put')->with('eyewitness_ssl_job_id_http://example.com', 'job123', 50)->once();
+
+        $this->ssl->poll();
+    }
+
+    public function test_result_handles_no_configured_domains()
+    {
+        config(['eyewitness.debug' => true]);
+        config(['eyewitness.application_domains' => []]);
+
+        $this->notifier->shouldReceive('alert')->never();
+        Log::shouldReceive('debug')->with('Eyewitness: No application domain set for SSL monitor', ['data' => null])->once();
+
+        $this->ssl->result();
+    }
+
+    public function test_result_handles_no_cached_job()
+    {
+        $domain = 'http://example.com';
+        config(['eyewitness.application_domains' => [$domain]]);
+
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(false);
+        Log::shouldReceive('error')->never();
+        $this->api->shouldReceive('sslResult')->never();
+        $this->notifier->shouldReceive('alert')->never();
+
+        $this->ssl->result();
+    }
+
+    public function test_result_handles_bad_api_result()
+    {
+        $domain = 'http://example.com';
+        config(['eyewitness.application_domains' => [$domain]]);
+
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+        Log::shouldReceive('error')->with('Eyewitness: SSL API result error', ['exception' => 'Example Error', 'data' => $domain])->once();
+
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['error' => 'Example Error']);
+        $this->notifier->shouldReceive('alert')->never();
+
+        $this->ssl->result();
     }
 
     public function test_does_not_alert_on_inital_lookup_and_saves_record()
@@ -69,7 +123,10 @@ class SslTest extends TestCase
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['results' => ['grade' => 'A+'],
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['results' => ['grade' => 'A+'],
                                                                             'internals' => ['alternate_url' => 'example.com'],
                                                                             'certificates' => ['information' => [0 => [
                                                                                 'valid_now' => false,
@@ -83,7 +140,7 @@ class SslTest extends TestCase
         $this->notifier->shouldReceive('alert')->never();
         Log::shouldReceive('error')->never();
 
-        $this->ssl->poll();
+        $this->ssl->result();
 
         $this->assertDatabaseHas('eyewitness_io_history_monitors', ['type' => 'ssl',
                                                                     'meta' => $domain,
@@ -103,6 +160,9 @@ class SslTest extends TestCase
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+
         factory(History::class)->create(['meta' => $domain,
                                          'record' => ['grade' => 'A+',
                                                       'results_url' => 'example.com',
@@ -113,7 +173,7 @@ class SslTest extends TestCase
                                                       'expires_soon' => true,
                                                       'issuer' => 'EyeCA']]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['results' => ['grade' => 'A+'],
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['results' => ['grade' => 'A+'],
                                                                             'internals' => ['alternate_url' => 'example.com'],
                                                                             'certificates' => ['information' => [0 => [
                                                                                 'valid_now' => false,
@@ -127,7 +187,7 @@ class SslTest extends TestCase
         $this->notifier->shouldReceive('alert')->never();
         Log::shouldReceive('error')->never();
 
-        $this->ssl->poll();
+        $this->ssl->result();
 
         $this->assertDatabaseHas('eyewitness_io_history_monitors', ['type' => 'ssl',
                                                                     'meta' => $domain,
@@ -152,6 +212,9 @@ class SslTest extends TestCase
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+
         factory(History::class)->create(['meta' => $domain,
                                          'record' => ['grade' => 'A+',
                                                       'results_url' => 'example.com',
@@ -162,7 +225,7 @@ class SslTest extends TestCase
                                                       'expires_soon' => true,
                                                       'issuer' => 'EyeCA']]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['results' => ['grade' => 'A+'],
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['results' => ['grade' => 'A+'],
                                                                             'internals' => ['alternate_url' => 'example.com'],
                                                                             'certificates' => ['information' => [0 => [
                                                                                 'valid_now' => false,
@@ -176,7 +239,7 @@ class SslTest extends TestCase
         $this->notifier->shouldReceive('alert')->with(Revoked::class)->once();
         Log::shouldReceive('error')->never();
 
-        $this->ssl->poll();
+        $this->ssl->result();
 
         $this->assertDatabaseHas('eyewitness_io_history_monitors', ['type' => 'ssl',
                                                                     'meta' => $domain,
@@ -201,6 +264,9 @@ class SslTest extends TestCase
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+
         factory(History::class)->create(['meta' => $domain,
                                          'record' => ['grade' => 'A+',
                                                       'results_url' => 'example.com',
@@ -211,7 +277,7 @@ class SslTest extends TestCase
                                                       'expires_soon' => false,
                                                       'issuer' => 'EyeCA']]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['results' => ['grade' => 'A+'],
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['results' => ['grade' => 'A+'],
                                                                             'internals' => ['alternate_url' => 'example.com'],
                                                                             'certificates' => ['information' => [0 => [
                                                                                 'valid_now' => false,
@@ -225,7 +291,7 @@ class SslTest extends TestCase
         $this->notifier->shouldReceive('alert')->with(Expiring::class)->once();
         Log::shouldReceive('error')->never();
 
-        $this->ssl->poll();
+        $this->ssl->result();
 
         $this->assertDatabaseHas('eyewitness_io_history_monitors', ['type' => 'ssl',
                                                                     'meta' => $domain,
@@ -250,6 +316,9 @@ class SslTest extends TestCase
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+
         factory(History::class)->create(['meta' => $domain,
                                          'record' => ['grade' => 'A+',
                                                       'results_url' => 'example.com',
@@ -260,7 +329,7 @@ class SslTest extends TestCase
                                                       'expires_soon' => true,
                                                       'issuer' => 'EyeCA']]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['results' => ['grade' => 'A+'],
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['results' => ['grade' => 'A+'],
                                                                             'internals' => ['alternate_url' => 'example.com'],
                                                                             'certificates' => ['information' => [0 => [
                                                                                 'valid_now' => false,
@@ -274,7 +343,7 @@ class SslTest extends TestCase
         $this->notifier->shouldReceive('alert')->with(Invalid::class)->once();
         Log::shouldReceive('error')->never();
 
-        $this->ssl->poll();
+        $this->ssl->result();
 
         $this->assertDatabaseHas('eyewitness_io_history_monitors', ['type' => 'ssl',
                                                                     'meta' => $domain,
@@ -299,6 +368,9 @@ class SslTest extends TestCase
         $domain = 'http://example.com';
         config(['eyewitness.application_domains' => [$domain]]);
 
+        Cache::shouldReceive('has')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn(true);
+        Cache::shouldReceive('pull')->with('eyewitness_ssl_job_id_http://example.com')->once()->andReturn('job123');
+
         factory(History::class)->create(['meta' => $domain,
                                          'record' => ['grade' => 'A+',
                                                       'results_url' => 'example.com',
@@ -309,7 +381,7 @@ class SslTest extends TestCase
                                                       'expires_soon' => true,
                                                       'issuer' => 'EyeCA']]);
 
-        $this->api->shouldReceive('ssl')->with($domain)->once()->andReturn(['results' => ['grade' => 'B'],
+        $this->api->shouldReceive('sslResult')->with('job123')->once()->andReturn(['results' => ['grade' => 'B'],
                                                                             'internals' => ['alternate_url' => 'example.com'],
                                                                             'certificates' => ['information' => [0 => [
                                                                                 'valid_now' => true,
@@ -323,7 +395,7 @@ class SslTest extends TestCase
         $this->notifier->shouldReceive('alert')->with(GradeChange::class)->once();
         Log::shouldReceive('error')->never();
 
-        $this->ssl->poll();
+        $this->ssl->result();
 
         $this->assertDatabaseHas('eyewitness_io_history_monitors', ['type' => 'ssl',
                                                                     'meta' => $domain,

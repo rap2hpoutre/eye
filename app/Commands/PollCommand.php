@@ -71,7 +71,6 @@ class PollCommand extends Command
         if ($this->option('force')) {
             $this->eye->composer()->poll();
             $this->eye->dns()->poll();
-            // $this->eye->ssl()->poll();
         }
 
         $this->eye->debug()->poll();
