@@ -10,7 +10,7 @@ interface MessageInterface
      * @param  array  $data
      * @return void
      */
-    public function __construct(array $data);
+    public function __construct($data = []);
 
     /**
      * Is this message an error notification.
