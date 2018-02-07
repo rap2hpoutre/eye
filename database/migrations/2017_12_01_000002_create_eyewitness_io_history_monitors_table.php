@@ -16,7 +16,7 @@ class CreateEyewitnessIoHistoryMonitorsTable extends Migration
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->create('eyewitness_io_history_monitors', function (Blueprint $table) {
             $table->increments('id');
             $table->string('type');
-            $table->string('meta')->nullable()->default(null);
+            $table->string('meta');
             $table->string('value')->nullable()->default(null);
             $table->text('record');
             $table->timestamp('created_at')->useCurrent();

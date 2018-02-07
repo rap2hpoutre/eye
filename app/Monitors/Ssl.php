@@ -25,7 +25,9 @@ class Ssl extends BaseMonitor
         }
 
         foreach (config('eyewitness.application_domains') as $domain) {
-            $this->startScan($domain);
+            if ($this->isValidDomain($domain)) {
+                $this->startScan($domain);
+            }
         }
     }
 
@@ -168,5 +170,21 @@ class Ssl extends BaseMonitor
             $this->eye->logger()->error('Ssl record save failed', $e, $domain);
             throw $e;
         }
+    }
+
+    /**
+     * Check if the URL is valid.
+     *
+     * @param  string  $domain
+     * @return bool
+     */
+    protected function isValidDomain($domain)
+    {
+        if (filter_var($domain, FILTER_VALIDATE_URL) === false) {
+            $this->eye->logger()->debug('SSL URL not valid', $domain);
+            return false;
+        }
+
+        return true;
     }
 }

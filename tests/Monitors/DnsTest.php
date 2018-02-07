@@ -38,6 +38,7 @@ class DnsTest extends TestCase
 
         $this->notifier->shouldReceive('alert')->never();
         Log::shouldReceive('debug')->with('Eyewitness: No application domain set for DNS witness', ['data' => null])->once();
+        Log::shouldReceive('error')->never();
 
         $this->dns->poll();
     }
@@ -50,7 +51,6 @@ class DnsTest extends TestCase
 
         $this->dns->shouldReceive('pollDns')->with('example.com.')->once()->andThrow($e);
         $this->notifier->shouldReceive('alert')->never();
-        Log::shouldReceive('error')->with('Eyewitness: DNS lookup failed', ['exception' => $e->getMessage(), 'data' => $domain])->once();
 
         $this->dns->poll();
     }
@@ -64,6 +64,7 @@ class DnsTest extends TestCase
 
         $this->notifier->shouldReceive('alert')->never();
         Log::shouldReceive('error')->never();
+        Log::shouldReceive('debug')->never();
 
         $this->dns->poll();
 
@@ -83,6 +84,7 @@ class DnsTest extends TestCase
 
         $this->notifier->shouldReceive('alert')->never();
         Log::shouldReceive('error')->never();
+        Log::shouldReceive('debug')->never();
 
         $this->dns->poll();
 
@@ -105,6 +107,7 @@ class DnsTest extends TestCase
 
         $this->notifier->shouldReceive('alert')->never();
         Log::shouldReceive('error')->never();
+        Log::shouldReceive('debug')->never();
 
         $this->dns->poll();
 
@@ -126,6 +129,7 @@ class DnsTest extends TestCase
 
         $this->notifier->shouldReceive('alert')->with(Change::class)->once();
         Log::shouldReceive('error')->never();
+        Log::shouldReceive('debug')->never();
 
         $this->dns->poll();
 

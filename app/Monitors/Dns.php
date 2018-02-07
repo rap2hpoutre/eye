@@ -37,14 +37,20 @@ class Dns extends BaseMonitor
      * Poll the DNS for its checks.
      *
      * @param  string  $domain
-     * @return void
+     * @return array|bool
      */
     protected function getDnsRecord($domain)
     {
+        if (filter_var($domain, FILTER_VALIDATE_URL) === false) {
+            $this->eye->logger()->debug('DNS URL not valid', $domain);
+            return false;
+        }
+
         try {
             $dns = $this->pollDns($this->parseUrl($domain));
         } catch (Exception $e) {
-            $this->eye->logger()->error('DNS lookup failed', $e, $domain);
+            $this->eye->logger()->debug('DNS lookup failed', ['domain' => $domain,
+                                                              'exception' => $e->getMessage()]);
             return false;
         }
 
