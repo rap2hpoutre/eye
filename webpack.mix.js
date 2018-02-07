@@ -40,7 +40,7 @@ if (mix.inProduction()) {
           path.join(__dirname, "resources/assets/icons/**/*.svg"),
           path.join(__dirname, "resources/assets/js/**/*.vue")
         ]),
-        whitelist:['tooltip-show'],
+        whitelist: ['tooltip-show'],
         whitelistPatterns: [/^svgcolor-/, /^chartist/, /^ct/],
         extractors: [
           {

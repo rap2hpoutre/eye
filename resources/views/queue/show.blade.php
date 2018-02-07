@@ -40,6 +40,10 @@
                 @include('eyewitness::queue.tabs.history')
             </eye-tab>
 
+            <eye-tab name="#failed" v-cloak>
+                @include('eyewitness::queue.tabs.failed')
+            </eye-tab>
+
             <eye-tab name="#settings" v-cloak>
                 @include('eyewitness::queue.tabs.settings')
             </eye-tab>

@@ -1,6 +1,6 @@
 <template>
     <div class="relative">
-        <div id="demo" role="button" class="inline-block select-none bg-transparent hover:bg-brand-light text-white uppercase text-xs font-semibold hover:text-white py-2 px-2 rounded svg-hover" @click="onClick" v-click-outside="onClickOutside">
+        <div id="demo" role="button" class="inline-block select-none hover:bg-brand-light text-white uppercase text-xs font-semibold hover:text-white py-2 px-2 rounded svg-hover" @click="onClick" v-click-outside="onClickOutside" :class="background">
             <div class="appearance-none flex items-center inline-block text-white font-medium">
                 <div v-if="title.length">
                     <span class="mr-2">{{ title }}</span>
@@ -24,7 +24,8 @@
     export default {
         props: {
             title: { default: 'menu' },
-            color: { default: 'svgcolor-white' }
+            color: { default: 'svgcolor-white' },
+            background: { default: 'bg-transparent' },
         },
         directives: {
               clickOutside: vClickOutside.directive

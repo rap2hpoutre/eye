@@ -129,41 +129,48 @@ class Queue extends BaseMonitor
     }
 
     /**
-     * Get a list of failed jobs.
+     * Get a list of failed jobs for a given queue.
      *
+     * @param  \Eyewitness\Eye\Repo\Queue  $queue
      * @return collection
      */
-    public function getFailedJobs()
+    public function getFailedJobs($queue)
     {
         try {
-            $list = collect(app('queue.failer')->all());
+            $list = collect(app('queue.failer')->all())->where('queue', $queue->tube)
+                                                       ->where('connection', $queue->connection);
+
             $list->map(function ($job) {
-                $payload = json_decode($job->payload);
-                $job->job = isset($payload->displayName) ? $payload->displayName : (isset($payload->job) ? $payload->job : 'Unknown');
-                $job->attempts = isset($payload->attempts) ? $payload->attempts : null;
-                $job->maxTries = isset($payload->maxTries) ? $payload->maxTries : null;
-                $job->timeout = isset($payload->timeout) ? $payload->timeout : null;
-                $job->job_id = isset($payload->id) ? $payload->id : null;
-
-                if (config('eyewitness.allow_failed_job_exception_data', true)) {
-                    $job->exception = isset($job->exception) ? $job->exception : null;
-                } else {
-                    $job->exception = null;
-                }
-
-                if (config('eyewitness.allow_failed_job_payload_data', true)) {
-                    $job->payload = isset($payload->data->command) ? json_encode($payload->data->command) : (isset($payload->data) ? json_encode($payload->data) : $job->payload);
-                } else {
-                    $job->payload = null;
-                }
-
-                return $job;
+                $job = $this->mapJob($job);
             });
+
             return $list;
         } catch (Exception $e) {
-            $this->eye->logger()->error('Unable to get Failed Jobs', $e);
-            return collect([]);
+            $this->eye->logger()->error('Unable to get Queue Failed Jobs', $e, $queue->id);
         }
+
+        return collect([]);
+    }
+
+    /**
+     * Get a specific failed jobs for a given queue.
+     *
+     * @param  integer  $job_id
+     * @return array|null
+     */
+    public function getFailedJob($job_id)
+    {
+        try {
+            $job = app('queue.failer')->find($job_id);
+
+            $job = $this->mapJob($job);
+
+            return $job;
+        } catch (Exception $e) {
+            $this->eye->logger()->error('Unable to get Queue Failed Job', $e, $job_id);
+        }
+
+        return null;
     }
 
     /**
@@ -174,9 +181,7 @@ class Queue extends BaseMonitor
      */
     public function getFailedJobsCount($queue)
     {
-        return $this->getFailedJobs()->where('queue', $queue->tube)
-                                     ->where('connection', $queue->connection)
-                                     ->count();
+        return $this->getFailedJobs($queue)->count();
     }
 
     /**
@@ -239,7 +244,6 @@ class Queue extends BaseMonitor
     {
         return QueueRepo::all();
     }
-
 
     /**
      * Check if the queue is online.
@@ -363,5 +367,42 @@ class Queue extends BaseMonitor
         $this->eye->status()->setSick('queue_pending_jobs_'.$queue->id);
 
         return false;
+    }
+
+    /**
+     * Map the job to a standard format.
+     *
+     * @param  array $job
+     * @return mised
+     */
+    protected function mapJob($job)
+    {
+        try {
+            $payload = json_decode($job->payload);
+            $job->job = isset($payload->displayName) ? $payload->displayName : (isset($payload->job) ? $payload->job : 'Unknown');
+            $job->attempts = isset($payload->attempts) ? $payload->attempts : null;
+            $job->maxTries = isset($payload->maxTries) ? $payload->maxTries : null;
+            $job->timeout = isset($payload->timeout) ? $payload->timeout : null;
+            $job->job_id = isset($payload->id) ? $payload->id : null;
+
+            if (config('eyewitness.allow_failed_job_exception_data', true)) {
+                $job->exception = isset($job->exception) ? $job->exception : null;
+            } else {
+                $job->exception = null;
+            }
+
+            if (config('eyewitness.allow_failed_job_payload_data', true)) {
+                $job->payload = isset($payload->data->command) ? $payload->data->command : (isset($payload->data) ? $payload->data : $job->payload);
+                $job->payload = get_object_vars(unserialize($job->payload));
+            } else {
+                $job->payload = null;
+            }
+
+            return $job;
+        } catch (Exception $e) {
+            $this->eye->logger()->error('Unable to map the Failed Job', $e);
+        }
+
+        return null;
     }
 }

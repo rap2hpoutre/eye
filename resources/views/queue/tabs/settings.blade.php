@@ -8,8 +8,8 @@
         <div class="flex w-full justify-between">
             <h1 class="font-hairline ml-4 mt-2 text-2xl">Settings for <span class="font-normal">{{ $queue->connection }} ({{ $queue->tube }})</span></h1>
 
-            <div class="mt-1 mr-2">
-                <eye-menu title='' color='svgcolor-grey'>
+            <div class="mt-2 mr-2">
+                <eye-menu title='Delete' color='svgcolor-white' background='bg-brand shadow-lg btn-pop'>
                     <div slot="dropdown" class="bg-white shadow rounded border overflow-hidden" v-cloak>
                         <button class="block px-4 py-3 border-b text-grey-darkest bg-white hover:text-white bg-circuit-hover bg-md-hover hover:bg-brand svg-hover w-full" @click="submitForm" data-action="{{ route('eyewitness.queues.destroy', $queue->id) }}" data-method="delete">
                             <div class="flex items-center">

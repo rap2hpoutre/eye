@@ -3,6 +3,7 @@
 namespace Eyewitness\Eye\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Eyewitness\Eye\Repo\Queue;
 use Illuminate\Routing\Controller;
 use Eyewitness\Eye\Repo\Notifications\History;
 
@@ -12,6 +13,7 @@ class NotificationsController extends Controller
      * Show the given notification.
      *
      * @param  Request  $request
+     * @param  integer  $id
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request, $id)
@@ -25,6 +27,7 @@ class NotificationsController extends Controller
      * Acknowledge the given notification.
      *
      * @param  Request  $request
+     * @param  integer  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
