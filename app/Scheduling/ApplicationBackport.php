@@ -4,7 +4,8 @@ namespace Eyewitness\Eye\Scheduling;
 
 use Eyewitness\Eye\Eye;
 use Illuminate\Console\Application;
-use Symfony\Component\Process\ProcessUtils;
+use Illuminate\Support\ProcessUtils as LaravelProcessUtils;
+use Symfony\Component\Process\ProcessUtils as SymfonyProcessUtils;
 use Illuminate\Contracts\Container\Container;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -28,11 +29,17 @@ trait ApplicationBackport
     /**
      * Determine the proper PHP executable.
      *
+     * https://github.com/laravel/framework/pull/22448
+     *
      * @return string
      */
     public static function phpBinary()
     {
-        return ProcessUtils::escapeArgument((new PhpExecutableFinder)->find(false));
+        if (Eye::laravelVersionIs('<', '5.5.26')) {
+            return SymfonyProcessUtils::escapeArgument((new PhpExecutableFinder)->find(false));
+        }
+
+        return LaravelProcessUtils::escapeArgument((new PhpExecutableFinder)->find(false));
     }
 
     /**
@@ -42,6 +49,10 @@ trait ApplicationBackport
      */
     public static function artisanBinary()
     {
-        return defined('ARTISAN_BINARY') ? ProcessUtils::escapeArgument(ARTISAN_BINARY) : 'artisan';
+        if (Eye::laravelVersionIs('<', '5.5.26')) {
+            return defined('ARTISAN_BINARY') ? SymfonyProcessUtils::escapeArgument(ARTISAN_BINARY) : 'artisan';
+        }
+
+        return defined('ARTISAN_BINARY') ? LaravelProcessUtils::escapeArgument(ARTISAN_BINARY) : 'artisan';
     }
 }

@@ -4,9 +4,10 @@ namespace Eyewitness\Eye\Scheduling;
 
 use Eyewitness\Eye\Eye;
 use Illuminate\Console\Application;
+use Illuminate\Support\ProcessUtils as LaravelProcessUtils;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Scheduling\Event as OriginalEvent;
-use Symfony\Component\Process\ProcessUtils;
+use Symfony\Component\Process\ProcessUtils as SymfonyProcessUtils;
 use Eyewitness\Eye\Scheduling\BaseEventTrait;
 use Illuminate\Contracts\Container\Container;
 
@@ -83,7 +84,11 @@ class Event extends OriginalEvent
      */
     public function buildForegroundCommand()
     {
-        $output = ProcessUtils::escapeArgument($this->output);
+        if (Eye::laravelVersionIs('<', '5.5.26')) {
+            $output = SymfonyProcessUtils::escapeArgument($this->output);
+        } else {
+            $output = LaravelProcessUtils::escapeArgument($this->output);
+        }
 
         return $this->ensureCorrectUser($this->command.$this->getAppendOutput().$output.' 2>&1');
     }
@@ -116,7 +121,12 @@ class Event extends OriginalEvent
     public function buildBackgroundCommand()
     {
         $background = $this->formatCommandString('eyewitness:background').' "'.$this->mutexName().'" --force';
-        $output = ProcessUtils::escapeArgument($this->getDefaultOutput());
+
+        if (Eye::laravelVersionIs('<', '5.5.26')) {
+            $output = SymfonyProcessUtils::escapeArgument($this->getDefaultOutput());
+        } else {
+            $output = LaravelProcessUtils::escapeArgument($this->getDefaultOutput());
+        }
 
         return $this->ensureCorrectUser('('.$background.' > '.$output.' 2>&1) > '.$output.' 2>&1 &');
     }

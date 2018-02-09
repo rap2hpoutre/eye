@@ -169,7 +169,7 @@ class EyeServiceProvider extends ServiceProvider
                     $schedule->command('eyewitness:monitor-ssl --result')->cron($this->eye->getMinuteSeed(31).' * * * *')->runInBackground();
                 } else {
                     $schedule->command('eyewitness:monitor-ssl')->cron($this->eye->getMinuteSeed(1).' * * * *');
-                    $schedule->command('eyewitness:monitor-ssl --result')->cron($this->eye->getMinuteSeed(31).' * * * *')->runInBackground();
+                    $schedule->command('eyewitness:monitor-ssl --result')->cron($this->eye->getMinuteSeed(31).' * * * *');
                 }
             }
 
