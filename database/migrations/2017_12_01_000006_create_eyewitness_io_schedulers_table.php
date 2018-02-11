@@ -15,13 +15,13 @@ class CreateEyewitnessIoSchedulersTable extends Migration
     {
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->create('eyewitness_io_schedulers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('schedule');
-            $table->string('command')->index();
-            $table->string('timezone')->nullable()->default(null);
+            $table->string('schedule', 191);
+            $table->string('command', 191)->index();
+            $table->string('timezone', 191)->nullable()->default(null);
             $table->boolean('without_overlapping')->default(false);
             $table->boolean('run_in_background')->default(false);
             $table->boolean('on_one_server')->default(false);
-            $table->string('mutex')->unique()->index();
+            $table->string('mutex', 191)->unique()->index();
             $table->boolean('healthy')->nullable()->default(null)->index();
             $table->timestamp('next_run_due')->useCurrent()->index();
             $table->timestamp('next_check_due')->useCurrent()->index();

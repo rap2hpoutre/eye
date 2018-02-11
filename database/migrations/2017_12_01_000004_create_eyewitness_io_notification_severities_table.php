@@ -16,9 +16,9 @@ class CreateEyewitnessIoNotificationSeveritiesTable extends Migration
     {
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->create('eyewitness_io_notification_severities', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('namespace')->index();
-            $table->string('notification')->index();
-            $table->string('severity');
+            $table->string('namespace', 191)->index();
+            $table->string('notification', 191)->index();
+            $table->string('severity', 191);
         });
 
         Severity::insert([

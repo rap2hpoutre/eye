@@ -15,11 +15,11 @@ class CreateEyewitnessIoNotificationHistoryTable extends Migration
     {
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->create('eyewitness_io_notification_history', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('type')->index();
+            $table->string('type', 191)->index();
             $table->boolean('isError');
-            $table->string('title');
+            $table->string('title', 191);
             $table->text('description');
-            $table->string('severity');
+            $table->string('severity', 191);
             $table->text('meta')->nullable()->default(null);
             $table->boolean('acknowledged')->default(false);
             $table->timestamp('created_at')->useCurrent();

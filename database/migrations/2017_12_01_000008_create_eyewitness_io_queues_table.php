@@ -15,9 +15,9 @@ class CreateEyewitnessIoQueuesTable extends Migration
     {
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->create('eyewitness_io_queues', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('connection');
-            $table->string('tube');
-            $table->string('driver');
+            $table->string('connection', 191);
+            $table->string('tube', 191);
+            $table->string('driver', 191);
             $table->decimal('current_wait_time')->default(0);
             $table->boolean('healthy')->nullable()->default(null)->index();
             $table->boolean('alert_on_failed_job')->default(true);
