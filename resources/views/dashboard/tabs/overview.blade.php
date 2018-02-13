@@ -136,7 +136,7 @@
                                 <p class="block tracking-wide text-grey text-right mr-1">Debug mode</p>
                             </div>
                             <div class="w-1/2 inline-flex">
-                                <p class="ml-4 max-w-full font-mono rounded text-xs text-white p-1 {{ $eye->application()->find('debug') ? 'bg-green' : 'bg-red' }}">{{ $eye->application()->find('debug') ? 'Disabled' : 'Enabled' }}</p>
+                                <p class="ml-4 max-w-full font-mono rounded text-xs text-white p-1 {{ $eye->application()->find('debug') ? 'bg-red' : 'bg-green' }}">{{ $eye->application()->find('debug') ? 'Enabled' : 'Disabled' }}</p>
                             </div>
                         </div>
                     </div>
