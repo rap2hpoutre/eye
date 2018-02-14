@@ -24,4 +24,15 @@ class OverviewTabTest extends TestCase
         $response->assertSee(app()->version());
         $response->assertSee('Route cache');
     }
+
+    public function test_debug_mode()
+    {
+        config(['app.debug' => true]);
+
+        $response = $this->withSession(['eyewitness:auth' => 1])
+                         ->get($this->home.'/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertSee('Enabled');
+    }
 }
