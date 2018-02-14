@@ -25,6 +25,7 @@ class Application extends BaseMonitor
             $this->settings['cache_route'] = app()->routesAreCached();
             $this->settings['timezone'] = config('app.timezone');
             $this->settings['debug'] = config('app.debug');
+            $this->settings['eyewitness_debug'] = config('eyewitness.debug');
             $this->settings['env'] = config('app.env');
             $this->settings['name'] = config('app.name', 'Laravel App');
             $this->settings['maintenance_mode'] = app()->isDownForMaintenance();

@@ -25,14 +25,29 @@ class OverviewTabTest extends TestCase
         $response->assertSee('Route cache');
     }
 
-    public function test_debug_mode()
+    public function test_application_debug_mode()
     {
         config(['app.debug' => true]);
+        config(['eyewitness.debug' => false]);
 
         $response = $this->withSession(['eyewitness:auth' => 1])
                          ->get($this->home.'/dashboard');
 
         $response->assertStatus(200);
+        $response->assertSee('Enabled');
+        $response->assertDontSee('Eyewitness debug');
+    }
+
+    public function test_eyewitness_debug_mode()
+    {
+        config(['app.debug' => false]);
+        config(['eyewitness.debug' => true]);
+
+        $response = $this->withSession(['eyewitness:auth' => 1])
+                         ->get($this->home.'/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertSee('Eyewitness debug');
         $response->assertSee('Enabled');
     }
 }

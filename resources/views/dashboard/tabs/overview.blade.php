@@ -140,6 +140,18 @@
                             </div>
                         </div>
                     </div>
+                    @if ($eye->application()->find('eyewitness_debug'))
+                        <div class="pl-1 pb-3 pt-3">
+                            <div class="flex">
+                                <div class="w-1/2 text-right">
+                                    <p class="block tracking-wide text-grey text-right mr-1">Eyewitness debug</p>
+                                </div>
+                                <div class="w-1/2 inline-flex">
+                                    <p class="ml-4 max-w-full font-mono rounded text-xs text-white p-1 bg-red">Enabled</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <div class="pl-1 pb-3 pt-3">
                         <div class="flex">
                             <div class="w-1/2 text-right">
