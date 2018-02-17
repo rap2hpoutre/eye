@@ -26,7 +26,7 @@ return [
      |--------------------------------------------------------------------------
      |
      | Throughout the package we will display introductory/helper information on
-     | each page to help you navigate your way around. Once you are familar
+     | each page to help you navigate your way around. Once you are familiar
      | with Eyewitness you can turn these off.
      |
      */
@@ -78,11 +78,11 @@ return [
      | "make:witness" command - just register them here.
      |
      | Please read the documentation for full instructions on creating your own
-     | cusstom monitor
+     | custom monitor
      |
      */
 
-     'custom_witnesses' => [],
+    'custom_witnesses' => [],
 
     /*
      |--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ return [
      |--------------------------------------------------------------------------
      |
      | Here you can set the domain(s) of your application. This will be used to
-     | monitor the DNS and SSL certificates for this applicatiom.
+     | monitor the DNS and SSL certificates for this application.
      |
      */
 
@@ -133,7 +133,7 @@ return [
      |
      */
 
-     'database_connections' => [],
+    'database_connections' => [],
 
     /*
      |--------------------------------------------------------------------------
@@ -162,10 +162,10 @@ return [
      |
      | Eyewitness will create a number of tables to store data it collects. By
      | default the package will use your normal database connection - but you
-     | are able to specifiy a specific connection if required.
+     | are able to specify a specific connection if required.
      |
-     | This means you can keep the Eyewitness data seperate from your application,
-     | and seperates your backups, migrations etc.
+     | This means you can keep the Eyewitness data separate from your application,
+     | and separates your backups, migrations etc.
      |
      */
 
@@ -198,9 +198,9 @@ return [
      | 'artisan eyewitness:install' and placed in your ".env" file.
      |
      | You can all generate a new token and secret key automatically by running
-     | 'artian eyewitness:regenerate'.
+     | 'artisan eyewitness:regenerate'.
      |
-     | The `subscription_token` can be left blank, unless you are given a specifc
+     | The `subscription_token` can be left blank, unless you are given a specific
      | key when using the remote eyewitness subscription: https://eyewitness.io/remote
      |
      */
