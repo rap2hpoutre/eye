@@ -2,6 +2,7 @@
 
 namespace Eyewitness\Eye\Test\Controllers;
 
+use Eyewitness\Eye\Eye;
 use Eyewitness\Eye\Test\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -64,5 +65,30 @@ class AuthControllerTest extends TestCase
 
         $response->assertRedirect($this->home.'/dashboard#overview');
         $response->assertSessionHas('eyewitness:auth', 1);
+    }
+
+    public function test_closure_auth_fails()
+    {
+        Eye::auth(function ($request) {
+            return false;
+        });
+
+        $response = $this->get($this->home.'/dashboard');
+
+        $response->assertRedirect($this->home);
+        $response->assertSessionMissing('eyewitness:auth');
+        $response->assertSessionHas('warning', 'Sorry - you must login to Eyewitness first.');
+    }
+
+    public function test_closure_auth_succeds()
+    {
+        Eye::auth(function ($request) {
+            return true;
+        });
+
+        $response = $this->get($this->home);
+
+        $response->assertSessionMissing('eyewitness:auth');
+        $response->assertRedirect($this->home.'/dashboard#overview');
     }
 }

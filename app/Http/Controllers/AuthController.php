@@ -15,7 +15,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        if ($request->session()->has('eyewitness:auth')) {
+        if ($request->session()->has('eyewitness:auth') || Eye::check($request)) {
             return redirect(route('eyewitness.dashboard').'#overview');
         }
 

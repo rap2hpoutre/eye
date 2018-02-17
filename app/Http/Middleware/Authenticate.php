@@ -3,6 +3,7 @@
 namespace Eyewitness\Eye\Http\Middleware;
 
 use Closure;
+use Eyewitness\Eye\Eye;
 
 class Authenticate
 {
@@ -15,10 +16,10 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
-        if (! session('eyewitness:auth')) {
-            return redirect()->route('eyewitness.login')->withWarning('Sorry - you must login to Eyewitness first.');
+        if (session('eyewitness:auth') || app(Eye::class)->check($request)) {
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect()->route('eyewitness.login')->withWarning('Sorry - you must login to Eyewitness first.');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Eyewitness\Eye;
 
+use Closure;
 use ReflectionClass;
 use Eyewitness\Eye\Api;
 use Eyewitness\Eye\Logger;
@@ -23,6 +24,13 @@ use Eyewitness\Eye\Notifications\Notifier;
 class Eye
 {
     const EYE_VERSION = '3.0.0';
+
+    /**
+     * A callback that can be used to authenticate users.
+     *
+     * @var \Closure
+     */
+    protected static $authUsing;
 
     /**
      * The Application witness.
@@ -449,5 +457,29 @@ class Eye
         $laravel = strtok($laravel, ' ');
 
         return version_compare($laravel, $version, $operator);
+    }
+
+    /**
+     * Set an optional callback that can be used to authenticate users.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public static function auth(Closure $callback)
+    {
+        static::$authUsing = $callback;
+    }
+
+    /**
+     * Determine if the given request can access Eyewitness.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    public static function check($request)
+    {
+        return (static::$authUsing ?: function () {
+            return false;
+        })($request);
     }
 }
