@@ -114,7 +114,7 @@ return [
      */
 
     'application_domains' => [
-        env('APP_URL')
+        env('APP_URL'),
     ],
 
     /*
