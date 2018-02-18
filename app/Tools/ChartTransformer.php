@@ -40,7 +40,6 @@ class ChartTransformer
      */
     protected $queue = [];
 
-
     /**
      * Get the scheduler data and transform it into the required format for our charts.
      *
@@ -53,16 +52,11 @@ class ChartTransformer
             return $this->scheduler;
         }
 
-        $history = Scheduler::select([DB::Raw('avg(time_to_run) as avg_time_to_run'), DB::Raw('DATE(created_at) day')])
-                            ->where('scheduler_id', $scheduler->id)
-                            ->groupBy('day')
-                            ->get();
-
-        // https://adamwathan.me/2016/07/14/customizing-keys-when-mapping-collections
-        $history = $history->reduce(function ($history, $result) {
-            $history[$result['day']] = round($result['avg_time_to_run'], 2);
-            return $history;
-        }, []);
+        $history = Scheduler::where('scheduler_id', $scheduler->id)->get()->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        })->map(function ($row) {
+            return round($row->avg('time_to_run'), 2);
+        });
 
         // Fill the array gaps - because the chart wont populate correctly without 0 values
         for($i=20; $i>=0; $i--) {
@@ -90,16 +84,11 @@ class ChartTransformer
             return $this->custom[$witness->getSafeName()];
         }
 
-        $history = CustomHistory::select([DB::Raw('avg(value) as avg_value'), DB::Raw('DATE(created_at) day')])
-                                ->where('meta', $witness->getSafeName())
-                                ->groupBy('day')
-                                ->get();
-
-        // https://adamwathan.me/2016/07/14/customizing-keys-when-mapping-collections
-        $history = $history->reduce(function ($history, $result) {
-            $history[$result['day']] = round($result['avg_value'], 2);
-            return $history;
-        }, []);
+        $history = CustomHistory::where('meta', $witness->getSafeName())->get()->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        })->map(function ($row) {
+            return round($row->avg('value'), 2);
+        });
 
         // Fill the array gaps - because the chart wont populate correctly without 0 values
         for($i=20; $i>=0; $i--) {
@@ -127,16 +116,11 @@ class ChartTransformer
             return $this->database[$connection];
         }
 
-        $history = Database::select([DB::Raw('avg(value) as avg_size'), DB::Raw('DATE(created_at) day')])
-                           ->where('meta', $connection)
-                           ->groupBy('day')
-                           ->get();
-
-        // https://adamwathan.me/2016/07/14/customizing-keys-when-mapping-collections
-        $history = $history->reduce(function ($history, $result) {
-            $history[$result['day']] = round($result['avg_size'], 2);
-            return $history;
-        }, []);
+        $history = Database::where('meta', $connection)->get()->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        })->map(function ($row) {
+            return round($row->avg('value'), 2);
+        });
 
         // Fill the array gaps - because the chart wont populate correctly without 0 values
         for($i=20; $i>=0; $i--) {
@@ -164,28 +148,18 @@ class ChartTransformer
             return $this->queue[$queue->id];
         }
 
-        $history = Queue::select([DB::Raw('avg(pending_count) as avg_pending_count'),
-                                  DB::Raw('sum(sonar_time) as total_sonar_time'),
-                                  DB::Raw('sum(sonar_count) as total_sonar_count'),
-                                  DB::Raw('sum(process_time) as total_process_time'),
-                                  DB::Raw('sum(process_count) as total_process_count'),
-                                  DB::Raw('sum(idle_time) as total_idle_time'),
-                                  DB::Raw('sum(exception_count) as total_exception_count'),
-                                  DB::Raw('DATE(date) day')])
-                        ->where('queue_id', $queue->id)
-                        ->groupBy('day')
-                        ->get();
-
-        // https://adamwathan.me/2016/07/14/customizing-keys-when-mapping-collections
-        $history = $history->reduce(function ($history, $result) {
-            $history[$result['day']]['avg_wait_time'] = $this->calculateAvg($result['total_sonar_time'], $result['total_sonar_count']);
-            $history[$result['day']]['avg_process_time'] = $this->calculateAvg($result['total_process_time'], $result['total_process_count']);
-            $history[$result['day']]['total_process_count'] = $result['total_process_count'];
-            $history[$result['day']]['avg_pending_count'] = round($result['avg_pending_count']);
-            $history[$result['day']]['idle_time'] = is_null($result['total_idle_time']) ? 0 : $result['total_idle_time'];
-            $history[$result['day']]['exception_count'] = is_null($result['total_exception_count']) ? 0 : $result['total_exception_count'];
-            return $history;
-        }, []);
+        $history = Queue::where('queue_id', $queue->id)->get()->groupBy(function($item) {
+            return $item->date->format('Y-m-d');
+        })->map(function ($row) {
+            return [
+                'avg_wait_time' => $this->calculateAvg($row->sum('sonar_time'), $row->sum('sonar_count')),
+                'avg_process_time' => $this->calculateAvg($row->sum('process_time'), $row->sum('process_count')),
+                'total_process_count' => $row->sum('process_count'),
+                'avg_pending_count' => round($row->avg('pending_count')),
+                'idle_time' => $this->calculateTotal($row->sum('idle_time')),
+                'exception_count' => $this->calculateTotal($row->sum('exception_count'))
+            ];
+        });
 
         // Fill the array gaps - because the chart wont populate correctly without 0 values
         for($i=14; $i>=0; $i--) {
@@ -225,5 +199,20 @@ class ChartTransformer
         }
 
         return round($total/$count, 2);
+    }
+
+    /**
+     * Calculate the total of the number.
+     *
+     * @param  int|null  $total
+     * @return int
+     */
+    protected function calculateTotal($total)
+    {
+        if (is_null($total) || $total < 1) {
+            return 0;
+        }
+
+        return round($total);
     }
 }
