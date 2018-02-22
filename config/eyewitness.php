@@ -177,7 +177,7 @@ return [
      |--------------------------------------------------------------------------
      | Allow scheduler to run Eyewitness tasks in background
      |
-     | https://docs.eyewitness.io/configuration/general#eyewitness-scheduler-background-tasks
+     | https://docs.eyewitness.io/configuration/general#disable-scheduler-background-tasks
      |--------------------------------------------------------------------------
      |
      | This should only be changed if you run Laravel & Eyewitness on a Windows server and
