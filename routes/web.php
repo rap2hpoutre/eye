@@ -44,4 +44,6 @@ Route::group([
     Route::delete('failedjob/{queue_id}/{job_id}',  ['as' => 'eyewitness.failedjob.destroy',            'uses' => 'FailedJobController@destroy']);
     Route::post('failedjob/{queue_id}',             ['as' => 'eyewitness.failedjob.retry-all',          'uses' => 'FailedJobController@retryAll']);
     Route::delete('failedjob/{queue_id}',           ['as' => 'eyewitness.failedjob.destroy-all',        'uses' => 'FailedJobController@destroyAll']);
+
+    Route::get('debug',                        ['as' => 'eyewitness.debug.index',                       'uses' => 'DebugController@index']);
 });
