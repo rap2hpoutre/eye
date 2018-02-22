@@ -15,6 +15,16 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_login_page_redirects_if_disabled()
+    {
+        $this->app['config']->set('eyewitness.login_disabled', true);
+
+        $response = $this->get($this->home);
+
+        $response->assertRedirect('/');
+        $response->assertSessionMissing('eyewitness:auth');
+    }
+
     public function test_login_page_redirects_to_dashboard_if_logged_in()
     {
         $response = $this->withSession(['eyewitness:auth' => 1])
@@ -65,6 +75,20 @@ class AuthControllerTest extends TestCase
 
         $response->assertRedirect($this->home.'/dashboard#overview');
         $response->assertSessionHas('eyewitness:auth', 1);
+    }
+
+    public function test_authenticate_wont_work_if_login_disabled()
+    {
+        $this->app['config']->set('eyewitness.login_disabled', true);
+
+        $response = $this->post($this->home,
+                            ['app_token' => config('eyewitness.app_token'),
+                             'secret_key' => config('eyewitness.secret_key')]);
+
+        $response = $this->get($this->home);
+
+        $response->assertRedirect('/');
+        $response->assertSessionMissing('eyewitness:auth');
     }
 
     public function test_closure_auth_succeds()

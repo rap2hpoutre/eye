@@ -15,6 +15,10 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        if (config('eyewitness.login_disabled', false)) {
+            return redirect('/');
+        }
+
         if ($request->session()->has('eyewitness:auth') || Eye::check($request)) {
             return redirect(route('eyewitness.dashboard').'#overview');
         }
@@ -29,6 +33,10 @@ class AuthController extends Controller
      */
     public function authenticate(Request $request)
     {
+        if (config('eyewitness.login_disabled', false)) {
+            return redirect('/');
+        }
+
         if (! app(Eye::class)->checkConfig()) {
             return redirect()->route('eyewitness.login')->withError('Eyewitness has not been configured correctly. Login has been disabled for your security. Please run "php artisan eyewitness:debug" to determine the issue.');
         }
