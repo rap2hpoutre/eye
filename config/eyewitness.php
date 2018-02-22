@@ -175,6 +175,22 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Allow scheduler to run Eyewitness tasks in background
+     |
+     | https://docs.eyewitness.io/configuration/general#eyewitness-scheduler-background-tasks
+     |--------------------------------------------------------------------------
+     |
+     | This should only be changed if you run Laravel & Eyewitness on a Windows server and
+     | experience issues with your schedules not running correctly. This is caused by some
+     | inconsistencies in how Window servers handles background processes. Only in this
+     | specific situation should you make the following change.
+     |
+     */
+
+    'enable_scheduler_background' => true,
+
+    /*
+     |--------------------------------------------------------------------------
      | Web route middleware
      |
      | https://docs.eyewitness.io/configuration/general#web-route-middleware

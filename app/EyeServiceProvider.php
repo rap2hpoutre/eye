@@ -153,7 +153,7 @@ class EyeServiceProvider extends ServiceProvider
         $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
 
-            if ($this->eye->laravelVersionIs('>=', '5.2.32')) {
+            if ($this->eye->laravelVersionIs('>=', '5.2.32') && config('eyewitness.enable_scheduler_background')) {
                 $schedule->command('eyewitness:poll')->cron('* * * * *')->runInBackground();
                 $schedule->command('eyewitness:custom')->cron('* * * * *')->runInBackground();
                 $schedule->command('eyewitness:prune')->cron('56 1 * * *')->runInBackground();
@@ -164,7 +164,7 @@ class EyeServiceProvider extends ServiceProvider
             }
 
             if (config('eyewitness.monitor_ssl')) {
-                if ($this->eye->laravelVersionIs('>=', '5.2.32')) {
+                if ($this->eye->laravelVersionIs('>=', '5.2.32') && config('eyewitness.enable_scheduler_background')) {
                     $schedule->command('eyewitness:monitor-ssl')->cron($this->eye->getMinuteSeed(1).' * * * *')->runInBackground();
                     $schedule->command('eyewitness:monitor-ssl --result')->cron($this->eye->getMinuteSeed(31).' * * * *')->runInBackground();
                 } else {
@@ -174,7 +174,7 @@ class EyeServiceProvider extends ServiceProvider
             }
 
             if (config('eyewitness.monitor_dns')) {
-                if ($this->eye->laravelVersionIs('>=', '5.2.32')) {
+                if ($this->eye->laravelVersionIs('>=', '5.2.32') && config('eyewitness.enable_scheduler_background')) {
                     $schedule->command('eyewitness:monitor-dns')->cron($this->eye->getMinuteSeed(10).' * * * *')->runInBackground();
                 } else {
                     $schedule->command('eyewitness:monitor-dns')->cron($this->eye->getMinuteSeed(10).' * * * *');
@@ -182,7 +182,7 @@ class EyeServiceProvider extends ServiceProvider
             }
 
             if (config('eyewitness.monitor_composer')) {
-                if ($this->eye->laravelVersionIs('>=', '5.2.32')) {
+                if ($this->eye->laravelVersionIs('>=', '5.2.32') && config('eyewitness.enable_scheduler_background')) {
                     $schedule->command('eyewitness:monitor-composer')->cron($this->eye->getMinuteSeed(20).' '.$this->eye->getHourSeed().' * * *')->runInBackground();
                 } else {
                     $schedule->command('eyewitness:monitor-composer')->cron($this->eye->getMinuteSeed(20).' '.$this->eye->getHourSeed().' * * *');
