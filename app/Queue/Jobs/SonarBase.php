@@ -2,6 +2,8 @@
 
 namespace Eyewitness\Eye\Queue\Jobs;
 
+use Exception;
+use Eyewitness\Eye\Eye;
 use Eyewitness\Eye\Repo\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\InteractsWithQueue;
@@ -62,12 +64,20 @@ class SonarBase
     {
         $end_time = round((microtime(true) - $this->created)*1000);
 
-        Cache::forget('eyewitness_q_sonar_deployed_'.$this->queue_id);
-        Cache::put('eyewitness_q_current_wait_time_'.$this->queue_id, $end_time, 180);
-        Cache::add('eyewitness_q_sonar_time_'.$this->queue_id, 0, 180);
-        Cache::increment('eyewitness_q_sonar_time_'.$this->queue_id, $end_time);
-        Cache::add('eyewitness_q_sonar_count_'.$this->queue_id, 0, 180);
-        Cache::increment('eyewitness_q_sonar_count_'.$this->queue_id);
+        try {
+            Cache::forget('eyewitness_q_sonar_deployed_'.$this->queue_id);
+            Cache::put('eyewitness_q_current_wait_time_'.$this->queue_id, $end_time, 180);
+            Cache::add('eyewitness_q_sonar_time_'.$this->queue_id, 0, 180);
+            Cache::increment('eyewitness_q_sonar_time_'.$this->queue_id, $end_time);
+            Cache::add('eyewitness_q_sonar_count_'.$this->queue_id, 0, 180);
+            Cache::increment('eyewitness_q_sonar_count_'.$this->queue_id);
+        } catch (Exception $e) {
+            app(Eye::class)->logger()->error('Error during Sonar Handling',
+                                             $e->getMessage(),
+                                             ['queue_id' => $this->queue_id,
+                                              'end_time' => $this->end_time,
+                                              'created_time' => $this->created]);
+        }
 
         $queue = Queue::find($this->queue_id);
         $queue->current_wait_time = round($end_time/1000, 2);
