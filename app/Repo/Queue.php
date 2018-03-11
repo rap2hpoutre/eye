@@ -35,7 +35,7 @@ class Queue extends Model
      */
     public function latest_history()
     {
-        return $this->hasOne(History::class)->orderBy('date')->orderBy('hour');
+        return $this->hasOne(History::class)->limit(1)->orderBy('date')->orderBy('hour');
     }
 
     /**

@@ -36,6 +36,6 @@ class Scheduler extends Model
      */
     public function latest_history()
     {
-        return $this->hasOne(History::class)->latest();
+        return $this->hasOne(History::class)->limit(1)->latest();
     }
 }
