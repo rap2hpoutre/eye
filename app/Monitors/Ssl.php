@@ -153,19 +153,21 @@ class Ssl extends BaseMonitor
      */
     protected function saveSslRecord($domain, $result)
     {
+        $record['grade'] = $result['results']['grade'];
+        $record['results_url'] = $result['internals']['alternate_url'];
+
+        if (isset($result['certificates']['information'][0])) {
+            $record['valid'] = $result['certificates']['information'][0]['valid_now'];
+            $record['valid_from'] = $result['certificates']['information'][0]['valid_from'];
+            $record['valid_to'] = $result['certificates']['information'][0]['valid_to'];
+            $record['revoked'] = $result['certificates']['information'][0]['revoked'];
+            $record['expires_soon'] = $result['certificates']['information'][0]['expires_soon'];
+            $record['issuer'] = $result['certificates']['information'][0]['issuer_cn'];
+        }
+
         try {
             History::where('meta', $domain)->delete();
-            History::create(['type' => 'ssl',
-                             'meta' => $domain,
-                             'record' => ['grade' => $result['results']['grade'],
-                                          'results_url' => $result['internals']['alternate_url'],
-                                          'valid' => $result['certificates']['information'][0]['valid_now'],
-                                          'valid_from' => $result['certificates']['information'][0]['valid_from'],
-                                          'valid_to' => $result['certificates']['information'][0]['valid_to'],
-                                          'revoked' => $result['certificates']['information'][0]['revoked'],
-                                          'expires_soon' => $result['certificates']['information'][0]['expires_soon'],
-                                          'issuer' => $result['certificates']['information'][0]['issuer_cn'],
-                             ]]);
+            History::create(['type' => 'ssl', 'meta' => $domain, 'record' => $record]);
         } catch (Exception $e) {
             $this->eye->logger()->error('Ssl record save failed', $e, $domain);
             throw $e;
