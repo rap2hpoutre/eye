@@ -75,7 +75,7 @@ class SonarBase
             app(Eye::class)->logger()->error('Error during Sonar Handling',
                                              $e->getMessage(),
                                              ['queue_id' => $this->queue_id,
-                                              'end_time' => $this->end_time,
+                                              'end_time' => $end_time,
                                               'created_time' => $this->created]);
         }
 
