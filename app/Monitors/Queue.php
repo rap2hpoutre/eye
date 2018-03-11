@@ -199,9 +199,15 @@ class Queue extends BaseMonitor
             return 0;
         }
 
-        $qm = app(QueueManager::class)->connection($queue->connection);
+        try {
+            $qm = app(QueueManager::class)->connection($queue->connection);
 
-        return (new $driver_class($qm, $queue))->pendingJobsCount($queue->tube);
+            return (new $driver_class($qm, $queue))->pendingJobsCount($queue->tube);
+        } catch (Exception $e) {
+            $this->eye->logger()->debug('Unable to find Queue connection', ['exception' => $e->getMessage(), 'connection' => $queue->connection]);
+        }
+
+        return -1;
     }
 
     /**
