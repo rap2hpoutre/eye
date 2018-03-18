@@ -206,7 +206,7 @@ class Eye
 
         foreach (config('eyewitness.custom_witnesses', []) as $witness) {
             if ($this->isValidWitness($witness)) {
-                $instance = resolve($witness);
+                $instance = app($witness);
                 if ($filterIsDue) {
                     if ($instance->isDue()) {
                         $list->push($instance);

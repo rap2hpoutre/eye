@@ -43,7 +43,7 @@ class Notifier
         $driver = "\\Eyewitness\\Eye\\Notifications\\Drivers\\".ucfirst(strtolower($recipient->type));
 
         if (class_exists($driver)) {
-            $channel = resolve($driver);
+            $channel = app($driver);
             $channel->fire($recipient, $message);
         } else {
             app(Eye::class)->logger()->debug('Notification Driver does not exist', $driver);
