@@ -35,8 +35,7 @@ class Working extends BaseMessage
     {
         return [
             'Command' => e($this->meta['scheduler']->command),
-            'Schedule' => e($this->meta['scheduler']->schedule),
-            'Last Run' => e($this->meta['scheduler']->latest_ping->created_at->diffForHumans())
+            'Schedule' => e($this->meta['scheduler']->schedule)
         ];
     }
 
