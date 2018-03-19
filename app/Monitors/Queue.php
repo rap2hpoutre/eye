@@ -398,8 +398,12 @@ class Queue extends BaseMonitor
             }
 
             if (config('eyewitness.allow_failed_job_payload_data', true)) {
-                $job->payload = isset($payload->data->command) ? $payload->data->command : (isset($payload->data) ? $payload->data : $job->payload);
-                $job->payload = get_object_vars(unserialize($job->payload));
+                try {
+                    $job->payload = isset($payload->data->command) ? $payload->data->command : (isset($payload->data) ? $payload->data : $job->payload);
+                    $job->payload = get_object_vars(unserialize($job->payload));
+                } catch (Exception $e) {
+                    $this->eye->logger()->debug('Unable to decode payload', ['exception' => $e->getMessage()]);
+                }
             } else {
                 $job->payload = null;
             }
