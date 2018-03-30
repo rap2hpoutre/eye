@@ -2,6 +2,7 @@
 
 namespace Eyewitness\Eye\Notifications\Messages\Scheduler;
 
+use Exception;
 use Eyewitness\Eye\Notifications\Messages\BaseMessage;
 
 class Missed extends BaseMessage
@@ -33,10 +34,16 @@ class Missed extends BaseMessage
      */
     public function meta()
     {
+        try {
+            $last = e($this->meta['scheduler']->latest_ping->created_at->diffForHumans());
+        } catch (Exception $e) {
+            $last = 'Unknown';
+        }
+
         return [
             'Command' => e($this->meta['scheduler']->command),
             'Schedule' => e($this->meta['scheduler']->schedule),
-            'Last Run' => e($this->meta['scheduler']->latest_ping->created_at->diffForHumans())
+            'Last Run' => $last
         ];
     }
 
