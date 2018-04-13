@@ -148,7 +148,7 @@ class Api
             $response = $this->client->post('https://www.htbridge.com/ssl/api/v1/get_result//'.time().'.html', $headers);
             return json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
-            app(Eye::class)->logger()->error('Unable to get SSL results', $e, $domain);
+            app(Eye::class)->logger()->error('Unable to get SSL results', $e);
         }
 
         return null;
