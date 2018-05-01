@@ -146,6 +146,9 @@ class Database extends BaseMonitor
             case 'pgsql':
                 $size = $this->checkPostgresDatabaseSize($connection);
                 break;
+            case 'sqlsrv':
+                $size = $this->checkSqlServerDatabaseSize($connection);
+                break;
             default:
                 $this->eye->logger()->debug('Unable to find DB driver for size', $connection);
                 return -1;
@@ -192,6 +195,29 @@ class Database extends BaseMonitor
             }
         } catch (Exception $e) {
             $this->eye->logger()->debug('Error during sqLite DB size check', ['exception' => $e->getMessage(), 'connection' => $connection]);
+        }
+
+        return -1;
+    }
+
+    protected function checkSqlServerDatabaseSize($connection)
+    {
+        try {
+            $result = DB::connection($connection)
+                ->select(
+                    DB::raw(
+                        "SELECT total_size_mb = CAST(SUM(size) * 8 AS DECIMAL(16,2)) FROM sys.master_files WITH(NOWAIT) WHERE DB_NAME(database_id) = '{$connection}' GROUP BY database_id"
+                    )
+                );
+            $result = (array)$result[0];
+
+            return $result['total_size_mb'] * 1024;
+        } catch (Exception $e) {
+            $this->eye->logger()
+                ->debug(
+                    'Error during SQL Server DB size check',
+                    ['exception' => $e->getMessage(), 'connection' => $connection]
+                );
         }
 
         return -1;
