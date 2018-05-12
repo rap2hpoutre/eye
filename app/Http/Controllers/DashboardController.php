@@ -23,7 +23,7 @@ class DashboardController extends Controller
                                                   ->withTransformer(new ChartTransformer)
                                                   ->withNotifications(History::orderBy('acknowledged')->orderBy('created_at', 'desc')->get())
                                                   ->withStatuses(Statuses::all())
-                                                  ->withQueues(Queue::with('latest_history')->get())
+                                                  ->withQueues(Queue::all())
                                                   ->withSchedulers(Scheduler::all());
     }
 }

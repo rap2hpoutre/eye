@@ -31,14 +31,6 @@ class Queue extends Model
     }
 
     /**
-     * Get the latest queue history that belong to this queue.
-     */
-    public function latest_history()
-    {
-        return $this->hasOne(History::class)->limit(1)->orderBy('date')->orderBy('hour');
-    }
-
-    /**
      * Set the queue heartbeat to now.
      */
     public function heartbeat()
