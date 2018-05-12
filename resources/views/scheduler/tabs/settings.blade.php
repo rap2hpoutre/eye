@@ -90,7 +90,7 @@
 
             <div class="flex md:items-center pb-4">
                 <div class="w-2/3 md:w-1/2 text-right">
-                    <label class="text-grey-dark" for="alert_last_run_greater_than">Alert if job has never given in a given timeframe (seconds)</label>
+                    <label class="text-grey-dark" for="alert_last_run_greater_than">Alert if job has never run in a given timeframe (seconds)</label>
                 </div>
                 <div class="w-1/3 md:w-1/2 text-left">
                     <div class="flex w-24 text-left">
