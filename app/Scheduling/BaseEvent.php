@@ -185,6 +185,7 @@ trait BaseEvent
                 ]);
             } else {
                 $this->scheduler->fill([
+                    'last_run' => date("Y-m-d H:i:s"),
                     'next_run_due' => $this->getNextRunDue($this->expression, $this->timezone),
                     'next_check_due' => $this->getNextCheckDue($this->expression, $this->timezone),
                 ]);
@@ -196,7 +197,6 @@ trait BaseEvent
                 'expected_completion' => $this->determineExpectedCompletion($this->scheduler),
             ]);
         } catch (Exception $e) {
-            dd($e->getMessage());
             app(Eye::class)->logger()->error('Unable to track scheduler',
                                              $e->getMessage(),
                                              ['expresison' => $this->expression,

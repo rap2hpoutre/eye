@@ -35,9 +35,9 @@ class Missed extends BaseMessage
     public function meta()
     {
         try {
-            $last = e($this->meta['scheduler']->latest_history->created_at->diffForHumans());
+            $last = e($this->meta['scheduler']->last_run->diffForHumans());
         } catch (Exception $e) {
-            $last = 'Unknown';
+            $last = 'Never';
         }
 
         return [

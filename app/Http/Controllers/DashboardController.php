@@ -24,6 +24,6 @@ class DashboardController extends Controller
                                                   ->withNotifications(History::orderBy('acknowledged')->orderBy('created_at', 'desc')->get())
                                                   ->withStatuses(Statuses::all())
                                                   ->withQueues(Queue::with('latest_history')->get())
-                                                  ->withSchedulers(Scheduler::with('latest_history')->get());
+                                                  ->withSchedulers(Scheduler::all());
     }
 }

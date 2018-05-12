@@ -42,5 +42,27 @@ class SchedulerTabTest extends TestCase
         $response->assertSee($scheduler1->schedule);
         $response->assertSee($scheduler2->schedule);
     }
+
+    public function test_schedulers_tab_with_no_last_run()
+    {
+        $scheduler1 = factory(Scheduler::class)->create(['schedule' => '* 3 5 34 3', 'last_run' => null]);
+
+        $response = $this->withSession(['eyewitness:auth' => 1])
+                         ->get($this->home.'/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertSee('Never');
+    }
+
+    public function test_schedulers_tab_with_previous_run()
+    {
+        $scheduler1 = factory(Scheduler::class)->create(['schedule' => '* 3 5 34 3', 'last_run' => '2016-01-01 01:01:01']);
+
+        $response = $this->withSession(['eyewitness:auth' => 1])
+                         ->get($this->home.'/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertDontSee('Never');
+    }
 }
 

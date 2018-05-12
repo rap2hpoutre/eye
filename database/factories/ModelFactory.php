@@ -29,6 +29,7 @@ $factory->define(\Eyewitness\Eye\Repo\Scheduler::class, function (Faker $faker) 
         'on_one_server' => false,
         'mutex' => uniqid(str_random(30), true),
         'healthy' => 1,
+        'last_run' => date('Y-m-d H:i:s'),
         'next_run_due' => date('Y-m-d H:i:s'),
         'next_check_due' => date('Y-m-d H:i:s'),
         'alert_on_missed' => 1,

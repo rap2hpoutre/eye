@@ -19,7 +19,8 @@ class Scheduler extends Model
      *
      * @var array
      */
-    protected $casts = ['next_run_due' => 'datetime',
+    protected $casts = ['last_run' => 'datetime',
+                        'next_run_due' => 'datetime',
                         'next_check_due' => 'datetime',
                         'created_at' => 'datetime'];
 
@@ -29,13 +30,5 @@ class Scheduler extends Model
     public function history()
     {
         return $this->hasMany(History::class)->latest();
-    }
-
-    /**
-     * Get the latest scheduler history that belong to this schedule.
-     */
-    public function latest_history()
-    {
-        return $this->hasOne(History::class)->limit(1)->latest();
     }
 }

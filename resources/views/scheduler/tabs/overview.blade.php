@@ -43,8 +43,8 @@
                 </div>
                 <div class="w-1/2 md:w-3/4">
                     <p class="text-grey-darker ml-4">
-                        @if ($scheduler->latest_history)
-                            <td class="text-center text-sm py-3 font-hairline hidden sm:table-cell">{{ $scheduler->latest_history->created_at->diffForHumans() }}</td>
+                        @if ($scheduler->last_run)
+                            <td class="text-center text-sm py-3 font-hairline hidden sm:table-cell">{{ $scheduler->last_run->diffForHumans() }}</td>
                         @else
                             <td class="text-center hidden sm:table-cell"><span class="rounded py-1 px-2 uppercase font-semibold text-white text-xs bg-orange">Never</span></td>
                         @endif

@@ -36,7 +36,7 @@ class Fast extends BaseMessage
         return [
             'Command' => e($this->meta['scheduler']->command),
             'Schedule' => e($this->meta['scheduler']->schedule),
-            'Last Run' => e($this->meta['scheduler']->latest_history->created_at->diffForHumans()),
+            'Last Run' => e($this->meta['scheduler']->last_run->diffForHumans()),
             'Your alert threshold' => e($this->meta['scheduler']->alert_run_time_greater_than).' seconds',
             'Actual cron job run time' => e(round($this->meta['time_to_run'], 1)).' seconds',
         ];
