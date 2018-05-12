@@ -36,7 +36,7 @@ class Overdue extends BaseMessage
         return [
             'Command' => e($this->meta['scheduler']->command),
             'Schedule' => e($this->meta['scheduler']->schedule),
-            'Last Run' => e($this->meta['scheduler']->latest_ping->created_at->diffForHumans()),
+            'Last Run' => e($this->meta['scheduler']->latest_history->created_at->diffForHumans()),
             'Your alert threshold' => e($this->meta['scheduler']->alert_run_time_greater_than).' seconds',
         ];
     }
