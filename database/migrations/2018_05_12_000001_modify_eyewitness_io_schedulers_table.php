@@ -15,6 +15,7 @@ class ModifyEyewitnessIoSchedulersTable extends Migration
     {
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->table('eyewitness_io_schedulers', function (Blueprint $table) {
             $table->timestamp('last_run')->nullable()->default(null)->index();
+            $table->integer('alert_last_run_greater_than')->default(0)->index();
         });
     }
 
@@ -27,6 +28,7 @@ class ModifyEyewitnessIoSchedulersTable extends Migration
     {
         Schema::connection(config('eyewitness.eyewitness_database_connection'))->table('eyewitness_io_schedulers', function (Blueprint $table) {
             $table->dropColumn('last_run');
+            $table->dropColumn('alert_last_run_greater_than');
         });
     }
 }

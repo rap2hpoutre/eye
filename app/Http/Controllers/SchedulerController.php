@@ -44,9 +44,17 @@ class SchedulerController extends Controller
             'alert_on_fail' => 'required|boolean',
             'alert_run_time_greater_than' => 'required|numeric|min:0|max:9999',
             'alert_run_time_less_than' => 'required|numeric|min:0|max:9999',
+            'alert_last_run_greater_than' => 'required|numeric|min:0|max:9999999',
         ]);
 
-        $scheduler->fill($request->only(['alert_on_missed', 'alert_on_fail', 'alert_run_time_greater_than', 'alert_run_time_less_than']));
+        $scheduler->fill($request->only([
+            'alert_on_missed',
+            'alert_on_fail',
+            'alert_run_time_greater_than',
+            'alert_run_time_less_than',
+            'alert_last_run_greater_than'
+        ]));
+
         $scheduler->save();
 
         return redirect(route('eyewitness.schedulers.show', $scheduler->id).'#settings')->withSuccess('The scheduler configuration has been updated.');

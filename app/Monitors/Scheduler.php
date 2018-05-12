@@ -29,13 +29,19 @@ class Scheduler extends BaseMonitor
             $this->setNextSchedule($scheduler);
         }
 
-        foreach ($this->getOverdueSchedules() as $history) {
+        foreach ($this->getOverdueNoExitSchedules() as $history) {
             $history->output = "No finish ping received by Eyewitness";
             $history->exitcode = 1;
             $history->save();
 
             if ($history->scheduler->alert_on_fail || ($history->scheduler->alert_run_time_greater_than > 0)) {
                 $this->eye->notifier()->alert(new Overdue(['scheduler' => $history->scheduler]));
+            }
+        }
+
+        foreach ($this->getConditionalSchedules() as $scheduler) {
+            if ($this->hasNotRunInGivenTimeframe($scheduler)) {
+                $this->notifyIfChanges($scheduler);
             }
         }
     }
@@ -55,9 +61,19 @@ class Scheduler extends BaseMonitor
      *
      * @return \Eyewitness\Eye\Repo\History\Scheduler
      */
-    public function getOverdueSchedules()
+    public function getOverdueNoExitSchedules()
     {
         return History::whereNull('exitcode')->where('expected_completion', '<=', Carbon::now())->get();
+    }
+
+    /**
+     * Get a list of any schedulers that are making sure they are run at some point.
+     *
+     * @return \Eyewitness\Eye\Repo\History\Scheduler
+     */
+    public function getConditionalSchedules()
+    {
+        return SchedulerRepo::where('alert_last_run_greater_than', '>', 0)->get();
     }
 
     /**
@@ -105,6 +121,17 @@ class Scheduler extends BaseMonitor
         $scheduler->next_run_due = $this->getNextRunDue($scheduler->schedule, $scheduler->timezone);
         $scheduler->next_check_due = $this->getNextCheckDue($scheduler->schedule, $scheduler->timezone);
         $scheduler->save();
+    }
+
+    /**
+     * Check if the scheduled command has never run in a given timeframe.
+     *
+     * @param  \Eyewitness\Eye\Repo\Scheduler  $scheduler
+     * @return bool
+     */
+    protected function hasNotRunInGivenTimeframe($scheduler)
+    {
+        return $scheduler->last_run->diffInSeconds() > $scheduler->alert_last_run_greater_than;
     }
 
     /**

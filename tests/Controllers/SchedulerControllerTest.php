@@ -43,7 +43,8 @@ class SchedulerControllerTest extends TestCase
                                  'alert_on_missed' => true,
                                  'alert_on_fail' => true,
                                  'alert_run_time_greater_than' => 0,
-                                 'alert_run_time_less_than' => -1,]);
+                                 'alert_run_time_less_than' => -1,
+                                 'alert_last_run_greater_than' => 0]);
 
          $response->assertStatus(302);
          $response->assertSessionHas('errors');
@@ -54,7 +55,8 @@ class SchedulerControllerTest extends TestCase
         $scheduler = factory(Scheduler::class)->create(['alert_on_missed' => true,
                                                         'alert_on_fail' => true,
                                                         'alert_run_time_greater_than' => 0,
-                                                        'alert_run_time_less_than' => 0]);
+                                                        'alert_run_time_less_than' => 0,
+                                                        'alert_last_run_greater_than' => 0]);
 
         $response = $this->withSession(['eyewitness:auth' => 1])
                          ->post(route('eyewitness.schedulers.update', $scheduler),
@@ -62,7 +64,8 @@ class SchedulerControllerTest extends TestCase
                                  'alert_on_missed' => false,
                                  'alert_on_fail' => false,
                                  'alert_run_time_greater_than' => 1,
-                                 'alert_run_time_less_than' => 2]);
+                                 'alert_run_time_less_than' => 2,
+                                 'alert_last_run_greater_than' => 3]);
 
          $response->assertRedirect(route('eyewitness.schedulers.show', $scheduler).'#settings');
          $response->assertSessionHas('success');
@@ -72,7 +75,8 @@ class SchedulerControllerTest extends TestCase
                                    'alert_on_missed' => false,
                                    'alert_on_fail' => false,
                                    'alert_run_time_greater_than' => 1,
-                                   'alert_run_time_less_than' => 2]);
+                                   'alert_run_time_less_than' => 2,
+                                   'alert_last_run_greater_than' => 3]);
     }
 
     public function test_destroy_scheduler()

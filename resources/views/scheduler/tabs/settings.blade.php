@@ -88,6 +88,17 @@
                 </div>
             </div>
 
+            <div class="flex md:items-center pb-4">
+                <div class="w-2/3 md:w-1/2 text-right">
+                    <label class="text-grey-dark" for="alert_last_run_greater_than">Alert if job has never given in a given timeframe (seconds)</label>
+                </div>
+                <div class="w-1/3 md:w-1/2 text-left">
+                    <div class="flex w-24 text-left">
+                        <eye-input id="alert_last_run_greater_than" type="text" name="alert_last_run_greater_than" label="" value="{{ old('alert_last_run_greater_than', $scheduler->alert_last_run_greater_than) }}"></eye-input>
+                    </div>
+                </div>
+            </div>
+
             <div class="text-right mt-8">
                 <eye-btn color="bg-brand" type="submit" icon='@eyewitness_svg('check-square-11', 'svgcolor-white h-4 w-4')'>Update scheduler</eye-btn>
             </div>

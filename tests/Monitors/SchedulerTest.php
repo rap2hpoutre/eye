@@ -107,4 +107,46 @@ class SchedulerTest extends TestCase
 
         $this->monitor->poll();
     }
+
+    public function test_alerts_for_conditional_schedules()
+    {
+        $schedule = factory(Scheduler::class)->create(['next_run_due' => Carbon::now()->addDay(),
+                                                       'next_check_due' => Carbon::now()->addDay(),
+                                                       'last_run' => Carbon::now()->subDay(),
+                                                       'alert_on_fail' => 1,
+                                                       'healthy' => 1,
+                                                       'alert_last_run_greater_than' => 10]);
+
+        $this->notifier->shouldReceive('alert')->with(Missed::class)->once();
+
+        $this->monitor->poll();
+    }
+
+    public function test_alerts_for_conditional_schedules_already_overdue()
+    {
+        $schedule = factory(Scheduler::class)->create(['next_run_due' => Carbon::now()->addDay(),
+                                                       'next_check_due' => Carbon::now()->addDay(),
+                                                       'last_run' => Carbon::now()->subDay(),
+                                                       'alert_on_fail' => 1,
+                                                       'healthy' => 0,
+                                                       'alert_last_run_greater_than' => 10]);
+
+        $this->notifier->shouldReceive('alert')->with(Missed::class)->never();
+
+        $this->monitor->poll();
+    }
+
+    public function test_alerts_for_conditional_schedules_not_overdue()
+    {
+        $schedule = factory(Scheduler::class)->create(['next_run_due' => Carbon::now()->addDay(),
+                                                       'next_check_due' => Carbon::now()->addDay(),
+                                                       'last_run' => Carbon::now(),
+                                                       'alert_on_fail' => 1,
+                                                       'healthy' => 0,
+                                                       'alert_last_run_greater_than' => 10]);
+
+        $this->notifier->shouldReceive('alert')->with(Missed::class)->never();
+
+        $this->monitor->poll();
+    }
 }

@@ -36,6 +36,7 @@ $factory->define(\Eyewitness\Eye\Repo\Scheduler::class, function (Faker $faker) 
         'alert_on_fail' => 1,
         'alert_run_time_greater_than' => 0,
         'alert_run_time_less_than' => 0,
+        'alert_last_run_greater_than' => 0,
     ];
 });
 
