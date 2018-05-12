@@ -15,7 +15,7 @@ class SchedulerControllerTest extends TestCase
         $this->artisan('migrate', ['--database' => 'testbench']);
     }
 
-    public function test_show_scheduler_page_loads()
+    public function test_show_scheduler_page_loads_with_no_pagination()
     {
         $scheduler = factory(Scheduler::class)->create();
         $history1 = factory(History::class)->create(['scheduler_id' => $scheduler->id, 'time_to_run' => '0.845']);
@@ -31,6 +31,28 @@ class SchedulerControllerTest extends TestCase
         $response->assertSee((string) round($history2->time_to_run, 1));
         $response->assertSee($history1->output);
         $response->assertSee($history2->output);
+        $response->assertDontSee('Load More');
+    }
+
+    public function test_show_scheduler_page_loads_with_pagination()
+    {
+        config(['eyewitness.pagination_size' => 4]);
+
+        $scheduler = factory(Scheduler::class)->create();
+        $history1 = factory(History::class)->create(['scheduler_id' => $scheduler->id, 'time_to_run' => '0.845']);
+        $history2 = factory(History::class)->create(['scheduler_id' => $scheduler->id, 'time_to_run' => '0.234']);
+        $history3 = factory(History::class)->create(['scheduler_id' => $scheduler->id, 'time_to_run' => '0.234']);
+        $history4 = factory(History::class)->create(['scheduler_id' => $scheduler->id, 'time_to_run' => '0.234']);
+        $history5 = factory(History::class)->create(['scheduler_id' => $scheduler->id, 'time_to_run' => '0.987']);
+
+        $response = $this->withSession(['eyewitness:auth' => 1])
+                         ->get(route('eyewitness.schedulers.show', $scheduler));
+
+        $response->assertStatus(200);
+        $response->assertSee($history1->output);
+        $response->assertSee($history2->output);
+        $response->assertSee('Load More');
+        $response->assertDontSee('0.987');
     }
 
     public function test_update_scheduler_validation()

@@ -1,5 +1,5 @@
 <template>
-    <a :href="btnLink" class="text-white font-bold pr-4 py-2 rounded inline-flex items-center no-underline shadow-md cursor-pointer" :class="buttonStatus" @click="pressButton" :disabled="loadingStatus">
+    <a :href="btnLink" class="text-white font-bold pr-4 py-2 rounded inline-flex items-center no-underline shadow-md cursor-pointer" :class="buttonStatus" @click="pressButton" :disabled="disabledStatus">
         <span v-show="!loadingStatus" class="pl-3 mr-2 flex items-center" v-html="icon"></span>
         <transition enter-active-class="animated zoomIn" leave-active-class="animated zoomOut">
             <span v-show="loadingStatus" class="pl-2 mr-1 flex items-center">
@@ -15,14 +15,19 @@
 <script>
     export default {
 
-        props: [
-            'icon',
-            'color',
-            'link'
-        ],
+        props: {
+            icon: String,
+            color: String,
+            link: String,
+            disabled: {
+                default: false,
+                type: Boolean
+            }
+        },
 
         data: function() {
             return {
+                'isDisabled': this.disabled,
                 'isLoading': false,
                 'btnColor': this.color,
                 'btnLink': this.link
@@ -30,24 +35,30 @@
         },
 
         computed: {
+            disabledStatus() {
+                return this.isLoading || this.isDisabled;
+            },
+
             loadingStatus() {
                 return this.isLoading;
             },
 
             buttonStatus() {
                 return [{
-                    'opacity-50': this.loadingStatus,
-                    'cursor-not-allowed': this.loadingStatus,
-                    'hover:bg-brand-light' : !this.loadingStatus,
-                    'hover:shadow-lg': !this.loadingStatus,
-                    'btn-pop': !this.loadingStatus,
+                    'opacity-50': this.disabledStatus,
+                    'cursor-not-allowed': this.disabledStatus,
+                    'hover:bg-brand-light' : !this.disabledStatus,
+                    'hover:shadow-lg': !this.disabledStatus,
+                    'btn-pop': !this.disabledStatus,
                 }, this.btnColor];
             },
         },
 
         methods: {
             pressButton() {
-                this.isLoading = true;
+                if (! this.disabledStatus) {
+                    this.isLoading = true;
+                }
             },
         }
     }

@@ -10,7 +10,7 @@
     <div class="text-center px-6 pb-8">
         @eyewitness_tutorial('Here is the history of this scheduled command. Each time the schedule runs, the results are captured below. Any output by the cron is also stored (although you can disable this in the config file if needed).')
 
-        @if (count($scheduler->history))
+        @if (count($histories))
             <table class="w-full" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($scheduler->history as $history)
+                    @foreach($histories as $history)
                         <tr>
                             <td class="text-center text-sm py-3 text-grey-darker font-hairline">{{ $history->created_at->format('Y-m-d H:i:s') }}  <span class="text-grey italic">({{ $history->created_at->diffForHumans() }})</span></td>
                             <td class="text-center text-sm py-3 text-grey-darker font-hairlinel">{{ round($history->time_to_run, 1) }}s</td>
@@ -51,6 +51,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $histories->fragment('history')->links('eyewitness::pagination') }}
         @else
             <div class="py-8">
                 <div class="mb-4">

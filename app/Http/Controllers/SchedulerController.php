@@ -25,6 +25,7 @@ class SchedulerController extends Controller
 
         return view('eyewitness::scheduler.show')->withEye(app(Eye::class))
                                                  ->withScheduler($scheduler)
+                                                 ->withHistories($scheduler->history()->simplePaginate(config('eyewitness.pagination_size', 50)))
                                                  ->withTransformer(new ChartTransformer);
     }
 
