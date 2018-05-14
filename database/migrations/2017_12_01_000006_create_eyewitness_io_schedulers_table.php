@@ -23,8 +23,8 @@ class CreateEyewitnessIoSchedulersTable extends Migration
             $table->boolean('on_one_server')->default(false);
             $table->string('mutex', 191)->unique()->index();
             $table->boolean('healthy')->nullable()->default(null)->index();
-            $table->timestamp('next_run_due')->useCurrent()->index();
-            $table->timestamp('next_check_due')->useCurrent()->index();
+            $table->timestamp('next_run_due')->nullable()->default(null)->index();
+            $table->timestamp('next_check_due')->nullable()->default(null)->index();
             $table->boolean('alert_on_missed')->default(true)->index();
             $table->boolean('alert_on_fail')->default(true);
             $table->integer('alert_run_time_greater_than')->default(0);

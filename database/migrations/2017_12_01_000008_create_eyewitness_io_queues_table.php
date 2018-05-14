@@ -25,7 +25,7 @@ class CreateEyewitnessIoQueuesTable extends Migration
             $table->integer('alert_pending_jobs_greater_than')->default(0);
             $table->integer('alert_failed_jobs_greater_than')->default(0);
             $table->integer('alert_wait_time_greater_than')->default(0);
-            $table->timestamp('last_heartbeat')->useCurrent();
+            $table->timestamp('last_heartbeat')->nullable()->default(null)->index();
             $table->timestamp('created_at')->useCurrent();
         });
     }
